@@ -1,0 +1,46 @@
+body {
+  font-family: sans-serif;
+  margin: 0 10%;
+}
+
+h1, h2 {
+  text-align: center;
+}
+
+h1 {
+  color: lightgray;
+  font-size: x-large;
+  font-weight: lighter;
+}
+
+h2 {
+  font-size: xx-large;
+}
+
+h3 {
+  font-size: x-large;
+}
+
+p {
+  text-align: justify;
+}
+
+a {
+  text-decoration: none;
+}
+
+a:link {
+  color: dodgerblue;
+}
+
+a:hover {
+  color: skyblue;
+}
+
+a:active {
+  color: red;
+}
+
+a:visited {
+  color: blueviolet;
+}
