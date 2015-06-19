@@ -21,6 +21,14 @@ h3 {
   font-size: x-large;
 }
 
+h4 {
+  font-size: large;
+}
+
+h5 {
+  font-size: medium;
+}
+
 p {
   text-align: justify;
 }
