@@ -1,0 +1,24 @@
+p {
+  font: xx-large sans-serif;
+  text-align: center;
+}
+
+a {
+  text-decoration: none;
+}
+
+a:link {
+  color: dodgerblue;
+}
+
+a:hover {
+  color: skyblue;
+}
+
+a:active {
+  color: red;
+}
+
+a:visited {
+  color: blueviolet;
+}
