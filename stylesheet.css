@@ -52,3 +52,16 @@ a:active {
 a:visited {
   color: blueviolet;
 }
+
+blockquote {
+  color: gray;
+  font-style: italic;
+}
+
+blockquote:before {
+  content:open-quote;
+}
+
+blockquote:after {
+  content:close-quote;
+}
