@@ -1,24 +1,49 @@
-p {
-  font: xx-large Arial, sans-serif;
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+}
+
+#header {
+  box-shadow: 0 0 2em;
+  padding: 0 0 .5em;
+}
+
+#name {
+  color: lightgray;
+  font-size: 2em;
+  margin: 0 0 .5em;
   text-align: center;
 }
 
-a {
+nav {
+  text-align: center;
+}
+
+#current-nav {
+  border-bottom: .1em solid black;
+}
+
+nav a {
+  display: inline-block;
+  font-size: 1.5em;
+  width: 10em;
   text-decoration: none;
 }
 
-a:link {
-  color: dodgerblue;
+nav a:link, nav a:visited {
+  color: black;
 }
 
-a:hover {
-  color: skyblue;
+nav a:hover {
+  color: dimgray;
 }
 
-a:active {
-  color: red;
+nav a:active {
+  color: gray;
 }
 
-a:visited {
-  color: blueviolet;
+#body {
+  margin-left: auto;
+  margin-right: auto;
+  width: 50em;
 }
