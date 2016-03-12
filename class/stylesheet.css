@@ -1,0 +1,79 @@
+body {
+  font-family: Arial, sans-serif;
+  margin: 0 10% 1em;
+}
+
+h1, h2 {
+  text-align: center;
+}
+
+h1 {
+  color: lightgray;
+  font-size: x-large;
+  font-weight: lighter;
+}
+
+h2 {
+  font-size: xx-large;
+}
+
+h3 {
+  font-size: x-large;
+}
+
+h4 {
+  font-size: large;
+}
+
+h5 {
+  font-size: medium;
+}
+
+p {
+  text-align: justify;
+}
+
+a {
+  text-decoration: none;
+}
+
+a:link {
+  color: dodgerblue;
+}
+
+a:hover {
+  color: skyblue;
+}
+
+a:active {
+  color: red;
+}
+
+a:visited {
+  color: blueviolet;
+}
+
+blockquote {
+  color: gray;
+  font-style: italic;
+}
+
+blockquote:before {
+  content:open-quote;
+}
+
+blockquote:after {
+  content:close-quote;
+}
+
+table {
+  border: 1px solid black;
+  border-collapse: collapse;
+  width: 100%;
+}
+
+td {
+  border: 1px solid black;
+  padding: .25em .25em 1.25em;
+  vertical-align: top;
+}
