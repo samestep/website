@@ -1,32 +1,52 @@
 body {
   font-family: Arial, sans-serif;
-  margin: 0 10% 1em;
+  margin: 0 0 1em;
 }
 
-h1, h2 {
+#header {
+  box-shadow: 0 0 2em;
+  padding: 0 0 .5em;
+}
+
+#name {
+  color: lightgray;
+  font-size: 2em;
+  margin: 0 0 .5em;
   text-align: center;
 }
 
-h1 {
-  color: lightgray;
-  font-size: x-large;
-  font-weight: lighter;
+nav {
+  text-align: center;
 }
 
-h2 {
-  font-size: xx-large;
+#current-nav {
+  border-bottom: .1em solid black;
 }
 
-h3 {
-  font-size: x-large;
+nav a {
+  display: inline-block;
+  font-size: 1.5em;
+  width: 10em;
+  text-decoration: none;
 }
 
-h4 {
-  font-size: large;
+nav a:link, nav a:visited {
+  color: black;
 }
 
-h5 {
-  font-size: medium;
+nav a:hover {
+  color: dimgray;
+}
+
+nav a:active {
+  color: gray;
+}
+
+#body {
+  margin-top: 3em;
+  margin-left: auto;
+  margin-right: auto;
+  width: 50em;
 }
 
 p {
