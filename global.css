@@ -19,7 +19,7 @@ nav {
   text-align: center;
 }
 
-#current-nav {
+.current-nav {
   border-bottom: .1em solid black;
 }
 
