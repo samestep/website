@@ -1,52 +1,57 @@
 body {
   font-family: Arial, sans-serif;
-  margin: 0 0 1em;
+  margin: 0;
 }
 
-#header {
+.placeholder {
+  position: static;
+  visibility: hidden;
+}
+
+header {
+  background: white;
   box-shadow: 0 0 2em;
   padding: 0 0 .5em;
+  position: fixed;
+  text-align: center;
+  top: 0;
+  width: 100%;
 }
 
-#name {
+header div.name {
   color: lightgray;
   font-size: 2em;
   margin: 0 0 .5em;
-  text-align: center;
 }
 
-nav {
-  text-align: center;
-}
-
-.current-nav {
-  border-bottom: .1em solid black;
-}
-
-nav a {
+header nav a {
+  border-bottom: .1em solid white;
   display: inline-block;
   font-size: 1.5em;
   width: 10em;
   text-decoration: none;
 }
 
-nav a:link, nav a:visited {
+header nav a.current {
+  border-color: black;
+}
+
+header nav a:link, header nav a:visited {
   color: black;
 }
 
-nav a:hover {
+header nav a:hover {
   color: dimgray;
 }
 
-nav a:active {
+header nav a:active {
   color: gray;
 }
 
-#body {
-  margin-top: 3em;
-  margin-left: auto;
-  margin-right: auto;
-  width: 50em;
+main {
+  margin: 3em auto;
+  padding: 0 3em;
+  max-width: 50em;
 }
 
 p {
