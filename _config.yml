@@ -34,7 +34,7 @@ minima:
     twitter: no # otherwise it adds a https://twitter.com/jekyllrb link
 
 # Build settings
-theme: minima
+remote_theme: jekyll/minima
 plugins:
   - jekyll-feed
 
