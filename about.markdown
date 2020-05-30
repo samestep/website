@@ -4,15 +4,16 @@ title: About
 permalink: /about/
 ---
 
-This is the base Jekyll theme. You can find out more info about customizing your Jekyll theme, as well as basic Jekyll usage documentation at [jekyllrb.com](https://jekyllrb.com/)
+Hey there! I'm Sam. Professionally I'm a software engineer, but I like to spend
+my free time learning from all the amazing people there are to be found (both in
+my own life and beyond). Here you can find some of my writings about some of my
+learnings.
 
-You can find the source code for Minima at GitHub:
-[jekyll][jekyll-organization] /
-[minima](https://github.com/jekyll/minima)
+Feel free to either send me a message here or reach out via social media :)
 
-You can find the source code for Jekyll at GitHub:
-[jekyll][jekyll-organization] /
-[jekyll](https://github.com/jekyll/jekyll)
-
-
-[jekyll-organization]: https://github.com/jekyll
+<form action="https://getsimpleform.com/messages?form_api_token=d3e0c0626631753c81170834239f910a" method="post">
+  <textarea name='message' placeholder='Your message' cols=80 rows=5></textarea>
+  <br>
+  <input type='text' name='email' placeholder='Your email address' />
+  <input type='submit' value='Send' />
+</form>
