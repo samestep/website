@@ -6,10 +6,10 @@ permalink: /about/
 
 ![Me](/assets/photo.jpg){: style="float: right; height: 20ex; border-radius: 50%" }
 
-Hey there! I'm Sam. Professionally I'm a software engineer, but I like to spend
-my free time learning from all the amazing people there are to be found (both in
-my own life and beyond). Here you can find some of my writings about some of my
-learnings.
+Hey there! I'm Sam. Professionally I'm a software engineer, but I also like to
+spend my free time learning from all the amazing people there are to be found
+(both in my own life and beyond). Here you can find some of my writings about
+some of my learnings.
 
 Feel free to either send me a message here or reach out via social media :)
 
