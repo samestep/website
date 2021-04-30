@@ -3,6 +3,15 @@ layout: post
 title: Parallelizing nvcc
 ---
 
+_Edit (2021-04-29):_ According to [Stack Overflow][]:
+
+> **`nvcc` from CUDA 11.3 finally supports this out of the box via the [`-t`
+> flag][].**
+
+CUDA 11.3 was released on 2021-04-15.
+
+---
+
 This post talks about [`fast_nvcc.py`][], which [Nikita Shulga][], [Rong
 Rong][], and I brought to the [PyTorch repo][] in December, reducing wall-clock
 build time for builds that use `nvcc` to compile large CUDA files for multiple
@@ -246,3 +255,5 @@ explored several of its implementation details. Thanks for reading! :)
 [nvcc]: https://docs.nvidia.com/cuda/cuda-compiler-driver-nvcc/index.html
 [PyTorch repo]: https://github.com/pytorch/pytorch
 [Rong Rong]: https://github.com/walterddr
+[Stack Overflow]: https://stackoverflow.com/a/51115889
+[`-t` flag]: https://docs.nvidia.com/cuda/cuda-compiler-driver-nvcc/index.html#options-for-guiding-compiler-driver-threads
