@@ -246,6 +246,7 @@ We looked at `fast_nvcc.py`---which acts as a faster (wall time) replacement for
 explored several of its implementation details. Thanks for reading! :)
 
 [`--dryrun`]: https://docs.nvidia.com/cuda/cuda-compiler-driver-nvcc/index.html#options-for-guiding-compiler-driver-dryrun
+[`-t` flag]: https://docs.nvidia.com/cuda/cuda-compiler-driver-nvcc/index.html#options-for-guiding-compiler-driver-threads
 [`AsyncMock`]: https://docs.python.org/3/library/unittest.mock.html#unittest.mock.AsyncMock
 [`aten/src/ATen/native/cuda/SoftMax.cu`]: https://github.com/pytorch/pytorch/blob/32b098baf936b63ee23017f6bba4f3e4c56f22a6/aten/src/ATen/native/cuda/SoftMax.cu
 [`fast_nvcc.py`]: https://github.com/pytorch/pytorch/blob/5adbace8e6c3b425c3f4805eb9d12e728708bd33/tools/fast_nvcc/fast_nvcc.py
@@ -256,4 +257,3 @@ explored several of its implementation details. Thanks for reading! :)
 [PyTorch repo]: https://github.com/pytorch/pytorch
 [Rong Rong]: https://github.com/walterddr
 [Stack Overflow]: https://stackoverflow.com/a/51115889
-[`-t` flag]: https://docs.nvidia.com/cuda/cuda-compiler-driver-nvcc/index.html#options-for-guiding-compiler-driver-threads
