@@ -32,6 +32,7 @@ minima:
     stackoverflow: "5044950" # has to be a string, not a number
     linkedin: sam-estep
     twitter: sgestep
+    youtube_channel: UCNv4Z4DBjqdD8lycl-zycYw
 
 # Build settings
 remote_theme: jekyll/minima@49f6dce0727a2441f0b0c265b41b5efc7b042eb6
