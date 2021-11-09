@@ -1,6 +1,7 @@
 ---
 layout: post
 title: Parallelizing nvcc
+author: Sam Estep
 ---
 
 _Edit (2021-04-29):_ According to [Stack Overflow][]:
