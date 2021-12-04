@@ -15,7 +15,11 @@
   <body>
     <div class="wrapper">
       <header>
-        <h1 style="text-align: center"><a href="{{ "/" | absolute_url }}">{{ site.title | default: site.github.repository_name }}</a> ({{ site.pronouns }})</h1>
+        <!--
+          pronouns text color and size copied from here:
+          https://github.com/pages-themes/minimal/blob/814b8723af0aa0ada9b5784da6b73d862bb74150/_sass/jekyll-theme-minimal.scss#L7-L8
+        -->
+        <h1 style="text-align: center"><a href="{{ "/" | absolute_url }}">{{ site.title | default: site.github.repository_name }}</a> <span style="color:#727272; font-size:14px; vertical-align:4px">({{ site.pronouns }})</span></h1>
 
         {% if site.logo %}
           <img src="{{site.logo | relative_url}}" alt="Logo" style="border-radius: 50%; margin-top: 1em; margin-bottom: 1em" />
