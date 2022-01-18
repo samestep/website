@@ -1,7 +1,7 @@
----
-layout: post
-title: Parallelizing nvcc
----
++++
+date = "2021-04-29"
+title = "Parallelizing nvcc"
++++
 
 _Edit (2021-04-29):_ According to [Stack Overflow][]:
 
@@ -53,9 +53,8 @@ $ nvcc --dryrun $NVCC_ARGS
 ```
 
 This command runs almost instantly, produces no files, and prints to stderr
-something similar to [this](/assets/parallelizing-nvcc/dryrun.txt), listing all
-the commands `nvcc` would run and the environment variables it would set while
-running them.
+something similar to [this](dryrun.txt), listing all the commands `nvcc` would
+run and the environment variables it would set while running them.
 
 So at this point we can reproduce the behavior of nvcc by running it with
 `--dryrun`, parsing the output, setting those environment variables, and running
@@ -93,13 +92,11 @@ $ fast_nvcc.py --graph=graph.dot --save=files --table=table.csv --verbose=verbos
 $ dot -Tpng graph.dot -o graph.png
 ```
 
-This populates [`files`](/assets/parallelizing-nvcc/files.txt) and generates
-[`graph.dot`](/assets/parallelizing-nvcc/graph.dot),
-[`table.csv`](/assets/parallelizing-nvcc/table.csv), and
-[`verbose.txt`](/assets/parallelizing-nvcc/verbose.txt). And if you have `dot`
-installed, that last command generates `graph.png` which looks like this:
+This populates [`files`](files.txt) and generates [`graph.dot`](graph.dot),
+[`table.csv`](table.csv), and [`verbose.txt`](verbose.txt). And if you have
+`dot` installed, that last command generates `graph.png` which looks like this:
 
-![The generated graph.png file.](/assets/parallelizing-nvcc/graph.png)
+![The generated graph.png file.](graph.png)
 
 A few notes:
 
@@ -124,7 +121,7 @@ file. This shows us that we are indeed parallelizing the most time-consuming
 parts of the compilation:
 
 ![An Excel chart generated from the first two columns of the table.csv
-file.](/assets/parallelizing-nvcc/table.png)
+file.](table.png)
 
 ### Tweaks
 
@@ -195,7 +192,7 @@ $ fast_nvcc.py --faithful --graph=faithful.dot -- $NVCC_ARGS
 $ dot -Tpng faithful.dot -o faithful.png
 ```
 
-![The generated faithful.png file.](/assets/parallelizing-nvcc/faithful.png)
+![The generated faithful.png file.](faithful.png)
 
 ### Leftovers
 

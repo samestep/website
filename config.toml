@@ -1,0 +1,61 @@
+baseURL = "http://samestep.com/"
+languageCode = "en-us"
+theme = "hugo-coder"
+title = "Sam Estep"
+
+[params]
+author = "Sam Estep"
+avatarURL = "images/photo.jpeg"
+colorScheme = "auto"
+info = ["PhD student at CMU · he/him"]
+
+[[params.social]]
+icon = "fa fa-2x fa-github"
+name = "GitHub"
+url = "https://github.com/samestep"
+weight = 1
+
+[[params.social]]
+icon = "fa fa-2x fa-gitlab"
+name = "GitLab"
+url = "https://gitlab.com/sestep"
+weight = 2
+
+[[params.social]]
+icon = "fa fa-2x fa-linkedin"
+name = "LinkedIn"
+url = "https://www.linkedin.com/in/sam-estep/"
+weight = 3
+
+[[params.social]]
+icon = "fa fa-2x fa-stack-overflow"
+name = "Stack Overflow"
+url = "https://stackoverflow.com/users/5044950/sam-estep"
+weight = 4
+
+[[params.social]]
+icon = "fa fa-2x fa-twitter"
+name = "Twitter"
+url = "https://twitter.com/sgestep"
+weight = 5
+
+[[params.social]]
+icon = "fa fa-2x fa-youtube"
+name = "YouTube"
+url = "https://www.youtube.com/channel/UCNv4Z4DBjqdD8lycl-zycYw"
+weight = 6
+
+[[languages.en.menu.main]]
+name = "About"
+url = "about/"
+weight = 1
+
+[[languages.en.menu.main]]
+name = "Blog"
+url = "posts/"
+weight = 2
+
+[[languages.en.menu.main]]
+name = "Publications"
+url = "publications/"
+weight = 2
