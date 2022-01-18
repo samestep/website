@@ -58,4 +58,4 @@ weight = 2
 [[languages.en.menu.main]]
 name = "Publications"
 url = "publications/"
-weight = 2
+weight = 3
