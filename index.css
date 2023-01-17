@@ -38,6 +38,21 @@
   color: var(--color-text-hover);
 }
 
+@keyframes wave {
+  from {
+    transform: none;
+  }
+
+  to {
+    transform: rotate(-30deg);
+  }
+}
+
+.wave {
+  display: inline-block;
+  animation: 0.15s linear 0.3s 6 alternate wave;
+}
+
 /* get higher specificity than the generic link selectors */
 a.pronouns {
   font-weight: normal;
