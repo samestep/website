@@ -16,6 +16,28 @@
   font-size: 40px;
 }
 
+.socials {
+  display: flex;
+  justify-content: center;
+}
+
+.socials a {
+  margin: 0 10px;
+}
+
+.socials a:link {
+  font-weight: normal;
+  color: var(--color-text);
+}
+
+.socials a:visited {
+  color: var(--color-text);
+}
+
+.socials a:hover {
+  color: var(--color-text-hover);
+}
+
 /* get higher specificity than the generic link selectors */
 a.pronouns {
   font-weight: normal;
