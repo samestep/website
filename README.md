@@ -1,8 +1,9 @@
 # My website
 
-To develop locally, [install Yarn][] and run this command:
+To develop locally, [install Yarn][] and run these commands:
 
 ```sh
+yarn
 yarn dev
 ```
 
