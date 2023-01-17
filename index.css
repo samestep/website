@@ -39,18 +39,39 @@
 }
 
 @keyframes wave {
-  from {
+  0% {
     transform: none;
   }
 
-  to {
+  15% {
     transform: rotate(-30deg);
+  }
+
+  30% {
+    transform: none;
+  }
+
+  45% {
+    transform: rotate(-30deg);
+  }
+
+  60% {
+    transform: none;
+  }
+
+  75% {
+    transform: rotate(-30deg);
+  }
+
+  /* get back early to work around iPhone timing bug */
+  90% {
+    transform: none;
   }
 }
 
 .wave {
   display: inline-block;
-  animation: 0.15s linear 0.3s 6 alternate wave;
+  animation: 1s linear 0.3s wave;
 }
 
 /* get higher specificity than the generic link selectors */
