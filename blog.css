@@ -42,6 +42,11 @@ pre {
   border-radius: 10px;
 }
 
+pre code {
+  background: none;
+  padding: initial;
+}
+
 .edit {
   font-style: italic;
 }
