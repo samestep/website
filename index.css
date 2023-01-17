@@ -20,12 +20,12 @@
 a.pronouns {
   font-weight: normal;
   color: var(--color-text);
-  -webkit-text-decoration: underline dotted; /* Safari */
-  text-decoration: underline dotted;
+  border-bottom: 2px dotted var(--color-text);
 }
 
 .pronouns:hover {
   color: var(--color-text-hover);
+  border-color: var(--color-text-hover);
 }
 
 .venue {
