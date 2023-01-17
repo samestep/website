@@ -36,7 +36,7 @@ code {
 }
 
 pre {
-  overflow: scroll;
+  overflow: auto;
   background-color: var(--color-background-darker);
   padding: 10px;
   border-radius: 10px;
