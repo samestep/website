@@ -1,9 +1,11 @@
 # My website
 
-To develop locally, [install Hugo][] and run this command:
-```sh
-hugo serve
-```
-Then open http://localhost:1313/ in a browser.
+To develop locally, [install Yarn][] and run this command:
 
-[install Hugo]: https://gohugo.io/getting-started/installing/
+```sh
+yarn dev
+```
+
+Then open <http://localhost:5173/> in a browser.
+
+[install yarn]: https://classic.yarnpkg.com/lang/en/docs/install/

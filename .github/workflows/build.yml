@@ -9,17 +9,11 @@ jobs:
     runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v3
-        with:
-          submodules: true # Fetch Hugo themes (true OR recursive)
-          fetch-depth: 0 # Fetch all history for .GitInfo and .Lastmod
-      - uses: peaceiris/actions-hugo@v2
-        with:
-          hugo-version: latest
-          extended: true
-      - run: hugo --minify
+      - run: yarn
+      - run: yarn build
       - uses: actions/upload-pages-artifact@v1
         with:
-          path: public
+          path: dist
 
   deploy:
     needs: build

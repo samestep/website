@@ -1,0 +1,50 @@
+header {
+  text-align: center;
+  font-size: 20px;
+  padding: 10px;
+  border-bottom: 4px solid var(--color-separator);
+  position: sticky;
+  top: 0;
+  background-color: var(--color-background-darker);
+}
+
+/* get higher specificity than the generic link selectors */
+a.home {
+  color: var(--color-text);
+}
+
+.home:hover {
+  color: var(--color-text-hover);
+}
+
+img {
+  max-width: 100%;
+}
+
+hr {
+  border: none;
+  height: 2px;
+  background-color: var(--color-text);
+}
+
+code {
+  background-color: var(--color-background-darker);
+  padding: 2px;
+  border-radius: 5px;
+}
+
+pre {
+  overflow: scroll;
+  background-color: var(--color-background-darker);
+  padding: 10px;
+  border-radius: 10px;
+}
+
+.edit {
+  font-style: italic;
+}
+
+.math {
+  font-family: serif;
+  font-style: italic;
+}

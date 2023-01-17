@@ -1,0 +1,30 @@
+.me {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.photo {
+  border-radius: 50%; /* circle */
+}
+
+.name {
+  width: min-content; /* put my first vs last name on separate lines */
+  margin-left: 10px;
+  font-size: 40px;
+}
+
+/* get higher specificity than the generic link selectors */
+a.pronouns {
+  font-weight: normal;
+  color: var(--color-text);
+  text-decoration: underline dotted;
+}
+
+.pronouns:hover {
+  color: var(--color-text-hover);
+}
+
+.venue {
+  font-style: italic;
+}

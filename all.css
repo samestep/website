@@ -1,0 +1,42 @@
+:root {
+  --color-background: #222;
+  --color-background-darker: #181818;
+  --color-separator: grey;
+  --color-text: #ddd;
+  --color-text-hover: white;
+  --color-link: hsl(222 100% 75%);
+  --color-link-hover: hsl(222 100% 85%);
+
+  background-color: var(--color-background);
+  color: var(--color-text);
+  font-family: sans-serif;
+}
+
+body {
+  margin: 0;
+}
+
+main {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 0 10px;
+}
+
+p,
+li {
+  line-height: 1.5;
+}
+
+a:link {
+  color: var(--color-link);
+  text-decoration: none;
+  font-weight: bold;
+}
+
+a:visited {
+  color: var(--color-link);
+}
+
+a:hover {
+  color: var(--color-link-hover);
+}
