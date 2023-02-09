@@ -1,9 +1,11 @@
 :root {
   --color-background: #222;
   --color-background-darker: #181818;
+  --color-background-darkest: #111;
   --color-separator: grey;
   --color-text: #ddd;
   --color-text-hover: white;
+  --color-text-dark: #666;
   --color-link: hsl(222 100% 75%);
   --color-link-hover: hsl(222 100% 85%);
 
@@ -39,4 +41,22 @@ a:visited {
 
 a:hover {
   color: var(--color-link-hover);
+}
+
+code {
+  background-color: var(--color-background-darker);
+  padding: 2px;
+  border-radius: 5px;
+}
+
+pre {
+  overflow: auto;
+  background-color: var(--color-background-darker);
+  padding: 10px;
+  border-radius: 10px;
+}
+
+pre code {
+  background: none;
+  padding: initial;
 }

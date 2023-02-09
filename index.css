@@ -86,6 +86,40 @@ a.pronouns {
   border-color: var(--color-text-hover);
 }
 
+.stuff {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 20px;
+}
+
+.stuff > a {
+  box-shadow: 0px 0px 10px var(--color-background-darker);
+}
+
+.stuff > a:hover {
+  box-shadow: 0px 0px 10px var(--color-background-darkest);
+}
+
+.toy {
+  margin: 15px;
+  display: flex;
+  justify-content: space-between;
+}
+
+.toy h3 {
+  margin: 0;
+}
+
+.year {
+  color: var(--color-text-dark);
+}
+
+.stuff p {
+  font-weight: normal;
+  color: var(--color-text);
+  margin: 15px;
+}
+
 .venue {
   font-style: italic;
 }
