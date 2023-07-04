@@ -4,10 +4,10 @@ header {
   text-align: center;
   font-size: 20px;
   padding: 10px;
-  border-bottom: 4px solid var(--color-separator);
+  box-shadow: 0px 0px 20px var(--color-background-darkest);
   position: sticky;
   top: 0;
-  background-color: var(--color-background-darker);
+  background-color: var(--color-background);
 }
 
 /* get higher specificity than the generic link selectors */
