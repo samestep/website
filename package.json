@@ -1,6 +1,7 @@
 {
   "private": true,
   "devDependencies": {
+    "prettier": "^3",
     "vite": "^4"
   },
   "scripts": {
