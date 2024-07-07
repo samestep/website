@@ -42,24 +42,45 @@
       <p>
         Hi! <span class="wave">👋</span> I'm Sam
         <a class="pronouns" href="https://pronouns.org/he-him">(he/him)</a>. I'm
-        a third-year PhD student in <a href="https://s3d.cmu.edu/">S3D</a> at
-        CMU, advised by
-        <a href="https://www.cs.cmu.edu/~jssunshi/">Joshua Sunshine</a>. I
-        research programming language design and compiler implementation for
-        visualization. Check out
-        <a href="https://penrose.cs.cmu.edu/">Penrose</a>!
+        a rising fourth-year PhD student in
+        <a href="https://s3d.cmu.edu/">S3D</a> at CMU, advised by
+        <a href="https://www.cs.cmu.edu/~jssunshi/">Joshua Sunshine</a>. I do
+        research on <span class="topic">differentiable programming</span>, with
+        a particular focus on performance for interactive visual applications.
+        Here are some of my projects:
       </p>
+      <ul>
+        <li>
+          <a href="https://github.com/rose-lang/rose">Rose</a> is the core
+          engine for differentiable programming inside
+          <a href="https://penrose.cs.cmu.edu/">Penrose</a>, engineered for
+          performance in the interactive web setting. We use JavaScript as a
+          host language for metaprogramming, and (similar to
+          <a href="https://jax.readthedocs.io/">JAX</a>) use just-in-time
+          compilation to get good performance. Unlike existing tools, we
+          drastically reduce compilation time by allowing explicit definition of
+          composable functions. Paper upcoming in ECOOP 2024; check out my
+          publications list below for a preprint!
+        </li>
+        <li>
+          <a href="https://github.com/gradbench/gradbench">GradBench</a> is a
+          work-in-progress extensible benchmark suite for comparing the
+          performance of differentiable programming tools across domains. Our
+          goal is to use containerization and a shared communication protocol to
+          simplify installation and usage of different tools, and to use our new
+          shared differentiable programming language called Adroit to make it
+          simplify addition of new benchmark examples by transpiling to all
+          existing tools.
+        </li>
+      </ul>
       <p>
         Outside of work, I love
         <a href="https://ironcityboulders.com/">bouldering</a>, performing
-        <a href="https://412improv.com/">improv comedy</a>, playing
-        <a href="https://www.fryxgames.se/games/terraforming-mars/"
-          >Terraforming Mars</a
-        >, and baking. I'm also always looking for music and book
-        recommendations, and trying to get my friends to join
-        <a href="https://letterboxd.com/">Letterboxd</a> because it lets us take
-        the set intersection of the movies <em>you</em> want to watch with the
-        movies <em>I</em> want to watch (how cool is that?)
+        <a href="https://412improv.com/">improv comedy</a>, and baking. I'm also
+        always looking for music and book recommendations, and trying to get my
+        friends to join <a href="https://letterboxd.com/">Letterboxd</a> because
+        it lets us take the set intersection of the movies <em>you</em> want to
+        watch with the movies <em>I</em> want to watch (how cool is that?)
       </p>
       <h2>Webapps</h2>
       <p>Here are a few toys I've made over the years.</p>

@@ -86,6 +86,10 @@ a.pronouns {
   border-color: var(--color-text-hover);
 }
 
+.topic {
+  font-weight: bold;
+}
+
 .stuff {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
