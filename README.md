@@ -1,10 +1,16 @@
 # My website
 
-To develop locally, install Node and run these commands:
+To develop locally, install [Bun][] and run these commands:
 
 ```sh
-npm i
-npm run dev
+bun install
+bun run watch
 ```
 
-Then open <http://localhost:5173/> in a browser.
+Then in a separate terminal:
+
+```sh
+bun run serve
+```
+
+[bun]: https://bun.sh/
