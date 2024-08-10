@@ -10,8 +10,8 @@ export const build = async () => {
   await fs.rm(out, { recursive: true });
   await generate();
   const dist = "dist";
-  const tmp = "tmp";
   try {
+    const tmp = "tmp";
     await fs.rename(dist, tmp);
     await fs.rm(tmp, { recursive: true });
   } catch (e) {}
