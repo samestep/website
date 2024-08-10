@@ -13,7 +13,7 @@ export const build = async () => {
   const tmp = "tmp";
   try {
     await fs.rename(dist, tmp);
+    await fs.rm(tmp, { recursive: true });
   } catch (e) {}
   await fs.rename(out, dist);
-  await fs.rm(tmp, { recursive: true });
 };
