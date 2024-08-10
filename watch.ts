@@ -1,5 +1,3 @@
-#!/usr/bin/env bun
-
 import chokidar from "chokidar";
 import { build } from "./common";
 

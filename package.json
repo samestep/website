@@ -9,7 +9,6 @@
   },
   "scripts": {
     "build": "./build.ts",
-    "watch": "./watch.ts",
     "serve": "live-server dist --verbose"
   }
 }
