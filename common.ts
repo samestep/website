@@ -9,11 +9,11 @@ const generate = async () => {
 export const build = async () => {
   await fs.rm(out, { recursive: true });
   await generate();
+  const tmp = "tmp";
   const dist = "dist";
   try {
-    const tmp = "tmp";
     await fs.rename(dist, tmp);
-    await fs.rm(tmp, { recursive: true });
-  } catch (e) {}
+  } catch (_) {}
   await fs.rename(out, dist);
+  await fs.rm(tmp, { recursive: true });
 };
