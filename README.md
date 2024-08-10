@@ -4,7 +4,7 @@ To develop locally, install [Bun][] and run these commands:
 
 ```sh
 bun install
-bun --watch run ./watch.ts
+bun --watch run watch.ts
 ```
 
 Then in a separate terminal:
