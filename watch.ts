@@ -18,7 +18,7 @@ async function work() {
   working = false;
 }
 
-chokidar.watch("src").on("all", async (event, path) => {
+chokidar.watch("src", { usePolling: true }).on("all", async (event, path) => {
   dirty = true;
   console.log(event, path);
   await work();
