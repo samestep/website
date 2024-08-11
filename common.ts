@@ -33,13 +33,14 @@ const generate = async () => {
   );
 
   const template = await Bun.file("src/blog.html").text();
-  for (const [name, { title }] of Object.entries(blogPosts)) {
+  for (const [name, { date, title }] of Object.entries(blogPosts)) {
     await fs.cp(`src/blog/${name}`, `${out}/blog/${name}`, { recursive: true });
     await fs.rm(`out/blog/${name}/index.md`);
     const body = md.render(await Bun.file(`src/blog/${name}/index.md`).text());
     await Bun.write(
       `${out}/blog/${name}/index.html`,
       template
+        .replaceAll("{{date}}", date)
         .replaceAll("{{title}}", Bun.escapeHTML(title))
         .replaceAll("{{body}}", body),
     );
