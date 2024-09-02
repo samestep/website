@@ -48,7 +48,7 @@ export const indexHtml = ({
           ></a>
         </div>
         <p>
-          Hi! <span class="wave">👋</span> I'm Sam
+          Hi! <span class="wave">👋</span> I'm Sam{" "}
           <a class="pronouns" href="https://pronouns.org/he-him">
             (he/him)
           </a>
