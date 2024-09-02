@@ -1,6 +1,12 @@
 import { JSX } from "preact";
 
-export const indexHtml = (blog: JSX.Element) => (
+export const indexHtml = ({
+  pubs,
+  blog,
+}: {
+  pubs: JSX.Element;
+  blog: JSX.Element;
+}) => (
   <html lang="en-us">
     <head>
       <meta charset="utf-8" />
@@ -47,7 +53,7 @@ export const indexHtml = (blog: JSX.Element) => (
             (he/him)
           </a>
           . I'm a fourth-year PhD student in{" "}
-          <a href="https://s3d.cmu.edu/">S3D</a> at CMU, advised by
+          <a href="https://s3d.cmu.edu/">S3D</a> at CMU, advised by{" "}
           <a href="https://www.cs.cmu.edu/~jssunshi/">Joshua Sunshine</a>. I do
           research on <span class="topic">differentiable programming</span> (you
           should <a href="https://discord.gg/RZ37HrpheT">join us on Discord</a>
@@ -57,10 +63,10 @@ export const indexHtml = (blog: JSX.Element) => (
         <ul>
           <li>
             <a href="https://github.com/rose-lang/rose">Rose</a> is the core
-            engine for differentiable programming inside
+            engine for differentiable programming inside{" "}
             <a href="https://penrose.cs.cmu.edu/">Penrose</a>, engineered for
             performance in the interactive web setting. We use JavaScript as a
-            host language for metaprogramming, and (similar to
+            host language for metaprogramming, and (similar to{" "}
             <a href="https://jax.readthedocs.io/">JAX</a>) use just-in-time
             compilation to get good performance. Unlike existing tools, we
             drastically reduce compilation time by allowing explicit definition
@@ -79,8 +85,8 @@ export const indexHtml = (blog: JSX.Element) => (
           </li>
         </ul>
         <p>
-          Outside of work, I love
-          <a href="https://ironcityboulders.com/">bouldering</a>, performing
+          Outside of work, I love{" "}
+          <a href="https://ironcityboulders.com/">bouldering</a>, performing{" "}
           <a href="https://412improv.com/">improv comedy</a>, and baking. I'm
           also always looking for music and book recommendations, and trying to
           get my friends to join{" "}
@@ -128,110 +134,7 @@ export const indexHtml = (blog: JSX.Element) => (
           </a>
         </div>
         <h2>Publications</h2>
-        <ul>
-          <li>
-            Codifying Visual Representations,
-            <span class="venue">
-              in
-              <a href="https://diagrams-2024.diagrams-conference.org/">
-                DIAGRAMS 2024
-              </a>
-            </span>
-            , by <a href="https://www.cs.cmu.edu/~woden/">Wode Ni</a>,
-            <a href="/">Sam Estep</a>,
-            <a href="https://hsharriman.github.io/">Hwei-Shin Harriman</a>,
-            <a href="https://www.linkedin.com/in/jiri-minarcik/">
-              Jiří Minarčík
-            </a>
-            , and
-            <a href="https://www.cs.cmu.edu/~jssunshi/">Joshua Sunshine</a> (
-            <a href="https://www.cs.cmu.edu/~woden/assets/diagrams-24-penrose.pdf">
-              pre-print
-            </a>
-            ; accepted, pending publication).
-          </li>
-          <li>
-            Rose: Composable Autodiff for the Interactive Web,
-            <span class="venue">
-              in <a href="https://2024.ecoop.org/">ECOOP 2024</a>
-            </span>
-            , by <a href="/">Sam Estep</a>,
-            <a href="https://www.cs.cmu.edu/~woden/">Wode Ni</a>,
-            <a href="https://ravenrothkopf.com/">Raven Rothkopf</a>, and
-            <a href="https://www.cs.cmu.edu/~jssunshi/">Joshua Sunshine</a>(
-            <a href="https://arxiv.org/pdf/2402.17743">pre-print</a>; accepted,
-            pending publication).
-          </li>
-          <li>
-            <a href="https://doi.org/10.1145/3641519.3657495">
-              Minkowski Penalties: Robust Differentiable Constraint Enforcement
-              for Vector Graphics
-            </a>
-            ,
-            <span class="venue">
-              in <a href="https://s2024.siggraph.org/">SIGGRAPH 2024</a>
-            </span>
-            , by
-            <a href="https://www.linkedin.com/in/jiri-minarcik/">
-              Jiří Minarčík
-            </a>
-            , <a href="/">Sam Estep</a>,
-            <a href="https://www.cs.cmu.edu/~woden/">Wode Ni</a>, and
-            <a href="https://www.cs.cmu.edu/~kmcrane/">Keenan Crane</a>.
-          </li>
-          <li>
-            <a href="https://doi.org/10.1145/3657604.3662034">
-              Edgeworth: Efficient and Scalable Authoring of Visual Thinking
-              Activities
-            </a>
-            ,
-            <span class="venue">
-              in
-              <a href="https://learningatscale.hosting.acm.org/las2024/">
-                L@S 2024
-              </a>
-            </span>
-            , by <a href="https://www.cs.cmu.edu/~woden/">Wode Ni</a>,
-            <a href="/">Sam Estep</a>,
-            <a href="https://hsharriman.github.io/">Hwei-Shin Harriman</a>,
-            <a href="https://pact.cs.cmu.edu/koedinger.html">Ken Koedinger</a>,
-            and <a href="https://www.cs.cmu.edu/~jssunshi/">Joshua Sunshine</a>.
-          </li>
-          <li>
-            <a href="https://doi.org/10.1145/3611643.3616327">
-              NaNofuzz: A Usable Tool for Automatic Test Generation
-            </a>
-            ,
-            <span class="venue">
-              in
-              <a href="https://conf.researchr.org/home/fse-2023">
-                ESEC/FSE 2023
-              </a>
-            </span>
-            , by <a href="https://cmumatt.github.io/">Matthew C. Davis</a>,
-            <a href="https://www.linkedin.com/in/sang-heon-choi/">
-              Sangheon Choi
-            </a>
-            , <a href="/">Sam Estep</a>,
-            <a href="https://www.cs.cmu.edu/~bam/">Brad A. Myers</a>, and
-            <a href="https://www.cs.cmu.edu/~jssunshi/">Joshua Sunshine</a>.
-          </li>
-          <li>
-            <a href="https://doi.org/10.4230/LIPIcs.ECOOP.2021.3">
-              Gradual Program Analysis for Null Pointers
-            </a>
-            ,
-            <span class="venue">
-              in <a href="https://2021.ecoop.org/">ECOOP 2021</a>
-            </span>
-            , by <a href="/">Sam Estep</a>,
-            <a href="https://www.cs.cmu.edu/~jlwise/">Jenna DiVincenzo</a>,
-            <a href="https://www.cs.cmu.edu/~aldrich/">Jonathan Aldrich</a>,
-            <a href="https://pleiad.cl/people/etanter">Éric Tanter</a>,
-            <a href="https://johannes-bader.com/">Johannes Bader</a>, and
-            <a href="https://www.cs.cmu.edu/~jssunshi/">Joshua Sunshine</a>.
-          </li>
-        </ul>
+        {pubs}
         <h2>Blog</h2>
         <p>I don't blog much.</p>
         {blog}

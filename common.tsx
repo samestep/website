@@ -3,6 +3,7 @@ import * as fs from "node:fs/promises";
 import { JSX } from "preact";
 import { render } from "preact-render-to-string";
 import prettier from "prettier";
+import { publications } from "./publications";
 import { blogHtml, indexHtml } from "./templates";
 
 const renderHtml = async (element: JSX.Element) =>
@@ -25,18 +26,21 @@ const generate = async () => {
   await Bun.write(
     `${out}/index.html`,
     await renderHtml(
-      indexHtml(
-        <ul>
-          {Object.entries(blogPosts).map(([id, { date, title }]) => {
-            const name = Bun.escapeHTML(title);
-            return (
-              <li>
-                {date} <a href={`/blog/${id}/`}>{name}</a>
-              </li>
-            );
-          })}
-        </ul>,
-      ),
+      indexHtml({
+        pubs: publications(),
+        blog: (
+          <ul>
+            {Object.entries(blogPosts).map(([id, { date, title }]) => {
+              const name = Bun.escapeHTML(title);
+              return (
+                <li>
+                  {date} <a href={`/blog/${id}/`}>{name}</a>
+                </li>
+              );
+            })}
+          </ul>
+        ),
+      }),
     ),
   );
 
