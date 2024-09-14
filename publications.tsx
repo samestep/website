@@ -66,10 +66,9 @@ const pubs: Publication[] = [
   },
   {
     title: "Rose: Composable Autodiff for the Interactive Web",
+    href: "https://doi.org/10.4230/LIPIcs.ECOOP.2024.15",
     venue: { name: "ECOOP 2024", href: "https://2024.ecoop.org/" },
     authors: [sam, nimo, raven, josh],
-    href: "https://arxiv.org/pdf/2402.17743",
-    preprint: true,
   },
   {
     title:

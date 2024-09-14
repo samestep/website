@@ -70,8 +70,8 @@ export const indexHtml = ({
             <a href="https://jax.readthedocs.io/">JAX</a>) use just-in-time
             compilation to get good performance. Unlike existing tools, we
             drastically reduce compilation time by allowing explicit definition
-            of composable functions. Paper upcoming in ECOOP 2024; check out my
-            publications list below for a preprint!
+            of composable functions. Check out my publications list below for
+            our paper in ECOOP 2024!
           </li>
           <li>
             <a href="https://github.com/gradbench/gradbench">GradBench</a> is a
