@@ -1,4 +1,4 @@
-This post is about generating random integers; it's written to try to be accessible, but even if you already know about rejection sampling and all that jazz, you still probably don't know the main idea in this post! In that case feel free to skip to the ["more clever approach"](#clever) section.
+This post is about generating random integers; it's written to try to be accessible, but even if you already know about rejection sampling and all that jazz, you still probably don't know the main idea in this post! In that case feel free to skip to the ["more clever approach"](#fast-dice-roller) section.
 
 ---
 
@@ -112,7 +112,7 @@ The rabbit hole gets deeper. [What is `_randbelow`?][python randbelow toplevel]
 
 Now that's what I'm talkin' about! See how it's defined entirely in terms of [`getrandbits`][python getrandbits]? Like we said before, in the end it all goes back to coin flips.
 
-<h2 id="clever">A more clever approach</h2>
+<h2 id="fast-dice-roller">A more clever approach</h2>
 
 I say "more clever" instead of "smarter" because there's probably a good reason people don't do this in practice. But we're gonna do it here! It turns out there's a way to avoid wasting these fractions of a random bit; there's a discussion on [Stack Overflow][], which links to a paper about the [Fast Dice Roller algorithm][fdr].
 
