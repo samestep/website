@@ -56,13 +56,12 @@ interface Publication {
 const pubs: Publication[] = [
   {
     title: "Codifying Visual Representations",
+    href: "https://doi.org/10.1007/978-3-031-71291-3_37",
     venue: {
       name: "DIAGRAMS 2024",
       href: "https://diagrams-2024.diagrams-conference.org/",
     },
     authors: [nimo, sam, hweiShin, jiri, josh],
-    href: "https://www.cs.cmu.edu/~woden/assets/diagrams-24-penrose.pdf",
-    preprint: true,
   },
   {
     title: "Rose: Composable Autodiff for the Interactive Web",
