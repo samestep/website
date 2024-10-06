@@ -14,6 +14,7 @@ const renderHtml = async (element: JSX.Element) =>
 const out = "out";
 
 const blogPosts = {
+  "random-integers": { date: "2024-10-06", title: "Random integers" },
   "parallelizing-nvcc": { date: "2021-02-20", title: "Parallelizing nvcc" },
 };
 
