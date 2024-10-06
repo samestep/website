@@ -1,3 +1,4 @@
+import hljs from "highlight.js";
 import markdownit from "markdown-it";
 import * as fs from "node:fs/promises";
 import { JSX } from "preact";
@@ -19,7 +20,17 @@ const blogPosts = {
 };
 
 const generate = async () => {
-  const md = markdownit();
+  const md = markdownit({
+    highlight: (str, lang) => {
+      if (lang && hljs.getLanguage(lang)) {
+        try {
+          return hljs.highlight(str, { language: lang }).value;
+        } catch (_) {}
+      }
+      return "";
+    },
+    html: true,
+  });
 
   for (const file of ["all.css", "blog.css", "index.css", "photo.jpeg"]) {
     await Bun.write(`${out}/${file}`, Bun.file(`src/${file}`));
