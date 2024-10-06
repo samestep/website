@@ -50,7 +50,6 @@ interface Publication {
   href: string;
   venue: Venue;
   authors: Author[];
-  preprint?: boolean;
 }
 
 const pubs: Publication[] = [
@@ -127,31 +126,22 @@ const authors = (array: Author[]): JSX.Element => {
 };
 
 export const publications = (): JSX.Element => (
-  <ul>
+  <div class="publications">
     {pubs.map((pub) => {
-      const title = pub.preprint ? (
-        pub.title
-      ) : (
-        <a href={pub.href}>{pub.title}</a>
-      );
-      const note = pub.preprint ? (
-        <>
-          {" "}
-          (<a href={pub.href}>pre-print</a>; accepted, pending publication)
-        </>
-      ) : (
-        ""
-      );
       return (
-        <li>
-          {title},{" "}
-          <span class="venue">
-            in <a href={pub.venue.href}>{pub.venue.name}</a>
-          </span>
-          , by {authors(pub.authors)}
-          {note}.
-        </li>
+        <div>
+          <div>
+            <a href={pub.href}>{pub.title}</a>
+          </div>
+          <div class="pub-info">
+            {authors(pub.authors)}.{" "}
+            <a class="venue" href={pub.venue.href}>
+              {pub.venue.name}
+            </a>
+            .
+          </div>
+        </div>
       );
     })}
-  </ul>
+  </div>
 );

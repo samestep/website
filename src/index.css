@@ -124,6 +124,16 @@ a.pronouns {
   margin: 15px;
 }
 
+.publications {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.pub-info a:link {
+  font-weight: normal;
+}
+
 .venue {
   font-style: italic;
 }
