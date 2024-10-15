@@ -16,8 +16,18 @@ const renderHtml = async (element: JSX.Element) =>
 
 const out = "out";
 
-const blogPosts = {
-  "random-integers": { date: "2024-10-15", title: "Random integers" },
+interface BlogPost {
+  date: string;
+  title: string;
+  draft?: boolean;
+}
+
+const blogPosts: Record<string, BlogPost> = {
+  "random-integers": {
+    date: "2024-10-15",
+    title: "Random integers",
+    draft: true,
+  },
   "parallelizing-nvcc": { date: "2021-02-20", title: "Parallelizing nvcc" },
 };
 
@@ -44,14 +54,16 @@ const generate = async () => {
         pubs: publications(),
         blog: (
           <ul>
-            {Object.entries(blogPosts).map(([id, { date, title }]) => {
-              const name = Bun.escapeHTML(title);
-              return (
-                <li>
-                  {date} <a href={`/blog/${id}/`}>{name}</a>
-                </li>
-              );
-            })}
+            {Object.entries(blogPosts)
+              .filter(([_, { draft }]) => !draft)
+              .map(([id, { date, title }]) => {
+                const name = Bun.escapeHTML(title);
+                return (
+                  <li>
+                    {date} <a href={`/blog/${id}/`}>{name}</a>
+                  </li>
+                );
+              })}
           </ul>
         ),
       }),
