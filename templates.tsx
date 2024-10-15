@@ -154,6 +154,14 @@ export const blogHtml = ({ title, date, body }: Post) => (
     <head>
       <meta charset="utf-8" />
       <meta name="viewport" content="width=device-width, initial-scale=1" />
+      <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.10.0/styles/monokai.min.css"
+      />
+      <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.5.1/katex.min.css"
+      />
       <link rel="stylesheet" href="/blog.css" />
       <title>{title} · Sam Estep</title>
     </head>

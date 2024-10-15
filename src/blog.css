@@ -19,6 +19,10 @@ a.home {
   color: var(--color-text-hover);
 }
 
+.svg {
+  text-align: center;
+}
+
 img {
   max-width: 100%;
 }
@@ -27,13 +31,4 @@ hr {
   border: none;
   height: 2px;
   background-color: var(--color-text);
-}
-
-.edit {
-  font-style: italic;
-}
-
-.math {
-  font-family: serif;
-  font-style: italic;
 }
