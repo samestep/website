@@ -30,21 +30,16 @@ Either way we have 3 possibilities left. Now we're kinda stuck. If we flip the c
 - If we get **heads** again, we'll say the die roll is **2**.
 - If we get **tails**, we'll say the die roll is **4** or **6**.
 
-And then if we got tails, we need to flip one more time to choose between **4** and **6**. But this is _not_ a fair die roll! We're twice as likely to get **2** as we are to get **4**, and similarly we're twice as likely to get **2** as **6**. What are we to do?
+And then if we got tails, we need to flip a third time to choose between **4** and **6**. But this is _not_ a fair die roll! We're twice as likely to get **2** as we are to get **4**, and similarly we're twice as likely to get **2** as **6**. What are we to do?
 
 (TODO: insert histogram here)
 
 ## Python!
 
-Let's look at how real computers do it. Boot up [the snake language][python]:
+Let's look at how real computers do it. Boot up [the snake language][python] and it's pretty straightforward to use the [builtin `random` module][python random] to simulate rolling a die:
 
 ```
 $ python
-```
-
-And then it's pretty straightforward to use the [builtin `random` module][random] to simulate rolling a die:
-
-```
 >>> import random
 >>> random.randrange(1, 6)
 5
@@ -74,7 +69,7 @@ So [that means:][python randint]
         return self.randrange(a, b+1)
 ```
 
-Fair enough. If you look at the [source for `randrange`][python randrange], there are three different cases; we're only interested in one of them, so I'll simplify the source code as if that were the only case:
+Fair enough: to generate a random integer between 1 and 6 (inclusive), that's the same as generating a random integer between 1 (inclusive) and 7 (exclusive). If you look at the [source for `randrange`][python randrange], there are three different cases; we're only interested in one of them, so I'll simplify the source code as if that were the only case:
 
 ```python
     def randrange(self, start, stop):
@@ -90,7 +85,7 @@ Fair enough. If you look at the [source for `randrange`][python randrange], ther
           raise ValueError(f"empty range in randrange({start}, {stop})")
 ```
 
-The rabbit hole gets deeper. [What is `_randbelow`?][python randbelow toplevel]
+So to generate a random integer between 1 (inclusive) and 7 (exclusive), that's the same as generating a random integer between 0 (inclusive) and 6 (exclusive) and then adding 1 at the end; but the rabbit hole gets deeper. [What is `_randbelow`?][python randbelow toplevel]
 
 ```python
     _randbelow = _randbelow_with_getrandbits
@@ -110,7 +105,25 @@ The rabbit hole gets deeper. [What is `_randbelow`?][python randbelow toplevel]
         return r
 ```
 
-Now that's what I'm talkin' about! See how it's defined entirely in terms of [`getrandbits`][python getrandbits]? Like we said before, in the end it all goes back to coin flips.
+Now that's what I'm talkin' about! See how it's defined entirely in terms of [`getrandbits`][python getrandbits]? Like we said before, in the end it all goes back to coin flips. First we use [`bit_length`][python bit_length]
+
+```
+>>> n = 6
+>>> bin(n)
+'0b110'
+>>> n.bit_length()
+3
+```
+
+So Python first looks at the upper limit for the range of integers we care about, and asks: how many bits do I need to represent that integer? In the case of rolling a die, the answer is three bits, or three coin flips. So far nothing is different from what we did before, because if you recall, in the worst case we did need to flip our coin three times. But here instead of deciding what to do after each coin flip, we simply start off by flipping the coin three times. This gives a _uniform_ random three-bit integer. The smallest integer we can represent with three bits is 0, and the largest is 7. And indeed, if you run `random.getrandbits(3)` many times, you'll see this uniform distribution!
+
+(TODO: insert another histogram here)
+
+OK... but that's not what we actually want. We wanted the generated integer to be less than 6, so we can add 1 to it and get a uniform die roll. And that's where the `while` loop comes in: if the generated integer is 6 or 7, we completely ignore it, flip the coin three more times, and try again. We just keep doing this until we get something in the correct range. In general this technique is called [rejection sampling][].
+
+(TODO: finally, a uniform die roll histogram)
+
+And really, this works fine. If all you wanted to know is how your computer rolls a die then congratulations, now you know! But... isn't this a bit inefficient?
 
 <h2 id="fast-dice-roller">A more clever approach</h2>
 
@@ -121,12 +134,15 @@ I say "more clever" instead of "smarter" because there's probably a good reason 
 [google die]: https://www.google.com/search?q=roll+a+die
 [google coin]: https://www.google.com/search?q=flip+a+coin
 [python]: https://www.python.org/
+[python bit_length]: https://docs.python.org/3/library/stdtypes.html#int.bit_length
 [python getrandbits]: https://github.com/python/cpython/blob/v3.12.7/Lib/random.py#L889-L895
 [python inst]: https://github.com/python/cpython/blob/v3.12.7/Lib/random.py#L920
 [python randbelow]: https://github.com/python/cpython/blob/v3.12.7/Lib/random.py#L242-L250
 [python randbelow toplevel]: https://github.com/python/cpython/blob/v3.12.7/Lib/random.py#L271
 [python randint]: https://github.com/python/cpython/blob/v3.12.7/Lib/random.py#L332-L336
 [python randint toplevel]: https://github.com/python/cpython/blob/v3.12.7/Lib/random.py#L925
+[python random]: https://docs.python.org/3/library/random.html
 [python randrange]: https://github.com/python/cpython/blob/v3.12.7/Lib/random.py#L291-L330
+[rejection sampling]: https://en.wikipedia.org/wiki/Rejection_sampling
 [stack overflow]: https://stackoverflow.com/a/62920514/5044950
 [three-sided coin]: https://imois.in/posts/3-sided-coin/

@@ -28,12 +28,3 @@ hr {
   height: 2px;
   background-color: var(--color-text);
 }
-
-.edit {
-  font-style: italic;
-}
-
-.math {
-  font-family: serif;
-  font-style: italic;
-}
