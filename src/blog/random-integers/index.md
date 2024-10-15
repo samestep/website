@@ -32,7 +32,7 @@ Either way we have 3 possibilities left. Now we're kinda stuck. If we flip the c
 
 And then if we got tails, we need to flip a third time to choose between **4** and **6**. But this is _not_ a fair die roll! We're twice as likely to get **2** as we are to get **4**, and similarly we're twice as likely to get **2** as **6**. What are we to do?
 
-(TODO: insert histogram here)
+{{histogramNaive}}
 
 ## Python!
 
@@ -117,11 +117,11 @@ Now that's what I'm talkin' about! See how it's defined entirely in terms of [`g
 
 So Python first looks at the upper limit for the range of integers we care about, and asks: how many bits do I need to represent that integer? In the case of rolling a die, the answer is three bits, or three coin flips. So far nothing is different from what we did before, because if you recall, in the worst case we did need to flip our coin three times. But here instead of deciding what to do after each coin flip, we simply start off by flipping the coin three times. This gives a _uniform_ random three-bit integer. The smallest integer we can represent with three bits is 0, and the largest is 7. And indeed, if you run `random.getrandbits(3)` many times, you'll see this uniform distribution!
 
-(TODO: insert another histogram here)
+{{histogramEight}}
 
 OK... but that's not what we actually want. We wanted the generated integer to be less than 6, so we can add 1 to it and get a uniform die roll. And that's where the `while` loop comes in: if the generated integer is 6 or 7, we completely ignore it, flip the coin three more times, and try again. We just keep doing this until we get something in the correct range. In general this technique is called [rejection sampling][].
 
-(TODO: finally, a uniform die roll histogram)
+{{histogramDie}}
 
 And really, this works fine. If all you wanted to know is how your computer rolls a die then congratulations, now you know! But... isn't this a bit inefficient?
 

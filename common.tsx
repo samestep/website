@@ -4,6 +4,7 @@ import * as fs from "node:fs/promises";
 import { JSX } from "preact";
 import { render } from "preact-render-to-string";
 import prettier from "prettier";
+import { Content } from "./blog";
 import { publications } from "./publications";
 import { blogHtml, indexHtml } from "./templates";
 
@@ -59,10 +60,19 @@ const generate = async () => {
   for (const [name, { date, title }] of Object.entries(blogPosts)) {
     await fs.cp(`src/blog/${name}`, `${out}/blog/${name}`, { recursive: true });
     await fs.rm(`out/blog/${name}/index.md`);
+    await fs.rm(`out/blog/${name}/content.tsx`);
+    const content: Content = (await import(`./src/blog/${name}/content`))
+      .content;
+    const replacements = new Map(
+      Object.entries(await content()).map(([k, v]) => [k, render(v)]),
+    );
+    const markdown = (
+      await Bun.file(`src/blog/${name}/index.md`).text()
+    ).replaceAll(/\{\{(\w+)\}\}/g, (_, key) => replacements.get(key));
     const body = (
       <div
         dangerouslySetInnerHTML={{
-          __html: md.render(await Bun.file(`src/blog/${name}/index.md`).text()),
+          __html: md.render(markdown),
         }}
       ></div>
     );
