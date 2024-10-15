@@ -66,9 +66,15 @@ const generate = async () => {
     const replacements = new Map(
       Object.entries(await content()).map(([k, v]) => [k, render(v)]),
     );
-    const markdown = (
-      await Bun.file(`src/blog/${name}/index.md`).text()
-    ).replaceAll(/\{\{(\w+)\}\}/g, (_, key) => replacements.get(key));
+    const filename = `src/blog/${name}/index.md`;
+    const markdown = (await Bun.file(filename).text()).replaceAll(
+      /\{\{(\w+)\}\}/g,
+      (_, key) => {
+        const val = replacements.get(key);
+        if (val === undefined) throw Error(`${filename} unknown key: ${key}`);
+        return val;
+      },
+    );
     const body = (
       <div
         dangerouslySetInnerHTML={{
