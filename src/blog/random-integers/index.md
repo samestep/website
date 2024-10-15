@@ -119,7 +119,7 @@ So Python first looks at the upper limit for the range of integers we care about
 
 {{histogramEight}}
 
-OK... but that's not what we actually want. We wanted the generated integer to be less than 6, so we can add 1 to it and get a uniform die roll. And that's where the `while` loop comes in: if the generated integer is 6 or 7, we completely ignore it, flip the coin three more times, and try again. We just keep doing this until we get something in the correct range. In general this technique is called [rejection sampling][].
+OK... but that's not what we actually want. We wanted the generated integer to be less than 6, so we can add 1 to it and get a uniform die roll. And that's where the `while` loop comes in: if the generated integer is 6 or 7, we completely ignore it, flip the coin three more times, and try again. We just keep doing this until we get something in the correct range. In general this technique is called [rejection sampling][]. As we said before, we can do this until it works, then add 1.
 
 {{histogramDie}}
 

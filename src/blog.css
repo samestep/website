@@ -19,6 +19,10 @@ a.home {
   color: var(--color-text-hover);
 }
 
+.svg {
+  text-align: center;
+}
+
 img {
   max-width: 100%;
 }
