@@ -123,13 +123,31 @@ OK... but that's not what we actually want. We wanted the generated integer to b
 
 {{histogramDie}}
 
-And really, this works fine. If all you wanted to know is how your computer rolls a die then congratulations, now you know! But... isn't this a bit inefficient?
+And really, this works fine. If all you wanted to know is how your computer rolls a die then congratulations, now you know! But... isn't this a bit inefficient? Well, we can plot the chance that
+
+- we don't have to retry at all,
+- we have to retry only once,
+- we have to retry twice,
+- etc.,
+
+and draw those in a different kind of histogram.
+
+{{histogramBits}}
+
+This shows that it's not _horrible_: the chance of having to retry $n$ times is exponential in $n$. Actually, how well should we _expect_ to be able to do? Well, in the case where $n$ is a power of two, uniformly sampling a nonnegative integer less than $n$ is equivalent to flipping a coin $\log_2 n$ times; no need to retry. If $n$ is not a power of two then instead of directly giving the number of coin flips, that logarithm gives the [entropy][] of the distribution; if we're using random bits to faithfully sampling from the distribution, we can't do better than the entropy on average. So for varying values of $n$ on the $x$-axis, we can plot the entropy (in blue) and Python's expected number of sampled bits (in red) on the $y$-axis.
+
+{{expectedBits}}
+
+For some integers, Python will on average sample roughly the theoretical minimum possible number of bits. But for others, it samples twice as many bits as should be needed!
+
+If you've been reading carefully, you may have noticed that there's some low-hanging fruit here: in the case where $n$ is a power of two, its binary representation is just a 1 followed by some number of 0s. In that case, we should _never_ need to retry, but Python samples from a range exactly twice as big as it should be, so retries are possible. But that case only affects powers of two, and it turns out that we can do better even for all those other numbers that aren't powers of two.
 
 <h2 id="fast-dice-roller">A more clever approach</h2>
 
 I say "more clever" instead of "smarter" because there's probably a good reason people don't do this in practice. But we're gonna do it here! It turns out there's a way to avoid wasting these fractions of a random bit; there's a discussion on [Stack Overflow][], which links to a paper about the [Fast Dice Roller algorithm][fdr].
 
 [binary]: https://youtu.be/sXxwr66Y79Y
+[entropy]: https://en.wikipedia.org/wiki/Entropy_(information_theory)
 [fdr]: https://arxiv.org/abs/1304.1916
 [google die]: https://www.google.com/search?q=roll+a+die
 [google coin]: https://www.google.com/search?q=flip+a+coin

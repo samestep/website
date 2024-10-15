@@ -1,5 +1,6 @@
 import hljs from "highlight.js";
 import markdownit from "markdown-it";
+import markdownitKatex from "markdown-it-katex";
 import * as fs from "node:fs/promises";
 import { JSX } from "preact";
 import { render } from "preact-render-to-string";
@@ -16,7 +17,7 @@ const renderHtml = async (element: JSX.Element) =>
 const out = "out";
 
 const blogPosts = {
-  "random-integers": { date: "2024-10-06", title: "Random integers" },
+  "random-integers": { date: "2024-10-15", title: "Random integers" },
   "parallelizing-nvcc": { date: "2021-02-20", title: "Parallelizing nvcc" },
 };
 
@@ -31,7 +32,7 @@ const generate = async () => {
       return "";
     },
     html: true,
-  });
+  }).use(markdownitKatex);
 
   for (const file of ["all.css", "blog.css", "index.css", "photo.jpeg"]) {
     await Bun.write(`${out}/${file}`, Bun.file(`src/${file}`));

@@ -7,6 +7,7 @@
     "highlight.js": "^11",
     "live-server": "^1",
     "markdown-it": "^14",
+    "markdown-it-katex": "^2",
     "prettier": "^3",
     "prettier-plugin-organize-imports": "^4",
     "preact": "^10",
