@@ -1,0 +1,139 @@
+@import "all.css";
+
+.me {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.photo {
+  border-radius: 50%; /* circle */
+}
+
+.name {
+  width: min-content; /* put my first vs last name on separate lines */
+  margin-left: 10px;
+  font-size: 40px;
+}
+
+.socials {
+  display: flex;
+  justify-content: center;
+}
+
+.socials a {
+  margin: 0 10px;
+}
+
+.socials a:link {
+  font-weight: normal;
+  color: var(--color-text);
+}
+
+.socials a:visited {
+  color: var(--color-text);
+}
+
+.socials a:hover {
+  color: var(--color-text-hover);
+}
+
+@keyframes wave {
+  0% {
+    transform: none;
+  }
+
+  15% {
+    transform: rotate(-30deg);
+  }
+
+  30% {
+    transform: none;
+  }
+
+  45% {
+    transform: rotate(-30deg);
+  }
+
+  60% {
+    transform: none;
+  }
+
+  75% {
+    transform: rotate(-30deg);
+  }
+
+  /* get back early to work around iPhone timing bug */
+  90% {
+    transform: none;
+  }
+}
+
+.wave {
+  display: inline-block;
+  animation: 1s linear 0.3s wave;
+}
+
+/* get higher specificity than the generic link selectors */
+a.pronouns {
+  font-weight: normal;
+  color: var(--color-text);
+  border-bottom: 2px dotted var(--color-text);
+}
+
+.pronouns:hover {
+  color: var(--color-text-hover);
+  border-color: var(--color-text-hover);
+}
+
+.topic {
+  font-weight: bold;
+}
+
+.stuff {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 20px;
+}
+
+.stuff > a {
+  box-shadow: 0px 0px 10px var(--color-background-darker);
+}
+
+.stuff > a:hover {
+  box-shadow: 0px 0px 10px var(--color-background-darkest);
+}
+
+.toy {
+  margin: 15px;
+  display: flex;
+  justify-content: space-between;
+}
+
+.toy h3 {
+  margin: 0;
+}
+
+.year {
+  color: var(--color-text-dark);
+}
+
+.stuff p {
+  font-weight: normal;
+  color: var(--color-text);
+  margin: 15px;
+}
+
+.publications {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.pub-info a:link {
+  font-weight: normal;
+}
+
+.venue {
+  font-style: italic;
+}

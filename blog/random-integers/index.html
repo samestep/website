@@ -1,0 +1,1223 @@
+<!doctype html>
+<html lang="en-us">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.10.0/styles/monokai.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.5.1/katex.min.css"
+    />
+    <link rel="stylesheet" href="/blog.css" />
+    <title>Random integers · Sam Estep</title>
+  </head>
+  <body>
+    <header>
+      <nav>Random integers · <a class="home" href="/">Sam Estep</a></nav>
+    </header>
+    <main>
+      <p style="text-align: center">
+        <strong><em>draft</em></strong>
+      </p>
+      <div>
+        <p>
+          This post is about generating random integers; it's written to try to
+          be accessible, but even if you already know about rejection sampling
+          and all that jazz, you still probably don't know the main idea in this
+          post! In that case feel free to skip to the
+          <a href="#fast-dice-roller">&quot;more clever approach&quot;</a>
+          section.
+        </p>
+        <hr />
+        <p>
+          If you
+          <a href="https://www.google.com/search?q=roll+a+die"
+            >type &quot;roll a die&quot; into Google</a
+          >, it... well, it rolls a die:
+        </p>
+        <p><img src="die.png" alt='Google "roll a die"' /></p>
+        <p>But how does it do that?</p>
+        <p>
+          To start: you may have heard that computers use binary numbers. That's
+          true! This has been well-explained by many other people, so if you're
+          unfamiliar, check out one of those explanations, e.g.
+          <a href="https://youtu.be/sXxwr66Y79Y">Khan Academy</a>.
+        </p>
+        <p>
+          <em>(6 minutes later)</em> Welcome back! So yeah, every digit of every
+          number in your computer is either a 0 or a 1. Kind of like how when
+          you flip a coin, it's either heads or tails. (<a
+            href="https://imois.in/posts/3-sided-coin/"
+            >Or its edge</a
+          >, but that's a different post entirely.) Let's talk about coin flips.
+        </p>
+        <h2>Coin flips</h2>
+        <p>
+          You can also
+          <a href="https://www.google.com/search?q=flip+a+coin"
+            >Google &quot;flip a coin&quot;</a
+          >:
+        </p>
+        <p><img src="coin.png" alt='Google "flip a coin"' /></p>
+        <p>
+          This is much closer to the computer's native tongue. All it has to do
+          is generate a single random bit. For the remainder of this post, we're
+          going to take &quot;generate a random bit&quot; as a basic primitive,
+          and then build everything else on top of that.
+        </p>
+        <p>
+          Let's say we want to simulate a die roll but all we have is a coin to
+          flip. How can we give each number on the die an equal chance? Well, we
+          can flip the coin once. This at least lets us narrow down the
+          possibilities:
+        </p>
+        <ul>
+          <li>
+            If we got <strong>heads</strong>, we'll say that the die roll is
+            even: <strong>2</strong>, <strong>4</strong>, or <strong>6</strong>.
+          </li>
+          <li>
+            If we got <strong>tails</strong>, we'll say that the die roll is
+            odd: <strong>1</strong>, <strong>3</strong>, or <strong>5</strong>.
+          </li>
+        </ul>
+        <p>
+          Either way we have 3 possibilities left. Now we're kinda stuck. If we
+          flip the coin again, how do we choose what to do? Let's say our first
+          flip was heads, so our choices are <strong>2</strong>,
+          <strong>4</strong>, or <strong>6</strong>. We could say:
+        </p>
+        <ul>
+          <li>
+            If we get <strong>heads</strong> again, we'll say the die roll is
+            <strong>2</strong>.
+          </li>
+          <li>
+            If we get <strong>tails</strong>, we'll say the die roll is
+            <strong>4</strong> or <strong>6</strong>.
+          </li>
+        </ul>
+        <p>
+          And then if we got tails, we need to flip a third time to choose
+          between <strong>4</strong> and <strong>6</strong>. But this is
+          <em>not</em> a fair die roll! We're twice as likely to get
+          <strong>2</strong> as we are to get <strong>4</strong>, and similarly
+          we're twice as likely to get <strong>2</strong> as <strong>6</strong>.
+          What are we to do?
+        </p>
+        <div class="svg">
+          <svg viewBox="0 0 300 200" height="200">
+            <rect
+              x="50"
+              y="38.33333333333333"
+              width="32.5"
+              height="141.66666666666669"
+              fill="hsl(222 100% 75%)"
+            ></rect>
+            <rect
+              x="92.5"
+              y="38.33333333333333"
+              width="32.5"
+              height="141.66666666666669"
+              fill="hsl(222 100% 75%)"
+            ></rect>
+            <rect
+              x="135"
+              y="109.16666666666666"
+              width="32.5"
+              height="70.83333333333334"
+              fill="hsl(222 100% 75%)"
+            ></rect>
+            <rect
+              x="177.5"
+              y="109.16666666666666"
+              width="32.5"
+              height="70.83333333333334"
+              fill="hsl(222 100% 75%)"
+            ></rect>
+            <rect
+              x="220"
+              y="109.16666666666666"
+              width="32.5"
+              height="70.83333333333334"
+              fill="hsl(222 100% 75%)"
+            ></rect>
+            <rect
+              x="262.5"
+              y="109.16666666666666"
+              width="32.5"
+              height="70.83333333333334"
+              fill="hsl(222 100% 75%)"
+            ></rect>
+            <text
+              x="40"
+              y="10"
+              fill="white"
+              text-anchor="end"
+              dominant-baseline="central"
+            >
+              30%
+            </text>
+            <text
+              x="40"
+              y="180"
+              fill="white"
+              text-anchor="end"
+              dominant-baseline="central"
+            >
+              0%
+            </text>
+            <text
+              x="66.25"
+              y="185"
+              fill="white"
+              text-anchor="middle"
+              dominant-baseline="hanging"
+            >
+              1
+            </text>
+            <text
+              x="108.75"
+              y="185"
+              fill="white"
+              text-anchor="middle"
+              dominant-baseline="hanging"
+            >
+              2
+            </text>
+            <text
+              x="151.25"
+              y="185"
+              fill="white"
+              text-anchor="middle"
+              dominant-baseline="hanging"
+            >
+              3
+            </text>
+            <text
+              x="193.75"
+              y="185"
+              fill="white"
+              text-anchor="middle"
+              dominant-baseline="hanging"
+            >
+              4
+            </text>
+            <text
+              x="236.25"
+              y="185"
+              fill="white"
+              text-anchor="middle"
+              dominant-baseline="hanging"
+            >
+              5
+            </text>
+            <text
+              x="278.75"
+              y="185"
+              fill="white"
+              text-anchor="middle"
+              dominant-baseline="hanging"
+            >
+              6
+            </text>
+            <polyline
+              points="45,10 45,180 300,180"
+              fill="none"
+              stroke="white"
+              stroke-width="2"
+            ></polyline>
+          </svg>
+        </div>
+        <h2>Python!</h2>
+        <p>
+          Let's look at how real computers do it. Boot up
+          <a href="https://www.python.org/">the snake language</a> and it's
+          pretty straightforward to use the
+          <a href="https://docs.python.org/3/library/random.html"
+            >builtin <code>random</code> module</a
+          >
+          to simulate rolling a die:
+        </p>
+        <pre><code>$ python
+&gt;&gt;&gt; import random
+&gt;&gt;&gt; random.randrange(1, 6)
+5
+&gt;&gt;&gt; random.randrange(1, 6)
+3
+</code></pre>
+        <p>
+          Now, you and I may have different ideas of fun, but I always enjoy
+          doing a little deep dive of the source code for other people's
+          software that I'm running.
+          <a
+            href="https://github.com/python/cpython/blob/v3.12.7/Lib/random.py#L925"
+            >How is <code>randrange</code> defined?</a
+          >
+        </p>
+        <pre><code class="language-python">randrange = _inst.randrange
+</code></pre>
+        <p>
+          <a
+            href="https://github.com/python/cpython/blob/v3.12.7/Lib/random.py#L920"
+            >Alright.</a
+          >
+        </p>
+        <pre><code class="language-python">_inst = Random()
+</code></pre>
+        <p>
+          So
+          <a
+            href="https://github.com/python/cpython/blob/v3.12.7/Lib/random.py#L332-L336"
+            >that means:</a
+          >
+        </p>
+        <pre><code class="language-python">    <span class="hljs-keyword">def</span> <span class="hljs-title function_">randint</span>(<span class="hljs-params">self, a, b</span>):
+        <span class="hljs-string">&quot;&quot;&quot;Return random integer in range [a, b], including both end points.
+        &quot;&quot;&quot;</span>
+
+        <span class="hljs-keyword">return</span> <span class="hljs-variable language_">self</span>.randrange(a, b+<span class="hljs-number">1</span>)
+</code></pre>
+        <p>
+          Fair enough: to generate a random integer between 1 and 6 (inclusive),
+          that's the same as generating a random integer between 1 (inclusive)
+          and 7 (exclusive). If you look at the
+          <a
+            href="https://github.com/python/cpython/blob/v3.12.7/Lib/random.py#L291-L330"
+            >source for <code>randrange</code></a
+          >, there are three different cases; we're only interested in one of
+          them, so I'll simplify the source code as if that were the only case:
+        </p>
+        <pre><code class="language-python">    <span class="hljs-keyword">def</span> <span class="hljs-title function_">randrange</span>(<span class="hljs-params">self, start, stop</span>):
+        <span class="hljs-string">&quot;&quot;&quot;Choose a random item from range(start, stop).
+        &quot;&quot;&quot;</span>
+
+        istart = _index(start)
+        istop = _index(stop)
+        width = istop - istart
+        istep = _index(step)
+          <span class="hljs-keyword">if</span> width &gt; <span class="hljs-number">0</span>:
+              <span class="hljs-keyword">return</span> istart + <span class="hljs-variable language_">self</span>._randbelow(width)
+          <span class="hljs-keyword">raise</span> ValueError(<span class="hljs-string">f&quot;empty range in randrange(<span class="hljs-subst">{start}</span>, <span class="hljs-subst">{stop}</span>)&quot;</span>)
+</code></pre>
+        <p>
+          So to generate a random integer between 1 (inclusive) and 7
+          (exclusive), that's the same as generating a random integer between 0
+          (inclusive) and 6 (exclusive) and then adding 1 at the end; but the
+          rabbit hole gets deeper.
+          <a
+            href="https://github.com/python/cpython/blob/v3.12.7/Lib/random.py#L271"
+            >What is <code>_randbelow</code>?</a
+          >
+        </p>
+        <pre><code class="language-python">    _randbelow = _randbelow_with_getrandbits
+</code></pre>
+        <p>
+          <a
+            href="https://github.com/python/cpython/blob/v3.12.7/Lib/random.py#L242-L250"
+            >OK.</a
+          >
+        </p>
+        <pre><code class="language-python">    <span class="hljs-keyword">def</span> <span class="hljs-title function_">_randbelow_with_getrandbits</span>(<span class="hljs-params">self, n</span>):
+        <span class="hljs-string">&quot;Return a random int in the range [0,n).  Defined for n &gt; 0.&quot;</span>
+
+        getrandbits = <span class="hljs-variable language_">self</span>.getrandbits
+        k = n.bit_length()
+        r = getrandbits(k)  <span class="hljs-comment"># 0 &lt;= r &lt; 2**k</span>
+        <span class="hljs-keyword">while</span> r &gt;= n:
+            r = getrandbits(k)
+        <span class="hljs-keyword">return</span> r
+</code></pre>
+        <p>
+          Now that's what I'm talkin' about! See how it's defined entirely in
+          terms of
+          <a
+            href="https://github.com/python/cpython/blob/v3.12.7/Lib/random.py#L889-L895"
+            ><code>getrandbits</code></a
+          >? Like we said before, in the end it all goes back to coin flips.
+          First we use
+          <a
+            href="https://docs.python.org/3/library/stdtypes.html#int.bit_length"
+            ><code>bit_length</code></a
+          >
+        </p>
+        <pre><code>&gt;&gt;&gt; n = 6
+&gt;&gt;&gt; bin(n)
+'0b110'
+&gt;&gt;&gt; n.bit_length()
+3
+</code></pre>
+        <p>
+          So Python first looks at the upper limit for the range of integers we
+          care about, and asks: how many bits do I need to represent that
+          integer? In the case of rolling a die, the answer is three bits, or
+          three coin flips. So far nothing is different from what we did before,
+          because if you recall, in the worst case we did need to flip our coin
+          three times. But here instead of deciding what to do after each coin
+          flip, we simply start off by flipping the coin three times. This gives
+          a <em>uniform</em> random three-bit integer. The smallest integer we
+          can represent with three bits is 0, and the largest is 7. And indeed,
+          if you run <code>random.getrandbits(3)</code> many times, you'll see
+          this uniform distribution!
+        </p>
+        <div class="svg">
+          <svg viewBox="0 0 300 200" height="200">
+            <rect
+              x="50"
+              y="109.16666666666666"
+              width="21.875"
+              height="70.83333333333334"
+              fill="hsl(222 100% 75%)"
+            ></rect>
+            <rect
+              x="81.875"
+              y="109.16666666666666"
+              width="21.875"
+              height="70.83333333333334"
+              fill="hsl(222 100% 75%)"
+            ></rect>
+            <rect
+              x="113.75"
+              y="109.16666666666666"
+              width="21.875"
+              height="70.83333333333334"
+              fill="hsl(222 100% 75%)"
+            ></rect>
+            <rect
+              x="145.625"
+              y="109.16666666666666"
+              width="21.875"
+              height="70.83333333333334"
+              fill="hsl(222 100% 75%)"
+            ></rect>
+            <rect
+              x="177.5"
+              y="109.16666666666666"
+              width="21.875"
+              height="70.83333333333334"
+              fill="hsl(222 100% 75%)"
+            ></rect>
+            <rect
+              x="209.375"
+              y="109.16666666666666"
+              width="21.875"
+              height="70.83333333333334"
+              fill="hsl(222 100% 75%)"
+            ></rect>
+            <rect
+              x="241.25"
+              y="109.16666666666666"
+              width="21.875"
+              height="70.83333333333334"
+              fill="hsl(222 100% 75%)"
+            ></rect>
+            <rect
+              x="273.125"
+              y="109.16666666666666"
+              width="21.875"
+              height="70.83333333333334"
+              fill="hsl(222 100% 75%)"
+            ></rect>
+            <text
+              x="40"
+              y="10"
+              fill="white"
+              text-anchor="end"
+              dominant-baseline="central"
+            >
+              30%
+            </text>
+            <text
+              x="40"
+              y="180"
+              fill="white"
+              text-anchor="end"
+              dominant-baseline="central"
+            >
+              0%
+            </text>
+            <text
+              x="60.9375"
+              y="185"
+              fill="white"
+              text-anchor="middle"
+              dominant-baseline="hanging"
+            >
+              0
+            </text>
+            <text
+              x="92.8125"
+              y="185"
+              fill="white"
+              text-anchor="middle"
+              dominant-baseline="hanging"
+            >
+              1
+            </text>
+            <text
+              x="124.6875"
+              y="185"
+              fill="white"
+              text-anchor="middle"
+              dominant-baseline="hanging"
+            >
+              2
+            </text>
+            <text
+              x="156.5625"
+              y="185"
+              fill="white"
+              text-anchor="middle"
+              dominant-baseline="hanging"
+            >
+              3
+            </text>
+            <text
+              x="188.4375"
+              y="185"
+              fill="white"
+              text-anchor="middle"
+              dominant-baseline="hanging"
+            >
+              4
+            </text>
+            <text
+              x="220.3125"
+              y="185"
+              fill="white"
+              text-anchor="middle"
+              dominant-baseline="hanging"
+            >
+              5
+            </text>
+            <text
+              x="252.1875"
+              y="185"
+              fill="white"
+              text-anchor="middle"
+              dominant-baseline="hanging"
+            >
+              6
+            </text>
+            <text
+              x="284.0625"
+              y="185"
+              fill="white"
+              text-anchor="middle"
+              dominant-baseline="hanging"
+            >
+              7
+            </text>
+            <polyline
+              points="45,10 45,180 300,180"
+              fill="none"
+              stroke="white"
+              stroke-width="2"
+            ></polyline>
+          </svg>
+        </div>
+        <p>
+          OK... but that's not what we actually want. We wanted the generated
+          integer to be less than 6, so we can add 1 to it and get a uniform die
+          roll. And that's where the <code>while</code> loop comes in: if the
+          generated integer is 6 or 7, we completely ignore it, flip the coin
+          three more times, and try again. We just keep doing this until we get
+          something in the correct range. In general this technique is called
+          <a href="https://en.wikipedia.org/wiki/Rejection_sampling"
+            >rejection sampling</a
+          >. As we said before, we can do this until it works, then add 1.
+        </p>
+        <div class="svg">
+          <svg viewBox="0 0 300 200" height="200">
+            <rect
+              x="50"
+              y="85.55555555555556"
+              width="32.5"
+              height="94.44444444444444"
+              fill="hsl(222 100% 75%)"
+            ></rect>
+            <rect
+              x="92.5"
+              y="85.55555555555556"
+              width="32.5"
+              height="94.44444444444444"
+              fill="hsl(222 100% 75%)"
+            ></rect>
+            <rect
+              x="135"
+              y="85.55555555555556"
+              width="32.5"
+              height="94.44444444444444"
+              fill="hsl(222 100% 75%)"
+            ></rect>
+            <rect
+              x="177.5"
+              y="85.55555555555556"
+              width="32.5"
+              height="94.44444444444444"
+              fill="hsl(222 100% 75%)"
+            ></rect>
+            <rect
+              x="220"
+              y="85.55555555555556"
+              width="32.5"
+              height="94.44444444444444"
+              fill="hsl(222 100% 75%)"
+            ></rect>
+            <rect
+              x="262.5"
+              y="85.55555555555556"
+              width="32.5"
+              height="94.44444444444444"
+              fill="hsl(222 100% 75%)"
+            ></rect>
+            <text
+              x="40"
+              y="10"
+              fill="white"
+              text-anchor="end"
+              dominant-baseline="central"
+            >
+              30%
+            </text>
+            <text
+              x="40"
+              y="180"
+              fill="white"
+              text-anchor="end"
+              dominant-baseline="central"
+            >
+              0%
+            </text>
+            <text
+              x="66.25"
+              y="185"
+              fill="white"
+              text-anchor="middle"
+              dominant-baseline="hanging"
+            >
+              1
+            </text>
+            <text
+              x="108.75"
+              y="185"
+              fill="white"
+              text-anchor="middle"
+              dominant-baseline="hanging"
+            >
+              2
+            </text>
+            <text
+              x="151.25"
+              y="185"
+              fill="white"
+              text-anchor="middle"
+              dominant-baseline="hanging"
+            >
+              3
+            </text>
+            <text
+              x="193.75"
+              y="185"
+              fill="white"
+              text-anchor="middle"
+              dominant-baseline="hanging"
+            >
+              4
+            </text>
+            <text
+              x="236.25"
+              y="185"
+              fill="white"
+              text-anchor="middle"
+              dominant-baseline="hanging"
+            >
+              5
+            </text>
+            <text
+              x="278.75"
+              y="185"
+              fill="white"
+              text-anchor="middle"
+              dominant-baseline="hanging"
+            >
+              6
+            </text>
+            <polyline
+              points="45,10 45,180 300,180"
+              fill="none"
+              stroke="white"
+              stroke-width="2"
+            ></polyline>
+          </svg>
+        </div>
+        <p>
+          And really, this works fine. If all you wanted to know is how your
+          computer rolls a die then congratulations, now you know! But... isn't
+          this a bit inefficient? Well, we can plot the chance that
+        </p>
+        <ul>
+          <li>we don't have to retry at all,</li>
+          <li>we have to retry only once,</li>
+          <li>we have to retry twice,</li>
+          <li>etc.,</li>
+        </ul>
+        <p>and draw those in a different kind of histogram.</p>
+        <div class="svg">
+          <svg viewBox="0 0 300 200" height="200">
+            <rect
+              x="50"
+              y="180"
+              width="18.333333333333332"
+              height="0"
+              fill="hsl(222 100% 75%)"
+            ></rect>
+            <rect
+              x="78.33333333333333"
+              y="180"
+              width="18.333333333333332"
+              height="0"
+              fill="hsl(222 100% 75%)"
+            ></rect>
+            <rect
+              x="106.66666666666666"
+              y="52.5"
+              width="18.333333333333332"
+              height="127.5"
+              fill="hsl(222 100% 75%)"
+            ></rect>
+            <rect
+              x="135"
+              y="180"
+              width="18.333333333333332"
+              height="0"
+              fill="hsl(222 100% 75%)"
+            ></rect>
+            <rect
+              x="163.33333333333331"
+              y="180"
+              width="18.333333333333332"
+              height="0"
+              fill="hsl(222 100% 75%)"
+            ></rect>
+            <rect
+              x="191.66666666666666"
+              y="148.125"
+              width="18.333333333333332"
+              height="31.875"
+              fill="hsl(222 100% 75%)"
+            ></rect>
+            <rect
+              x="220"
+              y="180"
+              width="18.333333333333332"
+              height="0"
+              fill="hsl(222 100% 75%)"
+            ></rect>
+            <rect
+              x="248.33333333333331"
+              y="180"
+              width="18.333333333333332"
+              height="0"
+              fill="hsl(222 100% 75%)"
+            ></rect>
+            <rect
+              x="276.66666666666663"
+              y="172.03125"
+              width="18.333333333333332"
+              height="7.96875"
+              fill="hsl(222 100% 75%)"
+            ></rect>
+            <text
+              x="40"
+              y="10"
+              fill="white"
+              text-anchor="end"
+              dominant-baseline="central"
+            >
+              100%
+            </text>
+            <text
+              x="40"
+              y="180"
+              fill="white"
+              text-anchor="end"
+              dominant-baseline="central"
+            >
+              0%
+            </text>
+            <text
+              x="59.166666666666664"
+              y="185"
+              fill="white"
+              text-anchor="middle"
+              dominant-baseline="hanging"
+            >
+              1
+            </text>
+            <text
+              x="87.5"
+              y="185"
+              fill="white"
+              text-anchor="middle"
+              dominant-baseline="hanging"
+            >
+              2
+            </text>
+            <text
+              x="115.83333333333333"
+              y="185"
+              fill="white"
+              text-anchor="middle"
+              dominant-baseline="hanging"
+            >
+              3
+            </text>
+            <text
+              x="144.16666666666666"
+              y="185"
+              fill="white"
+              text-anchor="middle"
+              dominant-baseline="hanging"
+            >
+              4
+            </text>
+            <text
+              x="172.49999999999997"
+              y="185"
+              fill="white"
+              text-anchor="middle"
+              dominant-baseline="hanging"
+            >
+              5
+            </text>
+            <text
+              x="200.83333333333331"
+              y="185"
+              fill="white"
+              text-anchor="middle"
+              dominant-baseline="hanging"
+            >
+              6
+            </text>
+            <text
+              x="229.16666666666666"
+              y="185"
+              fill="white"
+              text-anchor="middle"
+              dominant-baseline="hanging"
+            >
+              7
+            </text>
+            <text
+              x="257.5"
+              y="185"
+              fill="white"
+              text-anchor="middle"
+              dominant-baseline="hanging"
+            >
+              8
+            </text>
+            <text
+              x="285.8333333333333"
+              y="185"
+              fill="white"
+              text-anchor="middle"
+              dominant-baseline="hanging"
+            >
+              9
+            </text>
+            <polyline
+              points="45,10 45,180 300,180"
+              fill="none"
+              stroke="white"
+              stroke-width="2"
+            ></polyline>
+          </svg>
+        </div>
+        <p>
+          This shows that it's not <em>horrible</em>: the chance of having to
+          retry
+          <span class="katex"
+            ><span class="katex-mathml"
+              ><math
+                ><semantics
+                  ><mrow><mi>n</mi></mrow
+                  ><annotation encoding="application/x-tex"
+                    >n</annotation
+                  ></semantics
+                ></math
+              ></span
+            ><span class="katex-html" aria-hidden="true"
+              ><span class="strut" style="height: 0.43056em"></span
+              ><span
+                class="strut bottom"
+                style="height: 0.43056em; vertical-align: 0em"
+              ></span
+              ><span class="base textstyle uncramped"
+                ><span class="mord mathit">n</span></span
+              ></span
+            ></span
+          >
+          times is exponential in
+          <span class="katex"
+            ><span class="katex-mathml"
+              ><math
+                ><semantics
+                  ><mrow><mi>n</mi></mrow
+                  ><annotation encoding="application/x-tex"
+                    >n</annotation
+                  ></semantics
+                ></math
+              ></span
+            ><span class="katex-html" aria-hidden="true"
+              ><span class="strut" style="height: 0.43056em"></span
+              ><span
+                class="strut bottom"
+                style="height: 0.43056em; vertical-align: 0em"
+              ></span
+              ><span class="base textstyle uncramped"
+                ><span class="mord mathit">n</span></span
+              ></span
+            ></span
+          >. Actually, how well should we <em>expect</em> to be able to do?
+          Well, in the case where
+          <span class="katex"
+            ><span class="katex-mathml"
+              ><math
+                ><semantics
+                  ><mrow><mi>n</mi></mrow
+                  ><annotation encoding="application/x-tex"
+                    >n</annotation
+                  ></semantics
+                ></math
+              ></span
+            ><span class="katex-html" aria-hidden="true"
+              ><span class="strut" style="height: 0.43056em"></span
+              ><span
+                class="strut bottom"
+                style="height: 0.43056em; vertical-align: 0em"
+              ></span
+              ><span class="base textstyle uncramped"
+                ><span class="mord mathit">n</span></span
+              ></span
+            ></span
+          >
+          is a power of two, uniformly sampling a nonnegative integer less than
+          <span class="katex"
+            ><span class="katex-mathml"
+              ><math
+                ><semantics
+                  ><mrow><mi>n</mi></mrow
+                  ><annotation encoding="application/x-tex"
+                    >n</annotation
+                  ></semantics
+                ></math
+              ></span
+            ><span class="katex-html" aria-hidden="true"
+              ><span class="strut" style="height: 0.43056em"></span
+              ><span
+                class="strut bottom"
+                style="height: 0.43056em; vertical-align: 0em"
+              ></span
+              ><span class="base textstyle uncramped"
+                ><span class="mord mathit">n</span></span
+              ></span
+            ></span
+          >
+          is equivalent to flipping a coin
+          <span class="katex"
+            ><span class="katex-mathml"
+              ><math
+                ><semantics
+                  ><mrow
+                    ><msub><mi>log</mi><mn>2</mn></msub
+                    ><mi>n</mi></mrow
+                  ><annotation encoding="application/x-tex"
+                    >\log_2 n</annotation
+                  ></semantics
+                ></math
+              ></span
+            ><span class="katex-html" aria-hidden="true"
+              ><span class="strut" style="height: 0.69444em"></span
+              ><span
+                class="strut bottom"
+                style="height: 0.9388799999999999em; vertical-align: -0.24444em"
+              ></span
+              ><span class="base textstyle uncramped"
+                ><span class="mop"
+                  ><span class="mop"
+                    >lo<span style="margin-right: 0.01389em">g</span></span
+                  ><span class="vlist"
+                    ><span style="top: 0.24444em; margin-right: 0.05em"
+                      ><span class="fontsize-ensurer reset-size5 size5"
+                        ><span style="font-size: 0em">​</span></span
+                      ><span class="reset-textstyle scriptstyle cramped"
+                        ><span class="mord mathrm">2</span></span
+                      ></span
+                    ><span class="baseline-fix"
+                      ><span class="fontsize-ensurer reset-size5 size5"
+                        ><span style="font-size: 0em">​</span></span
+                      >​</span
+                    ></span
+                  ></span
+                ><span class="mord mathit">n</span></span
+              ></span
+            ></span
+          >
+          times; no need to retry. If
+          <span class="katex"
+            ><span class="katex-mathml"
+              ><math
+                ><semantics
+                  ><mrow><mi>n</mi></mrow
+                  ><annotation encoding="application/x-tex"
+                    >n</annotation
+                  ></semantics
+                ></math
+              ></span
+            ><span class="katex-html" aria-hidden="true"
+              ><span class="strut" style="height: 0.43056em"></span
+              ><span
+                class="strut bottom"
+                style="height: 0.43056em; vertical-align: 0em"
+              ></span
+              ><span class="base textstyle uncramped"
+                ><span class="mord mathit">n</span></span
+              ></span
+            ></span
+          >
+          is not a power of two then instead of directly giving the number of
+          coin flips, that logarithm gives the
+          <a href="https://en.wikipedia.org/wiki/Entropy_(information_theory)"
+            >entropy</a
+          >
+          of the distribution; if we're using random bits to faithfully sampling
+          from the distribution, we can't do better than the entropy on average.
+          So for varying values of
+          <span class="katex"
+            ><span class="katex-mathml"
+              ><math
+                ><semantics
+                  ><mrow><mi>n</mi></mrow
+                  ><annotation encoding="application/x-tex"
+                    >n</annotation
+                  ></semantics
+                ></math
+              ></span
+            ><span class="katex-html" aria-hidden="true"
+              ><span class="strut" style="height: 0.43056em"></span
+              ><span
+                class="strut bottom"
+                style="height: 0.43056em; vertical-align: 0em"
+              ></span
+              ><span class="base textstyle uncramped"
+                ><span class="mord mathit">n</span></span
+              ></span
+            ></span
+          >
+          on the
+          <span class="katex"
+            ><span class="katex-mathml"
+              ><math
+                ><semantics
+                  ><mrow><mi>x</mi></mrow
+                  ><annotation encoding="application/x-tex"
+                    >x</annotation
+                  ></semantics
+                ></math
+              ></span
+            ><span class="katex-html" aria-hidden="true"
+              ><span class="strut" style="height: 0.43056em"></span
+              ><span
+                class="strut bottom"
+                style="height: 0.43056em; vertical-align: 0em"
+              ></span
+              ><span class="base textstyle uncramped"
+                ><span class="mord mathit">x</span></span
+              ></span
+            ></span
+          >-axis, we can plot the entropy (in blue) and Python's expected number
+          of sampled bits (in red) on the
+          <span class="katex"
+            ><span class="katex-mathml"
+              ><math
+                ><semantics
+                  ><mrow><mi>y</mi></mrow
+                  ><annotation encoding="application/x-tex"
+                    >y</annotation
+                  ></semantics
+                ></math
+              ></span
+            ><span class="katex-html" aria-hidden="true"
+              ><span class="strut" style="height: 0.43056em"></span
+              ><span
+                class="strut bottom"
+                style="height: 0.625em; vertical-align: -0.19444em"
+              ></span
+              ><span class="base textstyle uncramped"
+                ><span class="mord mathit" style="margin-right: 0.03588em"
+                  >y</span
+                ></span
+              ></span
+            ></span
+          >-axis.
+        </p>
+        <div class="svg">
+          <svg viewBox="0 0 300 200" height="200">
+            <polyline
+              points="27.6,180 30.2,168.66666666666666 32.8,162.03709165849358 35.4,157.33333333333334 38,153.6848149246099 40.6,150.70375832516024 43.2,148.18331088334716 45.8,146 48.4,144.07418331698713 51,142.35148159127655 53.6,140.79310832211064 56.2,139.3704249918269 58.800000000000004,138.06168319440096 61.400000000000006,136.84997755001382 64,135.72190658310345 66.6,134.66666666666666 69.2,133.67542113249615 71.8,132.7408499836538 74.4,131.85682151430603 77,131.0181482579432 79.6,130.2204025418407 82.2,129.4597749887773 84.80000000000001,128.73296449802052 87.4,128.03709165849358 90,127.36962984921979 92.60000000000001,126.72834986106763 95.2,126.1112749754807 97.80000000000001,125.51664421668049 100.39999999999999,124.94288205522085 103,124.38857324977012 105.6,123.8524418156154 108.2,123.33333333333334 110.8,122.83019998060419 113.4,122.34208779916281 116,121.86812580795706 118.6,121.40751665032047 121.2,120.95952852287189 123.8,120.52348818097269 126.4,120.09877485289451 129,119.6848149246099 131.6,119.28107728099505 134.2,118.88706920850737 136.8,118.50233278004289 139.4,118.12644165544395 142,117.75899824159703 144.60000000000002,117.39963116468718 147.2,117.04799301432011 149.8,116.70375832516024 152.39999999999998,116.36662176669431 155,116.03629651588645 157.6,115.71251279098972 160.20000000000002,115.39501652773428 162.8,115.08356818161708 165.4,114.77794164214735 168,114.47792324672052 170.60000000000002,114.18331088334716 173.2,113.8939131727996 175.79999999999998,113.60954872188752 178.4,113.3300454405658 181,113.05523991643679 183.6,112.78497684095395 186.2,112.51910848228208 188.8,112.25749420033428 191.4,112 194,111.74649811901085 196.6,111.49686664727086 199.20000000000002,111.2509891748119 201.8,111.00875446582948 204.39999999999998,110.77005615651409 207,110.53479247462371 209.6,110.30286597894693 212.2,110.07418331698713 214.79999999999998,109.8486549993598 217.4,109.62619518953856 220,109.40672150771336 222.6,109.19015484763938 225.20000000000002,108.97641920545779 227.8,108.76544151956118 230.4,108.5571515206595 233,108.35148159127655 235.60000000000002,108.14836663397426 238.2,107.94774394766172 240.79999999999998,107.74955311140153 243.4,107.55373587517404 246,107.36023605710605 248.6,107.16899944670956 251.2,106.97997371371441 253.8,106.79310832211063 256.4,106.6083544490475 259,106.42566490826368 261.6,106.24499407774812 264.20000000000005,106.06629783135385 266.8,105.88953347410899 269.4,105.71465968098677 272,105.54163643891593 274.6,105.3704249918269 277.2,105.20098778854589 279.79999999999995,105.03328843336097 282.4,104.86729163909776 285,104.70296318255312"
+              fill="none"
+              stroke="hsl(222 100% 75%)"
+              stroke-width="2"
+            ></polyline>
+            <polyline
+              points="27.6,157.33333333333334 30.2,134.66666666666666 32.8,149.77777777777777 35.4,112 38,125.6 40.6,134.66666666666666 43.2,141.14285714285714 45.8,89.33333333333333 48.4,99.40740740740742 51,107.46666666666667 53.6,114.06060606060606 56.2,119.55555555555557 58.800000000000004,124.2051282051282 61.400000000000006,128.1904761904762 64,131.64444444444445 66.6,66.66666666666667 69.2,73.33333333333333 71.8,79.25925925925925 74.4,84.56140350877193 77,89.33333333333333 79.6,93.65079365079366 82.2,97.57575757575758 84.80000000000001,101.15942028985508 87.4,104.44444444444444 90,107.46666666666667 92.60000000000001,110.25641025641025 95.2,112.8395061728395 97.80000000000001,115.23809523809523 100.39999999999999,117.47126436781608 103,119.55555555555557 105.6,121.50537634408602 108.2,44 110.8,48.121212121212125 113.4,51.99999999999997 116,55.65714285714286 118.6,59.11111111111113 121.2,62.37837837837837 123.8,65.47368421052632 126.4,68.41025641025641 129,71.2 131.6,73.85365853658537 134.2,76.3809523809524 136.8,78.79069767441861 139.4,81.0909090909091 142,83.28888888888889 144.60000000000002,85.39130434782608 147.2,87.40425531914893 149.8,89.33333333333333 152.39999999999998,91.18367346938777 155,92.96 157.6,94.66666666666667 160.20000000000002,96.3076923076923 162.8,97.88679245283019 165.4,99.40740740740742 168,100.87272727272727 170.60000000000002,102.28571428571429 173.2,103.64912280701755 175.79999999999998,104.96551724137932 178.4,106.23728813559322 181,107.46666666666667 183.6,108.65573770491804 186.2,109.80645161290323 188.8,110.92063492063492 191.4,21.333333333333343 194,23.77435897435896 196.6,26.141414141414145 199.20000000000002,28.43781094527364 201.8,30.666666666666657 204.39999999999998,32.830917874396135 207,34.93333333333334 209.6,36.976525821596255 212.2,38.96296296296296 214.79999999999998,40.894977168949794 217.4,42.774774774774755 220,44.604444444444425 222.6,46.38596491228071 225.20000000000002,48.121212121212125 227.8,49.81196581196579 230.4,51.45991561181435 233,53.06666666666668 235.60000000000002,54.633744855967095 238.2,56.162601626016254 240.79999999999998,57.654618473895596 243.4,59.11111111111113 246,60.53333333333333 248.6,61.92248062015503 251.2,63.27969348659005 253.8,64.6060606060606 256.4,65.90262172284645 259,67.17037037037038 261.6,68.41025641025641 264.20000000000005,69.6231884057971 266.8,70.81003584229391 269.4,71.97163120567377 272,73.10877192982457 274.6,74.22222222222221 277.2,75.31271477663232 279.79999999999995,76.3809523809524 282.4,77.42760942760944 285,78.45333333333332"
+              fill="none"
+              stroke="hsl(0 100% 75%)"
+              stroke-width="2"
+            ></polyline>
+            <text
+              x="20"
+              y="10"
+              fill="white"
+              text-anchor="end"
+              dominant-baseline="central"
+            >
+              15
+            </text>
+            <text
+              x="20"
+              y="180"
+              fill="white"
+              text-anchor="end"
+              dominant-baseline="central"
+            >
+              0
+            </text>
+            <text
+              x="77"
+              y="185"
+              fill="white"
+              text-anchor="middle"
+              dominant-baseline="hanging"
+            >
+              20
+            </text>
+            <text
+              x="129"
+              y="185"
+              fill="white"
+              text-anchor="middle"
+              dominant-baseline="hanging"
+            >
+              40
+            </text>
+            <text
+              x="181"
+              y="185"
+              fill="white"
+              text-anchor="middle"
+              dominant-baseline="hanging"
+            >
+              60
+            </text>
+            <text
+              x="233"
+              y="185"
+              fill="white"
+              text-anchor="middle"
+              dominant-baseline="hanging"
+            >
+              80
+            </text>
+            <text
+              x="285"
+              y="185"
+              fill="white"
+              text-anchor="middle"
+              dominant-baseline="hanging"
+            >
+              100
+            </text>
+            <polyline
+              points="25,10 25,180 285,180"
+              fill="none"
+              stroke="white"
+              stroke-width="2"
+            ></polyline>
+          </svg>
+        </div>
+        <p>
+          For some integers, Python will on average sample roughly the
+          theoretical minimum possible number of bits. But for others, it
+          samples twice as many bits as should be needed!
+        </p>
+        <p>
+          If you've been reading carefully, you may have noticed that there's
+          some low-hanging fruit here: in the case where
+          <span class="katex"
+            ><span class="katex-mathml"
+              ><math
+                ><semantics
+                  ><mrow><mi>n</mi></mrow
+                  ><annotation encoding="application/x-tex"
+                    >n</annotation
+                  ></semantics
+                ></math
+              ></span
+            ><span class="katex-html" aria-hidden="true"
+              ><span class="strut" style="height: 0.43056em"></span
+              ><span
+                class="strut bottom"
+                style="height: 0.43056em; vertical-align: 0em"
+              ></span
+              ><span class="base textstyle uncramped"
+                ><span class="mord mathit">n</span></span
+              ></span
+            ></span
+          >
+          is a power of two, its binary representation is just a 1 followed by
+          some number of 0s. In that case, we should <em>never</em> need to
+          retry, but Python samples from a range exactly twice as big as it
+          should be, so retries are possible. But that case only affects powers
+          of two, and it turns out that we can do better even for all those
+          other numbers that aren't powers of two.
+        </p>
+        <h2 id="fast-dice-roller">A more clever approach</h2>
+        <p>
+          I say &quot;more clever&quot; instead of &quot;smarter&quot; because
+          there's probably a good reason people don't do this in practice. But
+          we're gonna do it here! It turns out there's a way to avoid wasting
+          these fractions of a random bit; there's a discussion on
+          <a href="https://stackoverflow.com/a/62920514/5044950"
+            >Stack Overflow</a
+          >, which links to a paper about the
+          <a href="https://arxiv.org/abs/1304.1916"
+            >Fast Dice Roller algorithm</a
+          >.
+        </p>
+        <pre><code class="language-rust"><span class="hljs-keyword">fn</span> <span class="hljs-title function_">fast_dice_roller</span>(n: <span class="hljs-type">u32</span>) <span class="hljs-punctuation">-&gt;</span> <span class="hljs-type">u32</span> {
+    <span class="hljs-keyword">let</span> <span class="hljs-keyword">mut </span><span class="hljs-variable">v</span> = <span class="hljs-number">1</span>;
+    <span class="hljs-keyword">let</span> <span class="hljs-keyword">mut </span><span class="hljs-variable">c</span> = <span class="hljs-number">0</span>;
+    <span class="hljs-keyword">loop</span> {
+        v = <span class="hljs-number">2</span> * v;
+        c = <span class="hljs-number">2</span> * c + <span class="hljs-title function_ invoke__">flip</span>();
+        <span class="hljs-keyword">if</span> v &gt;= n {
+            <span class="hljs-keyword">if</span> c &lt; n {
+                <span class="hljs-keyword">return</span> c;
+            } <span class="hljs-keyword">else</span> {
+                v -= n;
+                c -= n;
+            }
+        }
+    }
+}
+</code></pre>
+      </div>
+    </main>
+  </body>
+</html>

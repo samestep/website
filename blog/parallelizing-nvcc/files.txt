@@ -1,0 +1,110 @@
+.
+├── 0
+│   └── tmpxft_0023b74b_00000000-11_hello.compute_70.cpp1.ii
+├── 1
+│   └── tmpxft_0023b74b_00000000-3-1_hello.module_id
+├── 10
+│   ├── tmpxft_0023b74b_00000000-15_hello.compute_50.cubin
+│   └── tmpxft_0023b74b_00000000-7_hello.compute_50.ptx
+├── 11
+│   └── tmpxft_0023b74b_00000000-16_hello.compute_60.cpp1.ii
+├── 12
+│   └── tmpxft_0023b74b_00000000-3-9_hello.module_id
+├── 13
+│   ├── tmpxft_0023b74b_00000000-16_hello.compute_60.cpp1.ii
+│   ├── tmpxft_0023b74b_00000000-3-9_hello.module_id
+│   ├── tmpxft_0023b74b_00000000-6_hello.compute_60.cudafe1.c
+│   ├── tmpxft_0023b74b_00000000-6_hello.compute_60.cudafe1.gpu
+│   ├── tmpxft_0023b74b_00000000-6_hello.compute_60.cudafe1.stub.c
+│   └── tmpxft_0023b74b_00000000-6_hello.compute_60.ptx
+├── 14
+│   ├── tmpxft_0023b74b_00000000-17_hello.compute_60.cubin
+│   └── tmpxft_0023b74b_00000000-6_hello.compute_60.ptx
+├── 15
+│   ├── tmpxft_0023b74b_00000000-18_hello.compute_70.cubin
+│   └── tmpxft_0023b74b_00000000-5_hello.compute_70.ptx
+├── 16
+│   ├── tmpxft_0023b74b_00000000-13_hello.compute_30.cubin
+│   ├── tmpxft_0023b74b_00000000-15_hello.compute_50.cubin
+│   ├── tmpxft_0023b74b_00000000-17_hello.compute_60.cubin
+│   ├── tmpxft_0023b74b_00000000-18_hello.compute_70.cubin
+│   ├── tmpxft_0023b74b_00000000-2_hello.fatbin
+│   └── tmpxft_0023b74b_00000000-2_hello.fatbin.c
+├── 17
+├── 18
+│   └── tmpxft_0023b74b_00000000-4_hello.cpp4.ii
+├── 19
+│   └── tmpxft_0023b74b_00000000-3-15_hello.module_id
+├── 2
+│   ├── tmpxft_0023b74b_00000000-11_hello.compute_70.cpp1.ii
+│   ├── tmpxft_0023b74b_00000000-3-1_hello.module_id
+│   ├── tmpxft_0023b74b_00000000-5_hello.compute_70.cudafe1.c
+│   ├── tmpxft_0023b74b_00000000-5_hello.compute_70.cudafe1.gpu
+│   ├── tmpxft_0023b74b_00000000-5_hello.compute_70.cudafe1.stub.c
+│   └── tmpxft_0023b74b_00000000-5_hello.compute_70.ptx
+├── 20
+│   ├── tmpxft_0023b74b_00000000-3-15_hello.module_id
+│   ├── tmpxft_0023b74b_00000000-4_hello.cpp4.ii
+│   ├── tmpxft_0023b74b_00000000-5_hello.compute_70.cudafe1.cpp
+│   └── tmpxft_0023b74b_00000000-5_hello.compute_70.cudafe1.stub.c
+├── 21
+│   ├── tmpxft_0023b74b_00000000-19_hello.o
+│   └── tmpxft_0023b74b_00000000-5_hello.compute_70.cudafe1.cpp
+├── 22
+│   ├── tmpxft_0023b74b_00000000-19_hello.o
+│   ├── tmpxft_0023b74b_00000000-20_hello_dlink.compute_30.cubin
+│   └── tmpxft_0023b74b_00000000-9_hello_dlink.reg.c
+├── 23
+│   ├── tmpxft_0023b74b_00000000-19_hello.o
+│   ├── tmpxft_0023b74b_00000000-21_hello_dlink.compute_50.cubin
+│   └── tmpxft_0023b74b_00000000-9_hello_dlink.reg.c
+├── 24
+│   ├── tmpxft_0023b74b_00000000-19_hello.o
+│   ├── tmpxft_0023b74b_00000000-22_hello_dlink.compute_60.cubin
+│   └── tmpxft_0023b74b_00000000-9_hello_dlink.reg.c
+├── 25
+│   ├── tmpxft_0023b74b_00000000-19_hello.o
+│   ├── tmpxft_0023b74b_00000000-23_hello_dlink.compute_70.cubin
+│   └── tmpxft_0023b74b_00000000-9_hello_dlink.reg.c
+├── 26
+│   ├── tmpxft_0023b74b_00000000-10_hello_dlink.fatbin
+│   ├── tmpxft_0023b74b_00000000-10_hello_dlink.fatbin.c
+│   ├── tmpxft_0023b74b_00000000-20_hello_dlink.compute_30.cubin
+│   ├── tmpxft_0023b74b_00000000-21_hello_dlink.compute_50.cubin
+│   ├── tmpxft_0023b74b_00000000-22_hello_dlink.compute_60.cubin
+│   └── tmpxft_0023b74b_00000000-23_hello_dlink.compute_70.cubin
+├── 27
+├── 28
+│   ├── tmpxft_0023b74b_00000000-10_hello_dlink.fatbin.c
+│   ├── tmpxft_0023b74b_00000000-24_hello_dlink.o
+│   └── tmpxft_0023b74b_00000000-9_hello_dlink.reg.c
+├── 29
+│   ├── tmpxft_0023b74b_00000000-19_hello.o
+│   └── tmpxft_0023b74b_00000000-24_hello_dlink.o
+├── 3
+│   └── tmpxft_0023b74b_00000000-12_hello.compute_30.cpp1.ii
+├── 4
+│   └── tmpxft_0023b74b_00000000-3-3_hello.module_id
+├── 5
+│   ├── tmpxft_0023b74b_00000000-12_hello.compute_30.cpp1.ii
+│   ├── tmpxft_0023b74b_00000000-3-3_hello.module_id
+│   ├── tmpxft_0023b74b_00000000-8_hello.compute_30.cudafe1.c
+│   ├── tmpxft_0023b74b_00000000-8_hello.compute_30.cudafe1.gpu
+│   ├── tmpxft_0023b74b_00000000-8_hello.compute_30.cudafe1.stub.c
+│   └── tmpxft_0023b74b_00000000-8_hello.compute_30.ptx
+├── 6
+│   ├── tmpxft_0023b74b_00000000-13_hello.compute_30.cubin
+│   └── tmpxft_0023b74b_00000000-8_hello.compute_30.ptx
+├── 7
+│   └── tmpxft_0023b74b_00000000-14_hello.compute_50.cpp1.ii
+├── 8
+│   └── tmpxft_0023b74b_00000000-3-6_hello.module_id
+└── 9
+    ├── tmpxft_0023b74b_00000000-14_hello.compute_50.cpp1.ii
+    ├── tmpxft_0023b74b_00000000-3-6_hello.module_id
+    ├── tmpxft_0023b74b_00000000-7_hello.compute_50.cudafe1.c
+    ├── tmpxft_0023b74b_00000000-7_hello.compute_50.cudafe1.gpu
+    ├── tmpxft_0023b74b_00000000-7_hello.compute_50.cudafe1.stub.c
+    └── tmpxft_0023b74b_00000000-7_hello.compute_50.ptx
+
+30 directories, 77 files
