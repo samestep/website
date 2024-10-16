@@ -10,7 +10,7 @@ const weightsToProbs = (weights: number[]): Map<string, number> => {
   );
 };
 
-const width = 350;
+const width = 300;
 
 const Svg = (props: { height: number; children: ComponentChildren }) => (
   <div class="svg">

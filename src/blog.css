@@ -24,7 +24,9 @@ a.home {
 }
 
 img {
-  max-width: 100%;
+  display: block;
+  margin: auto;
+  max-width: 300px;
 }
 
 hr {
