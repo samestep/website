@@ -47,7 +47,7 @@ const generate = async () => {
   await Bun.write(
     `${out}/icon.png`,
     new Blob([
-      new Resvg(render(<Logo />), { fitTo: { mode: "width", value: 180 } })
+      new Resvg(render(<Logo />), { fitTo: { mode: "width", value: 192 } })
         .render()
         .asPng(),
     ]),
