@@ -1,3 +1,4 @@
+import { Resvg } from "@resvg/resvg-js";
 import hljs from "highlight.js";
 import markdownit from "markdown-it";
 import markdownitKatex from "markdown-it-katex";
@@ -6,6 +7,7 @@ import { JSX } from "preact";
 import { render } from "preact-render-to-string";
 import prettier from "prettier";
 import { Content } from "./blog";
+import { Logo } from "./logo";
 import { publications } from "./publications";
 import { blogHtml, indexHtml } from "./templates";
 
@@ -42,6 +44,14 @@ const generate = async () => {
   for (const file of ["all.css", "blog.css", "index.css", "photo.jpeg"]) {
     await Bun.write(`${out}/${file}`, Bun.file(`src/${file}`));
   }
+  await Bun.write(
+    `${out}/icon.png`,
+    new Blob([
+      new Resvg(render(<Logo />), { fitTo: { mode: "width", value: 180 } })
+        .render()
+        .asPng(),
+    ]),
+  );
   await Bun.write(
     `${out}/index.html`,
     await renderHtml(

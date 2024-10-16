@@ -1,5 +1,12 @@
 import { JSX } from "preact";
 
+const Favicon = () => (
+  <>
+    <link rel="apple-touch-icon" href="/icon.png" />
+    <link rel="icon" type="image/png" href="/icon.png" />
+  </>
+);
+
 export const indexHtml = ({
   pubs,
   blog,
@@ -10,6 +17,7 @@ export const indexHtml = ({
   <html lang="en-us">
     <head>
       <meta charset="utf-8" />
+      <Favicon />
       <meta name="viewport" content="width=device-width, initial-scale=1" />
       <link
         rel="stylesheet"
@@ -153,6 +161,7 @@ export const blogHtml = ({ title, date, body }: Post) => (
   <html lang="en-us">
     <head>
       <meta charset="utf-8" />
+      <Favicon />
       <meta name="viewport" content="width=device-width, initial-scale=1" />
       <link
         rel="stylesheet"

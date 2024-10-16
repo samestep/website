@@ -1,6 +1,7 @@
 {
   "private": true,
   "devDependencies": {
+    "@resvg/resvg-js": "^2",
     "@types/bun": "^1",
     "@types/markdown-it": "^14",
     "chokidar": "^3",
