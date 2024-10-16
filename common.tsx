@@ -22,7 +22,7 @@ interface BlogPost {
 }
 
 const blogPosts: Record<string, BlogPost> = {
-  "random-integers": { title: "Random integers" },
+  "random-integers": { title: "How can computers roll dice?" },
   "parallelizing-nvcc": { date: "2021-02-20", title: "Parallelizing nvcc" },
 };
 
@@ -92,7 +92,7 @@ const generate = async () => {
     );
     await Bun.write(
       `${out}/blog/${name}/index.html`,
-      await renderHtml(blogHtml({ date: date ?? "draft", title, body })),
+      await renderHtml(blogHtml({ date: date ?? "unpublished", title, body })),
     );
   }
 };

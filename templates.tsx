@@ -163,22 +163,15 @@ export const blogHtml = ({ title, date, body }: Post) => (
         href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.5.1/katex.min.css"
       />
       <link rel="stylesheet" href="/blog.css" />
-      <title>{title} · Sam Estep</title>
+      <title>{title} | Sam Estep</title>
     </head>
     <body>
-      <header>
-        <nav>
-          {title} ·{" "}
-          <a class="home" href="/">
-            Sam Estep
-          </a>
-        </nav>
-      </header>
       <main>
-        <p style="text-align: center">
-          <strong>
-            <em>{date}</em>
-          </strong>
+        <h1>{title}</h1>
+        <p>
+          <em>
+            by <a href="/">Sam Estep</a>, {date}
+          </em>
         </p>
         {body}
       </main>
