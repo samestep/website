@@ -44,14 +44,18 @@ const generate = async () => {
   for (const file of ["all.css", "blog.css", "index.css", "photo.jpeg"]) {
     await Bun.write(`${out}/${file}`, Bun.file(`src/${file}`));
   }
+
+  const logo = render(<Logo />);
+  await Bun.write(`${out}/logo.svg`, logo);
   await Bun.write(
     `${out}/icon.png`,
     new Blob([
-      new Resvg(render(<Logo />), { fitTo: { mode: "width", value: 192 } })
+      new Resvg(logo, { fitTo: { mode: "width", value: 192 } })
         .render()
         .asPng(),
     ]),
   );
+
   await Bun.write(
     `${out}/index.html`,
     await renderHtml(
