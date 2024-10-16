@@ -1,24 +1,5 @@
 @import "all.css";
 
-header {
-  text-align: center;
-  font-size: 20px;
-  padding: 10px;
-  box-shadow: 0px 0px 20px var(--color-background-darkest);
-  position: sticky;
-  top: 0;
-  background-color: var(--color-background);
-}
-
-/* get higher specificity than the generic link selectors */
-a.home {
-  color: var(--color-text);
-}
-
-.home:hover {
-  color: var(--color-text-hover);
-}
-
 .svg {
   text-align: center;
 }
