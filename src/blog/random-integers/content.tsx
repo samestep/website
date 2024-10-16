@@ -1,11 +1,13 @@
 import { ComponentChildren } from "preact";
 import { Content } from "../../../blog";
 
-const weightsToProbs = (weights: number[]): Map<string, number> => {
-  const total = weights.reduce((a, b) => a + b, 0);
+const weightsToProbs = (
+  weights: (number | undefined)[],
+): Map<string, number> => {
+  const total = weights.reduce((a, b) => a! + b!, 0)!;
   return new Map(
     weights
-      .map((w, i): [string, number] => [`${i}`, w / total])
+      .map((w, i): [string, number] => [`${i}`, w! / total])
       .filter(() => true), // get rid of holes in the array
   );
 };

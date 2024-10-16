@@ -17,17 +17,12 @@ const renderHtml = async (element: JSX.Element) =>
 const out = "out";
 
 interface BlogPost {
-  date: string;
+  date?: string;
   title: string;
-  draft?: boolean;
 }
 
 const blogPosts: Record<string, BlogPost> = {
-  "random-integers": {
-    date: "2024-10-15",
-    title: "Random integers",
-    draft: true,
-  },
+  "random-integers": { title: "Random integers" },
   "parallelizing-nvcc": { date: "2021-02-20", title: "Parallelizing nvcc" },
 };
 
@@ -55,7 +50,7 @@ const generate = async () => {
         blog: (
           <ul>
             {Object.entries(blogPosts)
-              .filter(([_, { draft }]) => !draft)
+              .filter(([_, { date }]) => date !== undefined)
               .map(([id, { date, title }]) => {
                 const name = Bun.escapeHTML(title);
                 return (
@@ -97,7 +92,7 @@ const generate = async () => {
     );
     await Bun.write(
       `${out}/blog/${name}/index.html`,
-      await renderHtml(blogHtml({ date, title, body })),
+      await renderHtml(blogHtml({ date: date ?? "draft", title, body })),
     );
   }
 };

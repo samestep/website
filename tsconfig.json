@@ -4,6 +4,7 @@
     "jsx": "react-jsx",
     "jsxImportSource": "preact",
     "module": "NodeNext",
+    "strict": true,
     "target": "ESNext"
   }
 }
