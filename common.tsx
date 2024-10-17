@@ -45,29 +45,21 @@ const generate = async () => {
     await Bun.write(`${out}/${file}`, Bun.file(`src/${file}`));
   }
 
-  const logoSvg = render(<Logo />);
-  await Bun.write(`${out}/logo.svg`, logoSvg);
-  const logoPng = new Blob([
-    new Resvg(logoSvg, { fitTo: { mode: "width", value: 192 } })
-      .render()
-      .asPng(),
-  ]);
-  await Bun.write(`${out}/icon.png`, logoPng);
-  const hasher = new Bun.CryptoHasher("sha256");
-  hasher.update(logoPng);
-  const favicon = (
-    <link
-      rel="icon"
-      type="image/png"
-      href={`/icon.png?sha256=${hasher.digest("hex")}`}
-    />
+  const logo = render(<Logo />);
+  await Bun.write(`${out}/logo.svg`, logo);
+  await Bun.write(
+    `${out}/icon.png`,
+    new Blob([
+      new Resvg(logo, { fitTo: { mode: "width", value: 192 } })
+        .render()
+        .asPng(),
+    ]),
   );
 
   await Bun.write(
     `${out}/index.html`,
     await renderHtml(
       indexHtml({
-        favicon,
         pubs: publications(),
         blog: (
           <ul>
@@ -114,9 +106,7 @@ const generate = async () => {
     );
     await Bun.write(
       `${out}/blog/${name}/index.html`,
-      await renderHtml(
-        blogHtml({ favicon, date: date ?? "unpublished", title, body }),
-      ),
+      await renderHtml(blogHtml({ date: date ?? "unpublished", title, body })),
     );
   }
 };
