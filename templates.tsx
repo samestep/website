@@ -1,18 +1,18 @@
 import { JSX } from "preact";
 
-const Favicon = () => <link rel="icon" type="image/png" href="/icon.png" />;
-
 export const indexHtml = ({
+  favicon,
   pubs,
   blog,
 }: {
+  favicon: JSX.Element;
   pubs: JSX.Element;
   blog: JSX.Element;
 }) => (
   <html lang="en-us">
     <head>
       <meta charset="utf-8" />
-      <Favicon />
+      {favicon}
       <meta name="viewport" content="width=device-width, initial-scale=1" />
       <link
         rel="stylesheet"
@@ -147,16 +147,17 @@ export const indexHtml = ({
 );
 
 export interface Post {
+  favicon: JSX.Element;
   title: string;
   date: string;
   body: JSX.Element;
 }
 
-export const blogHtml = ({ title, date, body }: Post) => (
+export const blogHtml = ({ favicon, title, date, body }: Post) => (
   <html lang="en-us">
     <head>
       <meta charset="utf-8" />
-      <Favicon />
+      {favicon}
       <meta name="viewport" content="width=device-width, initial-scale=1" />
       <link
         rel="stylesheet"
