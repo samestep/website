@@ -144,22 +144,22 @@ If you've been reading carefully, you may have noticed that there's some low-han
 
 <h2 id="fast-dice-roller">A more clever approach</h2>
 
-I say "more clever" instead of "smarter" because there's probably a good reason people don't do this in practice. But we're gonna do it here! It turns out there's a way to avoid wasting these fractions of a random bit; there's a discussion on [Stack Overflow][], which links to a paper about the [Fast Dice Roller algorithm][fdr]. Here's an implementation of that algorithm in Rust:
+I say "more clever" instead of "smarter" because there's probably a good reason people don't do this in practice. But we're gonna do it here! It turns out there's a way to avoid wasting these fractions of a random bit; there's a discussion on [Stack Overflow][], which links to a paper about the [Fast Dice Roller algorithm][fdr]. Here's an implementation of that algorithm in Rust (modified slightly for the `n == 1` case):
 
 ```rust
 fn fast_dice_roller(n: u32) -> u32 {
     let mut v = 1;
     let mut c = 0;
     loop {
-        v = 2 * v;
-        c = 2 * c + flip();
-        if v >= n {
-            if c < n {
-                return c;
-            } else {
-                v -= n;
-                c -= n;
-            }
+        while v < n {
+            v = 2 * v;
+            c = 2 * c + flip();
+        }
+        if c < n {
+            return c;
+        } else {
+            v -= n;
+            c -= n;
         }
     }
 }
