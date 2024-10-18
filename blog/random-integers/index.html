@@ -1218,7 +1218,7 @@
 </code></pre>
         <p>
           Let's walk through how this works for our 6-sided die example! So,
-          <code>n = 6</code>. We'll visualize this process as a flow chart that
+          <code>n == 6</code>. We'll visualize this process as a flow chart that
           goes from top to bottom and left to right (same as reading English
           prose). Each circle in the flow chart contains the value of
           <code>v</code> at that point in the process.
@@ -1442,6 +1442,103 @@
           <code>8 - 6 == 2</code>, so we've hit a cycle! This cycle is indicated
           in the diagram by a big red asterisk.
         </p>
+        <p>
+          Once we enter this cycle, we now only need to flip the coin twice for
+          each attempt, instead of three times. OK, but does that actually help
+          us? Turns out, yes, it does!
+        </p>
+        <div class="svg">
+          <svg viewBox="0 0 300 200" height="200">
+            <polyline
+              points="27.6,180 30.2,168.66666666666666 32.8,162.03709165849358 35.4,157.33333333333334 38,153.6848149246099 40.6,150.70375832516024 43.2,148.18331088334716 45.8,146 48.4,144.07418331698713 51,142.35148159127655 53.6,140.79310832211064 56.2,139.3704249918269 58.800000000000004,138.06168319440096 61.400000000000006,136.84997755001382 64,135.72190658310345 66.6,134.66666666666666 69.2,133.67542113249615 71.8,132.7408499836538 74.4,131.85682151430603 77,131.0181482579432 79.6,130.2204025418407 82.2,129.4597749887773 84.80000000000001,128.73296449802052 87.4,128.03709165849358 90,127.36962984921979 92.60000000000001,126.72834986106763 95.2,126.1112749754807 97.80000000000001,125.51664421668049 100.39999999999999,124.94288205522085 103,124.38857324977012 105.6,123.8524418156154 108.2,123.33333333333334 110.8,122.83019998060419 113.4,122.34208779916281 116,121.86812580795706 118.6,121.40751665032047 121.2,120.95952852287189 123.8,120.52348818097269 126.4,120.09877485289451 129,119.6848149246099 131.6,119.28107728099505 134.2,118.88706920850737 136.8,118.50233278004289 139.4,118.12644165544395 142,117.75899824159703 144.60000000000002,117.39963116468718 147.2,117.04799301432011 149.8,116.70375832516024 152.39999999999998,116.36662176669431 155,116.03629651588645 157.6,115.71251279098972 160.20000000000002,115.39501652773428 162.8,115.08356818161708 165.4,114.77794164214735 168,114.47792324672052 170.60000000000002,114.18331088334716 173.2,113.8939131727996 175.79999999999998,113.60954872188752 178.4,113.3300454405658 181,113.05523991643679 183.6,112.78497684095395 186.2,112.51910848228208 188.8,112.25749420033428 191.4,112 194,111.74649811901085 196.6,111.49686664727086 199.20000000000002,111.2509891748119 201.8,111.00875446582948 204.39999999999998,110.77005615651409 207,110.53479247462371 209.6,110.30286597894693 212.2,110.07418331698713 214.79999999999998,109.8486549993598 217.4,109.62619518953856 220,109.40672150771336 222.6,109.19015484763938 225.20000000000002,108.97641920545779 227.8,108.76544151956118 230.4,108.5571515206595 233,108.35148159127655 235.60000000000002,108.14836663397426 238.2,107.94774394766172 240.79999999999998,107.74955311140153 243.4,107.55373587517404 246,107.36023605710605 248.6,107.16899944670956 251.2,106.97997371371441 253.8,106.79310832211063 256.4,106.6083544490475 259,106.42566490826368 261.6,106.24499407774812 264.20000000000005,106.06629783135385 266.8,105.88953347410899 269.4,105.71465968098677 272,105.54163643891593 274.6,105.3704249918269 277.2,105.20098778854589 279.79999999999995,105.03328843336097 282.4,104.86729163909776 285,104.70296318255312"
+              fill="none"
+              stroke="hsl(222 100% 75%)"
+              stroke-width="2"
+            ></polyline>
+            <polyline
+              points="27.6,157.33333333333334 30.2,134.66666666666666 32.8,149.77777777777777 35.4,112 38,125.6 40.6,134.66666666666666 43.2,141.14285714285714 45.8,89.33333333333333 48.4,99.40740740740742 51,107.46666666666667 53.6,114.06060606060606 56.2,119.55555555555557 58.800000000000004,124.2051282051282 61.400000000000006,128.1904761904762 64,131.64444444444445 66.6,66.66666666666667 69.2,73.33333333333333 71.8,79.25925925925925 74.4,84.56140350877193 77,89.33333333333333 79.6,93.65079365079366 82.2,97.57575757575758 84.80000000000001,101.15942028985508 87.4,104.44444444444444 90,107.46666666666667 92.60000000000001,110.25641025641025 95.2,112.8395061728395 97.80000000000001,115.23809523809523 100.39999999999999,117.47126436781608 103,119.55555555555557 105.6,121.50537634408602 108.2,44 110.8,48.121212121212125 113.4,51.99999999999997 116,55.65714285714286 118.6,59.11111111111113 121.2,62.37837837837837 123.8,65.47368421052632 126.4,68.41025641025641 129,71.2 131.6,73.85365853658537 134.2,76.3809523809524 136.8,78.79069767441861 139.4,81.0909090909091 142,83.28888888888889 144.60000000000002,85.39130434782608 147.2,87.40425531914893 149.8,89.33333333333333 152.39999999999998,91.18367346938777 155,92.96 157.6,94.66666666666667 160.20000000000002,96.3076923076923 162.8,97.88679245283019 165.4,99.40740740740742 168,100.87272727272727 170.60000000000002,102.28571428571429 173.2,103.64912280701755 175.79999999999998,104.96551724137932 178.4,106.23728813559322 181,107.46666666666667 183.6,108.65573770491804 186.2,109.80645161290323 188.8,110.92063492063492 191.4,21.333333333333343 194,23.77435897435896 196.6,26.141414141414145 199.20000000000002,28.43781094527364 201.8,30.666666666666657 204.39999999999998,32.830917874396135 207,34.93333333333334 209.6,36.976525821596255 212.2,38.96296296296296 214.79999999999998,40.894977168949794 217.4,42.774774774774755 220,44.604444444444425 222.6,46.38596491228071 225.20000000000002,48.121212121212125 227.8,49.81196581196579 230.4,51.45991561181435 233,53.06666666666668 235.60000000000002,54.633744855967095 238.2,56.162601626016254 240.79999999999998,57.654618473895596 243.4,59.11111111111113 246,60.53333333333333 248.6,61.92248062015503 251.2,63.27969348659005 253.8,64.6060606060606 256.4,65.90262172284645 259,67.17037037037038 261.6,68.41025641025641 264.20000000000005,69.6231884057971 266.8,70.81003584229391 269.4,71.97163120567377 272,73.10877192982457 274.6,74.22222222222221 277.2,75.31271477663232 279.79999999999995,76.3809523809524 282.4,77.42760942760944 285,78.45333333333332"
+              fill="none"
+              stroke="hsl(0 100% 75%)"
+              stroke-width="2"
+            ></polyline>
+            <text
+              x="20"
+              y="10"
+              fill="white"
+              text-anchor="end"
+              dominant-baseline="central"
+            >
+              15
+            </text>
+            <text
+              x="20"
+              y="180"
+              fill="white"
+              text-anchor="end"
+              dominant-baseline="central"
+            >
+              0
+            </text>
+            <text
+              x="77"
+              y="185"
+              fill="white"
+              text-anchor="middle"
+              dominant-baseline="hanging"
+            >
+              20
+            </text>
+            <text
+              x="129"
+              y="185"
+              fill="white"
+              text-anchor="middle"
+              dominant-baseline="hanging"
+            >
+              40
+            </text>
+            <text
+              x="181"
+              y="185"
+              fill="white"
+              text-anchor="middle"
+              dominant-baseline="hanging"
+            >
+              60
+            </text>
+            <text
+              x="233"
+              y="185"
+              fill="white"
+              text-anchor="middle"
+              dominant-baseline="hanging"
+            >
+              80
+            </text>
+            <text
+              x="285"
+              y="185"
+              fill="white"
+              text-anchor="middle"
+              dominant-baseline="hanging"
+            >
+              100
+            </text>
+            <polyline
+              points="25,10 25,180 285,180"
+              fill="none"
+              stroke="white"
+              stroke-width="2"
+            ></polyline>
+          </svg>
+        </div>
+        <p>
+          Now you know not only how your computer rolls dice, but also how it
+          <em>could</em> roll dice even better. But... look at the shape of that
+          graph. Kinda weird, right? Doesn't it just tug at your brain and make
+          you want to understand it a bit more?
+        </p>
+        <h2>More math</h2>
         <p>
           The key invariant in this algorithm is that, at the start of the
           <code>loop</code>, <code>c</code> is always a uniformly random
@@ -2054,7 +2151,973 @@
             </text>
           </svg>
         </div>
-        <p>This is a lot more interesting!</p>
+        <p>
+          This is a lot more interesting! In our <code>n == 6</code> example the
+          cycle only went back to the previous node in the flow chart, but here
+          it went all the way back to the beginning. So the cycles can be
+          different lengths. Here are the first few of those cycle lengths, for
+          <code>n == 1</code> through <code>n == 40</code>, and for powers of
+          two where there's no cycle, I've inserted 1 as a placeholder value.
+          (Try using 0 instead for a different rabbit hole!)
+        </p>
+        <blockquote>
+          <p>
+            1, 1, 1, 1, 2, 1, 1, 1, 3, 2, 5, 1, 6, 1, 1, 1, 4, 3, 9, 2, 2, 5, 4,
+            1, 10, 6, 9, 1, 14, 1, 1, 1, 5, 4, 5, 3, 18, 9, 4, 2, ...
+          </p>
+        </blockquote>
+        <p>
+          Turns out, if you look up this sequence, it already has a name! It's
+          called <a href="https://oeis.org/A136043">A136043</a>:
+        </p>
+        <blockquote>
+          <p>
+            Period-lengths of the base-<span class="katex"
+              ><span class="katex-mathml"
+                ><math
+                  ><semantics
+                    ><mrow><mn>2</mn></mrow
+                    ><annotation encoding="application/x-tex"
+                      >2</annotation
+                    ></semantics
+                  ></math
+                ></span
+              ><span class="katex-html" aria-hidden="true"
+                ><span class="strut" style="height: 0.64444em"></span
+                ><span
+                  class="strut bottom"
+                  style="height: 0.64444em; vertical-align: 0em"
+                ></span
+                ><span class="base textstyle uncramped"
+                  ><span class="mord mathrm">2</span></span
+                ></span
+              ></span
+            >
+            <span class="katex"
+              ><span class="katex-mathml"
+                ><math
+                  ><semantics
+                    ><mrow
+                      ><mtext
+                        ><mi mathvariant="normal">M</mi
+                        ><mi mathvariant="normal">R</mi></mtext
+                      ></mrow
+                    ><annotation encoding="application/x-tex"
+                      >\text{MR}</annotation
+                    ></semantics
+                  ></math
+                ></span
+              ><span class="katex-html" aria-hidden="true"
+                ><span class="strut" style="height: 0.68333em"></span
+                ><span
+                  class="strut bottom"
+                  style="height: 0.68333em; vertical-align: 0em"
+                ></span
+                ><span class="base textstyle uncramped"
+                  ><span class="text mord textstyle uncramped"
+                    ><span class="mord mathrm">M</span
+                    ><span class="mord mathrm">R</span></span
+                  ></span
+                ></span
+              ></span
+            >-expansions of the reciprocals of the positive integers.
+          </p>
+        </blockquote>
+        <p>
+          Neat! The bit about &quot;reciprocals of the positive integers&quot;
+          makes sense, because if you're trying to uniformly sample a
+          nonnegative integer less than
+          <span class="katex"
+            ><span class="katex-mathml"
+              ><math
+                ><semantics
+                  ><mrow><mi>n</mi></mrow
+                  ><annotation encoding="application/x-tex"
+                    >n</annotation
+                  ></semantics
+                ></math
+              ></span
+            ><span class="katex-html" aria-hidden="true"
+              ><span class="strut" style="height: 0.43056em"></span
+              ><span
+                class="strut bottom"
+                style="height: 0.43056em; vertical-align: 0em"
+              ></span
+              ><span class="base textstyle uncramped"
+                ><span class="mord mathit">n</span></span
+              ></span
+            ></span
+          >, the chance of getting <em>any specific possibility</em> should be
+          equal to
+          <span class="katex"
+            ><span class="katex-mathml"
+              ><math
+                ><semantics
+                  ><mrow
+                    ><mn>1</mn><mi mathvariant="normal">/</mi><mi>n</mi></mrow
+                  ><annotation encoding="application/x-tex"
+                    >1/n</annotation
+                  ></semantics
+                ></math
+              ></span
+            ><span class="katex-html" aria-hidden="true"
+              ><span class="strut" style="height: 0.75em"></span
+              ><span
+                class="strut bottom"
+                style="height: 1em; vertical-align: -0.25em"
+              ></span
+              ><span class="base textstyle uncramped"
+                ><span class="mord mathrm">1</span
+                ><span class="mord mathrm">/</span
+                ><span class="mord mathit">n</span></span
+              ></span
+            ></span
+          >. What is an
+          <span class="katex"
+            ><span class="katex-mathml"
+              ><math
+                ><semantics
+                  ><mrow
+                    ><mtext
+                      ><mi mathvariant="normal">M</mi
+                      ><mi mathvariant="normal">R</mi></mtext
+                    ></mrow
+                  ><annotation encoding="application/x-tex"
+                    >\text{MR}</annotation
+                  ></semantics
+                ></math
+              ></span
+            ><span class="katex-html" aria-hidden="true"
+              ><span class="strut" style="height: 0.68333em"></span
+              ><span
+                class="strut bottom"
+                style="height: 0.68333em; vertical-align: 0em"
+              ></span
+              ><span class="base textstyle uncramped"
+                ><span class="text mord textstyle uncramped"
+                  ><span class="mord mathrm">M</span
+                  ><span class="mord mathrm">R</span></span
+                ></span
+              ></span
+            ></span
+          >-expansion, though? I Googled it and found
+          <a
+            href="https://www.rosolalaboratories.com/2021/07/27/study-of-a-modulo-sequence/"
+            >a secondhand explanation</a
+          >
+          (I've edited it a bit to remove a couple errors):
+        </p>
+        <blockquote>
+          <p>
+            The base-<span class="katex"
+              ><span class="katex-mathml"
+                ><math
+                  ><semantics
+                    ><mrow><mi>m</mi></mrow
+                    ><annotation encoding="application/x-tex"
+                      >m</annotation
+                    ></semantics
+                  ></math
+                ></span
+              ><span class="katex-html" aria-hidden="true"
+                ><span class="strut" style="height: 0.43056em"></span
+                ><span
+                  class="strut bottom"
+                  style="height: 0.43056em; vertical-align: 0em"
+                ></span
+                ><span class="base textstyle uncramped"
+                  ><span class="mord mathit">m</span></span
+                ></span
+              ></span
+            >
+            <span class="katex"
+              ><span class="katex-mathml"
+                ><math
+                  ><semantics
+                    ><mrow
+                      ><mtext
+                        ><mi mathvariant="normal">M</mi
+                        ><mi mathvariant="normal">R</mi></mtext
+                      ></mrow
+                    ><annotation encoding="application/x-tex"
+                      >\text{MR}</annotation
+                    ></semantics
+                  ></math
+                ></span
+              ><span class="katex-html" aria-hidden="true"
+                ><span class="strut" style="height: 0.68333em"></span
+                ><span
+                  class="strut bottom"
+                  style="height: 0.68333em; vertical-align: 0em"
+                ></span
+                ><span class="base textstyle uncramped"
+                  ><span class="text mord textstyle uncramped"
+                    ><span class="mord mathrm">M</span
+                    ><span class="mord mathrm">R</span></span
+                  ></span
+                ></span
+              ></span
+            >-expansion of a positive real number
+            <span class="katex"
+              ><span class="katex-mathml"
+                ><math
+                  ><semantics
+                    ><mrow><mi>x</mi></mrow
+                    ><annotation encoding="application/x-tex"
+                      >x</annotation
+                    ></semantics
+                  ></math
+                ></span
+              ><span class="katex-html" aria-hidden="true"
+                ><span class="strut" style="height: 0.43056em"></span
+                ><span
+                  class="strut bottom"
+                  style="height: 0.43056em; vertical-align: 0em"
+                ></span
+                ><span class="base textstyle uncramped"
+                  ><span class="mord mathit">x</span></span
+                ></span
+              ></span
+            >, denoted by
+            <span class="katex"
+              ><span class="katex-mathml"
+                ><math
+                  ><semantics
+                    ><mrow
+                      ><mtext
+                        ><mi mathvariant="normal">M</mi
+                        ><mi mathvariant="normal">R</mi></mtext
+                      ><mo>(</mo><mi>x</mi><mo separator="true">,</mo><mi>m</mi
+                      ><mo>)</mo></mrow
+                    ><annotation encoding="application/x-tex"
+                      >\text{MR}(x, m)</annotation
+                    ></semantics
+                  ></math
+                ></span
+              ><span class="katex-html" aria-hidden="true"
+                ><span class="strut" style="height: 0.75em"></span
+                ><span
+                  class="strut bottom"
+                  style="height: 1em; vertical-align: -0.25em"
+                ></span
+                ><span class="base textstyle uncramped"
+                  ><span class="text mord textstyle uncramped"
+                    ><span class="mord mathrm">M</span
+                    ><span class="mord mathrm">R</span></span
+                  ><span class="mopen">(</span><span class="mord mathit">x</span
+                  ><span class="mpunct">,</span
+                  ><span class="mord mathit">m</span
+                  ><span class="mclose">)</span></span
+                ></span
+              ></span
+            >, is the integer sequence
+            <span class="katex"
+              ><span class="katex-mathml"
+                ><math
+                  ><semantics
+                    ><mrow
+                      ><mo>{</mo><mi>s</mi><mo>(</mo><mn>1</mn><mo>)</mo
+                      ><mo separator="true">,</mo><mi>s</mi><mo>(</mo><mn>2</mn
+                      ><mo>)</mo><mo separator="true">,</mo><mi>s</mi><mo>(</mo
+                      ><mn>3</mn><mo>)</mo><mo separator="true">,</mo><mo>…</mo
+                      ><mo>}</mo></mrow
+                    ><annotation encoding="application/x-tex"
+                      >\{s(1), s(2), s(3), \ldots\}</annotation
+                    ></semantics
+                  ></math
+                ></span
+              ><span class="katex-html" aria-hidden="true"
+                ><span class="strut" style="height: 0.75em"></span
+                ><span
+                  class="strut bottom"
+                  style="height: 1em; vertical-align: -0.25em"
+                ></span
+                ><span class="base textstyle uncramped"
+                  ><span class="mopen">{</span><span class="mord mathit">s</span
+                  ><span class="mopen">(</span><span class="mord mathrm">1</span
+                  ><span class="mclose">)</span><span class="mpunct">,</span
+                  ><span class="mord mathit">s</span><span class="mopen">(</span
+                  ><span class="mord mathrm">2</span
+                  ><span class="mclose">)</span><span class="mpunct">,</span
+                  ><span class="mord mathit">s</span><span class="mopen">(</span
+                  ><span class="mord mathrm">3</span
+                  ><span class="mclose">)</span><span class="mpunct">,</span
+                  ><span class="minner">…</span
+                  ><span class="mclose">}</span></span
+                ></span
+              ></span
+            >, where
+            <span class="katex"
+              ><span class="katex-mathml"
+                ><math
+                  ><semantics
+                    ><mrow><mi>s</mi><mo>(</mo><mi>i</mi><mo>)</mo></mrow
+                    ><annotation encoding="application/x-tex"
+                      >s(i)</annotation
+                    ></semantics
+                  ></math
+                ></span
+              ><span class="katex-html" aria-hidden="true"
+                ><span class="strut" style="height: 0.75em"></span
+                ><span
+                  class="strut bottom"
+                  style="height: 1em; vertical-align: -0.25em"
+                ></span
+                ><span class="base textstyle uncramped"
+                  ><span class="mord mathit">s</span><span class="mopen">(</span
+                  ><span class="mord mathit">i</span
+                  ><span class="mclose">)</span></span
+                ></span
+              ></span
+            >
+            is the smallest exponent
+            <span class="katex"
+              ><span class="katex-mathml"
+                ><math
+                  ><semantics
+                    ><mrow><mi>d</mi></mrow
+                    ><annotation encoding="application/x-tex"
+                      >d</annotation
+                    ></semantics
+                  ></math
+                ></span
+              ><span class="katex-html" aria-hidden="true"
+                ><span class="strut" style="height: 0.69444em"></span
+                ><span
+                  class="strut bottom"
+                  style="height: 0.69444em; vertical-align: 0em"
+                ></span
+                ><span class="base textstyle uncramped"
+                  ><span class="mord mathit">d</span></span
+                ></span
+              ></span
+            >
+            such that
+            <span class="katex"
+              ><span class="katex-mathml"
+                ><math
+                  ><semantics
+                    ><mrow
+                      ><mo>(</mo><msup><mi>m</mi><mi>d</mi></msup
+                      ><mo>)</mo><mi>x</mi><mo>(</mo><mi>i</mi><mo>)</mo
+                      ><mo>&gt;</mo><mn>1</mn></mrow
+                    ><annotation encoding="application/x-tex"
+                      >(m^d)x(i) &gt; 1</annotation
+                    ></semantics
+                  ></math
+                ></span
+              ><span class="katex-html" aria-hidden="true"
+                ><span class="strut" style="height: 0.849108em"></span
+                ><span
+                  class="strut bottom"
+                  style="height: 1.099108em; vertical-align: -0.25em"
+                ></span
+                ><span class="base textstyle uncramped"
+                  ><span class="mopen">(</span
+                  ><span class="mord"
+                    ><span class="mord mathit">m</span
+                    ><span class="vlist"
+                      ><span style="top: -0.363em; margin-right: 0.05em"
+                        ><span class="fontsize-ensurer reset-size5 size5"
+                          ><span style="font-size: 0em">​</span></span
+                        ><span class="reset-textstyle scriptstyle uncramped"
+                          ><span class="mord mathit">d</span></span
+                        ></span
+                      ><span class="baseline-fix"
+                        ><span class="fontsize-ensurer reset-size5 size5"
+                          ><span style="font-size: 0em">​</span></span
+                        >​</span
+                      ></span
+                    ></span
+                  ><span class="mclose">)</span
+                  ><span class="mord mathit">x</span><span class="mopen">(</span
+                  ><span class="mord mathit">i</span
+                  ><span class="mclose">)</span><span class="mrel">&gt;</span
+                  ><span class="mord mathrm">1</span></span
+                ></span
+              ></span
+            >
+            and where
+            <span class="katex"
+              ><span class="katex-mathml"
+                ><math
+                  ><semantics
+                    ><mrow
+                      ><mi>x</mi><mo>(</mo><mi>i</mi><mo>+</mo><mn>1</mn
+                      ><mo>)</mo><mo>=</mo><mo>(</mo
+                      ><msup><mi>m</mi><mi>d</mi></msup
+                      ><mo>)</mo><mi>x</mi><mo>(</mo><mi>i</mi><mo>)</mo
+                      ><mo>−</mo><mn>1</mn></mrow
+                    ><annotation encoding="application/x-tex"
+                      >x(i + 1) = (m^d)x(i) - 1</annotation
+                    ></semantics
+                  ></math
+                ></span
+              ><span class="katex-html" aria-hidden="true"
+                ><span class="strut" style="height: 0.849108em"></span
+                ><span
+                  class="strut bottom"
+                  style="height: 1.099108em; vertical-align: -0.25em"
+                ></span
+                ><span class="base textstyle uncramped"
+                  ><span class="mord mathit">x</span><span class="mopen">(</span
+                  ><span class="mord mathit">i</span><span class="mbin">+</span
+                  ><span class="mord mathrm">1</span
+                  ><span class="mclose">)</span><span class="mrel">=</span
+                  ><span class="mopen">(</span
+                  ><span class="mord"
+                    ><span class="mord mathit">m</span
+                    ><span class="vlist"
+                      ><span style="top: -0.363em; margin-right: 0.05em"
+                        ><span class="fontsize-ensurer reset-size5 size5"
+                          ><span style="font-size: 0em">​</span></span
+                        ><span class="reset-textstyle scriptstyle uncramped"
+                          ><span class="mord mathit">d</span></span
+                        ></span
+                      ><span class="baseline-fix"
+                        ><span class="fontsize-ensurer reset-size5 size5"
+                          ><span style="font-size: 0em">​</span></span
+                        >​</span
+                      ></span
+                    ></span
+                  ><span class="mclose">)</span
+                  ><span class="mord mathit">x</span><span class="mopen">(</span
+                  ><span class="mord mathit">i</span
+                  ><span class="mclose">)</span><span class="mbin">−</span
+                  ><span class="mord mathrm">1</span></span
+                ></span
+              ></span
+            >, with the initialization
+            <span class="katex"
+              ><span class="katex-mathml"
+                ><math
+                  ><semantics
+                    ><mrow
+                      ><mi>x</mi><mo>(</mo><mn>1</mn><mo>)</mo><mo>=</mo
+                      ><mi>x</mi></mrow
+                    ><annotation encoding="application/x-tex"
+                      >x(1) = x</annotation
+                    ></semantics
+                  ></math
+                ></span
+              ><span class="katex-html" aria-hidden="true"
+                ><span class="strut" style="height: 0.75em"></span
+                ><span
+                  class="strut bottom"
+                  style="height: 1em; vertical-align: -0.25em"
+                ></span
+                ><span class="base textstyle uncramped"
+                  ><span class="mord mathit">x</span><span class="mopen">(</span
+                  ><span class="mord mathrm">1</span
+                  ><span class="mclose">)</span><span class="mrel">=</span
+                  ><span class="mord mathit">x</span></span
+                ></span
+              ></span
+            >. The base-<span class="katex"
+              ><span class="katex-mathml"
+                ><math
+                  ><semantics
+                    ><mrow><mn>2</mn></mrow
+                    ><annotation encoding="application/x-tex"
+                      >2</annotation
+                    ></semantics
+                  ></math
+                ></span
+              ><span class="katex-html" aria-hidden="true"
+                ><span class="strut" style="height: 0.64444em"></span
+                ><span
+                  class="strut bottom"
+                  style="height: 0.64444em; vertical-align: 0em"
+                ></span
+                ><span class="base textstyle uncramped"
+                  ><span class="mord mathrm">2</span></span
+                ></span
+              ></span
+            >
+            <span class="katex"
+              ><span class="katex-mathml"
+                ><math
+                  ><semantics
+                    ><mrow
+                      ><mtext
+                        ><mi mathvariant="normal">M</mi
+                        ><mi mathvariant="normal">R</mi></mtext
+                      ></mrow
+                    ><annotation encoding="application/x-tex"
+                      >\text{MR}</annotation
+                    ></semantics
+                  ></math
+                ></span
+              ><span class="katex-html" aria-hidden="true"
+                ><span class="strut" style="height: 0.68333em"></span
+                ><span
+                  class="strut bottom"
+                  style="height: 0.68333em; vertical-align: 0em"
+                ></span
+                ><span class="base textstyle uncramped"
+                  ><span class="text mord textstyle uncramped"
+                    ><span class="mord mathrm">M</span
+                    ><span class="mord mathrm">R</span></span
+                  ></span
+                ></span
+              ></span
+            >-expansion of
+            <span class="katex"
+              ><span class="katex-mathml"
+                ><math
+                  ><semantics
+                    ><mrow
+                      ><mn>1</mn><mi mathvariant="normal">/</mi><mn>2</mn
+                      ><mn>9</mn></mrow
+                    ><annotation encoding="application/x-tex"
+                      >1/29</annotation
+                    ></semantics
+                  ></math
+                ></span
+              ><span class="katex-html" aria-hidden="true"
+                ><span class="strut" style="height: 0.75em"></span
+                ><span
+                  class="strut bottom"
+                  style="height: 1em; vertical-align: -0.25em"
+                ></span
+                ><span class="base textstyle uncramped"
+                  ><span class="mord mathrm">1</span
+                  ><span class="mord mathrm">/</span
+                  ><span class="mord mathrm">2</span
+                  ><span class="mord mathrm">9</span></span
+                ></span
+              ></span
+            >
+            is periodic with period length
+            <span class="katex"
+              ><span class="katex-mathml"
+                ><math
+                  ><semantics
+                    ><mrow><mn>1</mn><mn>4</mn></mrow
+                    ><annotation encoding="application/x-tex"
+                      >14</annotation
+                    ></semantics
+                  ></math
+                ></span
+              ><span class="katex-html" aria-hidden="true"
+                ><span class="strut" style="height: 0.64444em"></span
+                ><span
+                  class="strut bottom"
+                  style="height: 0.64444em; vertical-align: 0em"
+                ></span
+                ><span class="base textstyle uncramped"
+                  ><span class="mord mathrm">1</span
+                  ><span class="mord mathrm">4</span></span
+                ></span
+              ></span
+            >. Further computational results (see
+            <a href="https://oeis.org/A136043">A136043</a>) suggest that if
+            <span class="katex"
+              ><span class="katex-mathml"
+                ><math
+                  ><semantics
+                    ><mrow><mi>p</mi></mrow
+                    ><annotation encoding="application/x-tex"
+                      >p</annotation
+                    ></semantics
+                  ></math
+                ></span
+              ><span class="katex-html" aria-hidden="true"
+                ><span class="strut" style="height: 0.43056em"></span
+                ><span
+                  class="strut bottom"
+                  style="height: 0.625em; vertical-align: -0.19444em"
+                ></span
+                ><span class="base textstyle uncramped"
+                  ><span class="mord mathit">p</span></span
+                ></span
+              ></span
+            >
+            is a prime with
+            <span class="katex"
+              ><span class="katex-mathml"
+                ><math
+                  ><semantics
+                    ><mrow><mn>2</mn></mrow
+                    ><annotation encoding="application/x-tex"
+                      >2</annotation
+                    ></semantics
+                  ></math
+                ></span
+              ><span class="katex-html" aria-hidden="true"
+                ><span class="strut" style="height: 0.64444em"></span
+                ><span
+                  class="strut bottom"
+                  style="height: 0.64444em; vertical-align: 0em"
+                ></span
+                ><span class="base textstyle uncramped"
+                  ><span class="mord mathrm">2</span></span
+                ></span
+              ></span
+            >
+            as a primitive root, then the base-<span class="katex"
+              ><span class="katex-mathml"
+                ><math
+                  ><semantics
+                    ><mrow><mn>2</mn></mrow
+                    ><annotation encoding="application/x-tex"
+                      >2</annotation
+                    ></semantics
+                  ></math
+                ></span
+              ><span class="katex-html" aria-hidden="true"
+                ><span class="strut" style="height: 0.64444em"></span
+                ><span
+                  class="strut bottom"
+                  style="height: 0.64444em; vertical-align: 0em"
+                ></span
+                ><span class="base textstyle uncramped"
+                  ><span class="mord mathrm">2</span></span
+                ></span
+              ></span
+            >
+            <span class="katex"
+              ><span class="katex-mathml"
+                ><math
+                  ><semantics
+                    ><mrow
+                      ><mtext
+                        ><mi mathvariant="normal">M</mi
+                        ><mi mathvariant="normal">R</mi></mtext
+                      ></mrow
+                    ><annotation encoding="application/x-tex"
+                      >\text{MR}</annotation
+                    ></semantics
+                  ></math
+                ></span
+              ><span class="katex-html" aria-hidden="true"
+                ><span class="strut" style="height: 0.68333em"></span
+                ><span
+                  class="strut bottom"
+                  style="height: 0.68333em; vertical-align: 0em"
+                ></span
+                ><span class="base textstyle uncramped"
+                  ><span class="text mord textstyle uncramped"
+                    ><span class="mord mathrm">M</span
+                    ><span class="mord mathrm">R</span></span
+                  ></span
+                ></span
+              ></span
+            >-expansion of
+            <span class="katex"
+              ><span class="katex-mathml"
+                ><math
+                  ><semantics
+                    ><mrow
+                      ><mn>1</mn><mi mathvariant="normal">/</mi><mi>p</mi></mrow
+                    ><annotation encoding="application/x-tex"
+                      >1/p</annotation
+                    ></semantics
+                  ></math
+                ></span
+              ><span class="katex-html" aria-hidden="true"
+                ><span class="strut" style="height: 0.75em"></span
+                ><span
+                  class="strut bottom"
+                  style="height: 1em; vertical-align: -0.25em"
+                ></span
+                ><span class="base textstyle uncramped"
+                  ><span class="mord mathrm">1</span
+                  ><span class="mord mathrm">/</span
+                  ><span class="mord mathit">p</span></span
+                ></span
+              ></span
+            >
+            is periodic with period
+            <span class="katex"
+              ><span class="katex-mathml"
+                ><math
+                  ><semantics
+                    ><mrow
+                      ><mo>(</mo><mi>p</mi><mo>−</mo><mn>1</mn><mo>)</mo
+                      ><mi mathvariant="normal">/</mi><mn>2</mn></mrow
+                    ><annotation encoding="application/x-tex"
+                      >(p - 1)/2</annotation
+                    ></semantics
+                  ></math
+                ></span
+              ><span class="katex-html" aria-hidden="true"
+                ><span class="strut" style="height: 0.75em"></span
+                ><span
+                  class="strut bottom"
+                  style="height: 1em; vertical-align: -0.25em"
+                ></span
+                ><span class="base textstyle uncramped"
+                  ><span class="mopen">(</span><span class="mord mathit">p</span
+                  ><span class="mbin">−</span><span class="mord mathrm">1</span
+                  ><span class="mclose">)</span
+                  ><span class="mord mathrm">/</span
+                  ><span class="mord mathrm">2</span></span
+                ></span
+              ></span
+            >. This has been confirmed for primes up to
+            <span class="katex"
+              ><span class="katex-mathml"
+                ><math
+                  ><semantics
+                    ><mrow><mn>2</mn><mn>0</mn><mn>0</mn><mn>0</mn></mrow
+                    ><annotation encoding="application/x-tex"
+                      >2000</annotation
+                    ></semantics
+                  ></math
+                ></span
+              ><span class="katex-html" aria-hidden="true"
+                ><span class="strut" style="height: 0.64444em"></span
+                ><span
+                  class="strut bottom"
+                  style="height: 0.64444em; vertical-align: 0em"
+                ></span
+                ><span class="base textstyle uncramped"
+                  ><span class="mord mathrm">2</span
+                  ><span class="mord mathrm">0</span
+                  ><span class="mord mathrm">0</span
+                  ><span class="mord mathrm">0</span></span
+                ></span
+              ></span
+            >. The base-<span class="katex"
+              ><span class="katex-mathml"
+                ><math
+                  ><semantics
+                    ><mrow><mn>2</mn></mrow
+                    ><annotation encoding="application/x-tex"
+                      >2</annotation
+                    ></semantics
+                  ></math
+                ></span
+              ><span class="katex-html" aria-hidden="true"
+                ><span class="strut" style="height: 0.64444em"></span
+                ><span
+                  class="strut bottom"
+                  style="height: 0.64444em; vertical-align: 0em"
+                ></span
+                ><span class="base textstyle uncramped"
+                  ><span class="mord mathrm">2</span></span
+                ></span
+              ></span
+            >
+            <span class="katex"
+              ><span class="katex-mathml"
+                ><math
+                  ><semantics
+                    ><mrow
+                      ><mtext
+                        ><mi mathvariant="normal">M</mi
+                        ><mi mathvariant="normal">R</mi></mtext
+                      ></mrow
+                    ><annotation encoding="application/x-tex"
+                      >\text{MR}</annotation
+                    ></semantics
+                  ></math
+                ></span
+              ><span class="katex-html" aria-hidden="true"
+                ><span class="strut" style="height: 0.68333em"></span
+                ><span
+                  class="strut bottom"
+                  style="height: 0.68333em; vertical-align: 0em"
+                ></span
+                ><span class="base textstyle uncramped"
+                  ><span class="text mord textstyle uncramped"
+                    ><span class="mord mathrm">M</span
+                    ><span class="mord mathrm">R</span></span
+                  ></span
+                ></span
+              ></span
+            >-expansion of
+            <span class="katex"
+              ><span class="katex-mathml"
+                ><math
+                  ><semantics
+                    ><mrow
+                      ><mi>e</mi><mo>=</mo><mn>2</mn
+                      ><mi mathvariant="normal">.</mi><mn>7</mn><mn>1</mn
+                      ><mn>8</mn><mn>2</mn><mn>8</mn><mo>…</mo></mrow
+                    ><annotation encoding="application/x-tex"
+                      >e = 2.71828\ldots</annotation
+                    ></semantics
+                  ></math
+                ></span
+              ><span class="katex-html" aria-hidden="true"
+                ><span class="strut" style="height: 0.64444em"></span
+                ><span
+                  class="strut bottom"
+                  style="height: 0.64444em; vertical-align: 0em"
+                ></span
+                ><span class="base textstyle uncramped"
+                  ><span class="mord mathit">e</span><span class="mrel">=</span
+                  ><span class="mord mathrm">2</span
+                  ><span class="mord mathrm">.</span
+                  ><span class="mord mathrm">7</span
+                  ><span class="mord mathrm">1</span
+                  ><span class="mord mathrm">8</span
+                  ><span class="mord mathrm">2</span
+                  ><span class="mord mathrm">8</span
+                  ><span class="minner">…</span></span
+                ></span
+              ></span
+            >
+            is given in <a href="https://oeis.org/A136044">A136044</a>.
+          </p>
+        </blockquote>
+        <p>
+          As the author of that post mentions, this is a bit dense. I'm not
+          going to work through it in detail here, but if you think about it,
+          this intuitively matches up with the algorithm we've been examining.
+          See how it mentions &quot;the smallest exponent
+          <span class="katex"
+            ><span class="katex-mathml"
+              ><math
+                ><semantics
+                  ><mrow><mi>d</mi></mrow
+                  ><annotation encoding="application/x-tex"
+                    >d</annotation
+                  ></semantics
+                ></math
+              ></span
+            ><span class="katex-html" aria-hidden="true"
+              ><span class="strut" style="height: 0.69444em"></span
+              ><span
+                class="strut bottom"
+                style="height: 0.69444em; vertical-align: 0em"
+              ></span
+              ><span class="base textstyle uncramped"
+                ><span class="mord mathit">d</span></span
+              ></span
+            ></span
+          >&quot;? That's the same as our number of coin flips in each row of
+          the diagrams we've been looking at! Each flip doubles <code>v</code>,
+          so that's exponentiation right there. The process of defining
+          <span class="katex"
+            ><span class="katex-mathml"
+              ><math
+                ><semantics
+                  ><mrow
+                    ><mi>x</mi><mo>(</mo><mi>i</mi><mo>+</mo><mn>1</mn
+                    ><mo>)</mo></mrow
+                  ><annotation encoding="application/x-tex"
+                    >x(i + 1)</annotation
+                  ></semantics
+                ></math
+              ></span
+            ><span class="katex-html" aria-hidden="true"
+              ><span class="strut" style="height: 0.75em"></span
+              ><span
+                class="strut bottom"
+                style="height: 1em; vertical-align: -0.25em"
+              ></span
+              ><span class="base textstyle uncramped"
+                ><span class="mord mathit">x</span><span class="mopen">(</span
+                ><span class="mord mathit">i</span><span class="mbin">+</span
+                ><span class="mord mathrm">1</span
+                ><span class="mclose">)</span></span
+              ></span
+            ></span
+          >
+          in terms of
+          <span class="katex"
+            ><span class="katex-mathml"
+              ><math
+                ><semantics
+                  ><mrow><mi>x</mi><mo>(</mo><mi>i</mi><mo>)</mo></mrow
+                  ><annotation encoding="application/x-tex"
+                    >x(i)</annotation
+                  ></semantics
+                ></math
+              ></span
+            ><span class="katex-html" aria-hidden="true"
+              ><span class="strut" style="height: 0.75em"></span
+              ><span
+                class="strut bottom"
+                style="height: 1em; vertical-align: -0.25em"
+              ></span
+              ><span class="base textstyle uncramped"
+                ><span class="mord mathit">x</span><span class="mopen">(</span
+                ><span class="mord mathit">i</span
+                ><span class="mclose">)</span></span
+              ></span
+            ></span
+          >
+          and
+          <span class="katex"
+            ><span class="katex-mathml"
+              ><math
+                ><semantics
+                  ><mrow
+                    ><msup><mi>m</mi><mi>d</mi></msup></mrow
+                  ><annotation encoding="application/x-tex"
+                    >m^d</annotation
+                  ></semantics
+                ></math
+              ></span
+            ><span class="katex-html" aria-hidden="true"
+              ><span class="strut" style="height: 0.849108em"></span
+              ><span
+                class="strut bottom"
+                style="height: 0.849108em; vertical-align: 0em"
+              ></span
+              ><span class="base textstyle uncramped"
+                ><span class="mord"
+                  ><span class="mord mathit">m</span
+                  ><span class="vlist"
+                    ><span style="top: -0.363em; margin-right: 0.05em"
+                      ><span class="fontsize-ensurer reset-size5 size5"
+                        ><span style="font-size: 0em">​</span></span
+                      ><span class="reset-textstyle scriptstyle uncramped"
+                        ><span class="mord mathit">d</span></span
+                      ></span
+                    ><span class="baseline-fix"
+                      ><span class="fontsize-ensurer reset-size5 size5"
+                        ><span style="font-size: 0em">​</span></span
+                      >​</span
+                    ></span
+                  ></span
+                ></span
+              ></span
+            ></span
+          >
+          (where
+          <span class="katex"
+            ><span class="katex-mathml"
+              ><math
+                ><semantics
+                  ><mrow><mi>m</mi><mo>=</mo><mn>2</mn></mrow
+                  ><annotation encoding="application/x-tex"
+                    >m = 2</annotation
+                  ></semantics
+                ></math
+              ></span
+            ><span class="katex-html" aria-hidden="true"
+              ><span class="strut" style="height: 0.64444em"></span
+              ><span
+                class="strut bottom"
+                style="height: 0.64444em; vertical-align: 0em"
+              ></span
+              ><span class="base textstyle uncramped"
+                ><span class="mord mathit">m</span><span class="mrel">=</span
+                ><span class="mord mathrm">2</span></span
+              ></span
+            ></span
+          >
+          in our case) is essentially the same as our process of going from one
+          row of the diagram to the next.
+        </p>
+        <p>
+          That's all I'll say about this sequence for now, but by all means dig
+          further into this definition if you're curious! And if you think about
+          it and look back at the diagrams we've been drawing, there are a
+          couple other sequences we could define instead... can you find any of
+          those in the OEIS?
+        </p>
+        <h2>Conclusion</h2>
+        <p>
+          Hopefully you had fun reading this and learned a bit more about
+          digital dice. I've posted this on Hacker News and on Twitter, so feel
+          free to reply there with any questions or comments!
+        </p>
       </div>
     </main>
   </body>
