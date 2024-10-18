@@ -106,7 +106,12 @@ const Bitsogram = ({ n }: { n: number }) => {
   return <Histogram probs={probs} pmax={1} />;
 };
 
-const ExpectedBits = () => {
+interface Plot {
+  color: string;
+  f: (n: number) => number;
+}
+
+const ExpectedBits = ({ plots }: { plots: Plot[] }) => {
   const height = 200;
   const top = 10;
   const bottom = height - 20;
@@ -145,38 +150,25 @@ const ExpectedBits = () => {
     );
   }
 
-  const limit: [number, number][] = [];
-  const python: [number, number][] = [];
-  for (let n = 1; n <= xmax; ++n) {
-    limit.push([n, Math.log2(n)]);
-    const k = n.toString(2).length;
-    const p = n / 2 ** k;
-    python.push([n, k / p]);
-  }
-
-  const points = (coords: [number, number][]) =>
-    coords
-      .map(([n, p]) => {
-        const x = left + (n / xmax) * (right - left);
-        const y = bottom - (p / ymax) * (bottom - top);
-        return `${x},${y}`;
-      })
-      .join(" ");
-
   return (
     <Svg height={height}>
-      <polyline
-        points={points(limit)}
-        fill="none"
-        stroke="hsl(222 100% 75%)"
-        stroke-width="2"
-      />
-      <polyline
-        points={points(python)}
-        fill="none"
-        stroke="hsl(0 100% 75%)"
-        stroke-width="2"
-      />
+      {plots.map(({ color, f }) => {
+        const points: string[] = [];
+        for (let n = 1; n <= xmax; ++n) {
+          const p = f(n);
+          const x = left + (n / xmax) * (right - left);
+          const y = bottom - (p / ymax) * (bottom - top);
+          points.push(`${x},${y}`);
+        }
+        return (
+          <polyline
+            points={points.join(" ")}
+            fill="none"
+            stroke={color}
+            stroke-width="2"
+          />
+        );
+      })}
       {ylabels}
       {xlabels}
       <polyline
@@ -200,7 +192,7 @@ interface Sequence {
   cycle?: number;
 }
 
-const sequence = (n: number) => {
+const sequence = (n: number): Sequence => {
   const states: State[] = [];
   const indices = new Map<number, number>();
   let v = 1;
@@ -414,6 +406,53 @@ const Lengths = () => {
 
 export const content: Content = async () => {
   const pmax = 0.3;
+  const limit: Plot = { color: "hsl(222 100% 75%)", f: (n) => Math.log2(n) };
+  const python: Plot = {
+    color: "hsl(0 100% 75%)",
+    f: (n) => {
+      const k = n.toString(2).length;
+      const p = n / 2 ** k;
+      return k / p;
+    },
+  };
+  const fdr: Plot = {
+    color: "hsl(111 100% 75%)",
+    f: (n) => {
+      const { states, cycle } = sequence(n);
+      if (cycle === undefined) return Math.log2(n);
+      let x = 0; // number of flips so far
+      let p = 1; // probability to get this far
+      const accum = states.map(({ flips, after }) => {
+        const a = { x, p }; // before reaching this state
+        x += flips;
+        p *= 1 - n / after;
+        const b = { x, p }; // after exiting this state
+        return [a, b];
+      });
+      let e = 0; // expected value
+      for (let i = 0; i < cycle; ++i) {
+        const pi = n / states[i].after; // conditional chance of ending here
+        const [a, b] = accum[i];
+        e += b.x * a.p * pi;
+      }
+      const [c] = accum[cycle]; // information on entering first cycle iteration
+      const pc = c.p - p; // probability of terminating in first cycle iteration
+      let ec = 0; // conditional expectation for first cycle iteration
+      for (let i = cycle; i < states.length; ++i) {
+        const pi = n / states[i].after; // conditional chance of ending here
+        const [a, b] = accum[i];
+        ec += (b.x * a.p * pi) / pc;
+      }
+      // add the contribution from first cycle iteration
+      e += (c.p - p) * ec;
+      // further cycle iterations: multiply the probability of getting past the
+      // first iteration by that conditional expectation, by lumping together
+      // each iteration of the cycle into one Bernoulli trial to use the formula
+      // for geometric distribution
+      e += p * (ec + (x - c.x) / (1 - p / c.p));
+      return e;
+    },
+  };
   return {
     histogramNaive: (
       <Histogram probs={weightsToProbs([, 2, 2, 1, 1, 1, 1])} pmax={pmax} />
@@ -425,9 +464,9 @@ export const content: Content = async () => {
       <Histogram probs={weightsToProbs([, 1, 1, 1, 1, 1, 1])} pmax={pmax} />
     ),
     histogramBits: <Bitsogram n={6} />,
-    expectedBits: <ExpectedBits />,
+    expectedBits: <ExpectedBits plots={[limit, python]} />,
     sequence6: <Sequence n={6} />,
-    fdrBits: <ExpectedBits />,
+    fdrBits: <ExpectedBits plots={[limit, python, fdr]} />,
     sequence32: <Sequence n={32} />,
     sequence11: <Sequence n={11} />,
     lengths: <Lengths />,

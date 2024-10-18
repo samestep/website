@@ -171,9 +171,11 @@ Let's walk through how this works for our 6-sided die example! So, `n == 6`. We'
 
 As you can see from the code, we start with `v == 1`. We `flip` the coin (doubling `v` each time) until we have `v >= 6`, which in this case takes three coin flips. At this point we have `v == 8`, and we check to see whether `c < 6`. If so, we return! Otherwise, we subtract `6` from `v`, leaving `v == 2`. Now we only need to flip the coin twice to get back to `v >= 6`. We again check; if `c < 6` then we return, and if not then we subtract `6` from `v` again. But we've seen this before: `8 - 6 == 2`, so we've hit a cycle! This cycle is indicated in the diagram by a big red asterisk.
 
-Once we enter this cycle, we now only need to flip the coin twice for each attempt, instead of three times. OK, but does that actually help us? Turns out, yes, it does!
+Once we enter this cycle, we now only need to flip the coin twice for each attempt, instead of three times. OK, but does that actually help us? Turns out, yes, it does! Here's its expected number of coin flips for a given `n`, plotted in green.
 
 {{fdrBits}}
+
+As you can see, while the red curve can be up to double the height of the blue curve at a given point, the green curve is never greater than the blue curve plus 2 bits.
 
 Now you know not only how your computer rolls dice, but also how it _could_ roll dice even better. But... look at the shape of that graph. Kinda weird, right? Doesn't it just tug at your brain and make you want to understand it a bit more?
 
