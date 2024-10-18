@@ -165,11 +165,11 @@ fn fast_dice_roller(n: u32) -> u32 {
 }
 ```
 
-Let's walk through how this works for 6-sided die example! So, `n = 6`. We'll visualize this process as a flow chart that goes from top to bottom and left to right (same as reading English prose). Each circle in the flow chart contains the value of `v` at that point in the process.
+Let's walk through how this works for our 6-sided die example! So, `n = 6`. We'll visualize this process as a flow chart that goes from top to bottom and left to right (same as reading English prose). Each circle in the flow chart contains the value of `v` at that point in the process.
 
 {{sequence6}}
 
-As you can see from the code, we start with `v == 1`. We `flip` the coin (doubling `v` each time) until we have `v >= 6`, which in this case takes three coin flips. At this point we have `v == 8`, and we check to see whether `c < 6`. If so, we return! Otherwise, we subtract `6` from `v`, leaving `v == 2`. Now we only need to flip the coin twice to get back to `v >= 6`. We again check; if `c < 6` then we return, and if not then we subtract `6` from `v` again. But we've seen this before: `8 - 2 == 6`, so we've hit a cycle! This cycle is indicated in the diagram by a big red asterisk.
+As you can see from the code, we start with `v == 1`. We `flip` the coin (doubling `v` each time) until we have `v >= 6`, which in this case takes three coin flips. At this point we have `v == 8`, and we check to see whether `c < 6`. If so, we return! Otherwise, we subtract `6` from `v`, leaving `v == 2`. Now we only need to flip the coin twice to get back to `v >= 6`. We again check; if `c < 6` then we return, and if not then we subtract `6` from `v` again. But we've seen this before: `8 - 6 == 2`, so we've hit a cycle! This cycle is indicated in the diagram by a big red asterisk.
 
 The key invariant in this algorithm is that, at the start of the `loop`, `c` is always a uniformly random nonnegative integer less than `v`. At the start we have `v == 1`, so the only such integer is `0`, and indeed that is `c`'s value! Now, think about what we do inside the `loop`. We double `v`, so now `c` needs to be uniformly distributed across twice as many possible values. We start by doubling `c`. This always produces a value that is even! So we're missing all the odd values less than `v`. Then, the `flip` function always returns either `0` or `1`, so when we add its result after doubling `c`, we have a 50% chance to stay on an even value, and a 50% to go to the odd value immediately following it. Once again `c` is uniformly sampled from all nonnegative integers less than `v`.
 
