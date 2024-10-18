@@ -165,11 +165,19 @@ fn fast_dice_roller(n: u32) -> u32 {
 }
 ```
 
-Let's walk through how this works for our 6-sided die example! So, `n = 6`. We'll visualize this process as a flow chart that goes from top to bottom and left to right (same as reading English prose). Each circle in the flow chart contains the value of `v` at that point in the process.
+Let's walk through how this works for our 6-sided die example! So, `n == 6`. We'll visualize this process as a flow chart that goes from top to bottom and left to right (same as reading English prose). Each circle in the flow chart contains the value of `v` at that point in the process.
 
 {{sequence6}}
 
 As you can see from the code, we start with `v == 1`. We `flip` the coin (doubling `v` each time) until we have `v >= 6`, which in this case takes three coin flips. At this point we have `v == 8`, and we check to see whether `c < 6`. If so, we return! Otherwise, we subtract `6` from `v`, leaving `v == 2`. Now we only need to flip the coin twice to get back to `v >= 6`. We again check; if `c < 6` then we return, and if not then we subtract `6` from `v` again. But we've seen this before: `8 - 6 == 2`, so we've hit a cycle! This cycle is indicated in the diagram by a big red asterisk.
+
+Once we enter this cycle, we now only need to flip the coin twice for each attempt, instead of three times. OK, but does that actually help us? Turns out, yes, it does!
+
+{{fdrBits}}
+
+Now you know not only how your computer rolls dice, but also how it _could_ roll dice even better. But... look at the shape of that graph. Kinda weird, right? Doesn't it just tug at your brain and make you want to understand it a bit more?
+
+## More math
 
 The key invariant in this algorithm is that, at the start of the `loop`, `c` is always a uniformly random nonnegative integer less than `v`. At the start we have `v == 1`, so the only such integer is `0`, and indeed that is `c`'s value! Now, think about what we do inside the `loop`. We double `v`, so now `c` needs to be uniformly distributed across twice as many possible values. We start by doubling `c`. This always produces a value that is even! So we're missing all the odd values less than `v`. Then, the `flip` function always returns either `0` or `1`, so when we add its result after doubling `c`, we have a 50% chance to stay on an even value, and a 50% to go to the odd value immediately following it. Once again `c` is uniformly sampled from all nonnegative integers less than `v`.
 
@@ -183,13 +191,34 @@ But these cycles can also get much longer: here's `n == 11`.
 
 {{sequence11}}
 
-This is a lot more interesting!
+This is a lot more interesting! In our `n == 6` example the cycle only went back to the previous node in the flow chart, but here it went all the way back to the beginning. So the cycles can be different lengths. Here are the first few of those cycle lengths, for `n == 1` through `n == 40`, and for powers of two where there's no cycle, I've inserted 1 as a placeholder value. (Try using 0 instead for a different rabbit hole!)
+
+{{lengths}}
+
+Turns out, if you look up this sequence, it already has a name! It's called [A136043][oeis a136043]:
+
+> Period-lengths of the base-$2$ $\text{MR}$-expansions of the reciprocals of the positive integers.
+
+Neat! The bit about "reciprocals of the positive integers" makes sense, because if you're trying to uniformly sample a nonnegative integer less than $n$, the chance of getting _any specific possibility_ should be equal to $1/n$. What is an $\text{MR}$-expansion, though? I Googled it and found [a secondhand explanation][mr-expansions] (I've edited it a bit to remove a couple errors):
+
+> The base-$m$ $\text{MR}$-expansion of a positive real number $x$, denoted by $\text{MR}(x, m)$, is the integer sequence $\{s(1), s(2), s(3), \ldots\}$, where $s(i)$ is the smallest exponent $d$ such that $(m^d)x(i) > 1$ and where $x(i + 1) = (m^d)x(i) - 1$, with the initialization $x(1) = x$. The base-$2$ $\text{MR}$-expansion of $1/29$ is periodic with period length $14$. Further computational results (see [A136043][oeis a136043]) suggest that if $p$ is a prime with $2$ as a primitive root, then the base-$2$ $\text{MR}$-expansion of $1/p$ is periodic with period $(p - 1)/2$. This has been confirmed for primes up to $2000$. The base-$2$ $\text{MR}$-expansion of $e = 2.71828\ldots$ is given in [A136044][oeis a136044].
+
+As the author of that post mentions, this is a bit dense. I'm not going to work through it in detail here, but if you think about it, this intuitively matches up with the algorithm we've been examining. See how it mentions "the smallest exponent $d$"? That's the same as our number of coin flips in each row of the diagrams we've been looking at! Each flip doubles `v`, so that's exponentiation right there. The process of defining $x(i + 1)$ in terms of $x(i)$ and $m^d$ (where $m = 2$ in our case) is essentially the same as our process of going from one row of the diagram to the next.
+
+That's all I'll say about this sequence for now, but by all means dig further into this definition if you're curious! And if you think about it and look back at the diagrams we've been drawing, there are a couple other sequences we could define instead... can you find any of those in the OEIS?
+
+## Conclusion
+
+Hopefully you had fun reading this and learned a bit more about digital dice. I've posted this on Hacker News and on Twitter, so feel free to reply there with any questions or comments!
 
 [binary]: https://youtu.be/sXxwr66Y79Y
 [entropy]: https://en.wikipedia.org/wiki/Entropy_(information_theory)
 [fdr]: https://arxiv.org/abs/1304.1916
 [google die]: https://www.google.com/search?q=roll+a+die
 [google coin]: https://www.google.com/search?q=flip+a+coin
+[mr-expansions]: https://www.rosolalaboratories.com/2021/07/27/study-of-a-modulo-sequence/
+[oeis a136043]: https://oeis.org/A136043
+[oeis a136044]: https://oeis.org/A136044
 [python]: https://www.python.org/
 [python bit_length]: https://docs.python.org/3/library/stdtypes.html#int.bit_length
 [python getrandbits]: https://github.com/python/cpython/blob/v3.12.7/Lib/random.py#L889-L895

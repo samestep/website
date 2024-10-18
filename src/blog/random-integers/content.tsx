@@ -399,6 +399,19 @@ const Sequence = ({ n }: { n: number }) => {
   );
 };
 
+const Lengths = () => {
+  const lengths: number[] = [];
+  for (let n = 1; n <= 40; ++n) {
+    const { states, cycle } = sequence(n);
+    lengths.push(cycle === undefined ? 1 : states.length - cycle);
+  }
+  return (
+    <blockquote>
+      <p>{lengths.join(", ")}, ...</p>
+    </blockquote>
+  );
+};
+
 export const content: Content = async () => {
   const pmax = 0.3;
   return {
@@ -414,7 +427,9 @@ export const content: Content = async () => {
     histogramBits: <Bitsogram n={6} />,
     expectedBits: <ExpectedBits />,
     sequence6: <Sequence n={6} />,
+    fdrBits: <ExpectedBits />,
     sequence32: <Sequence n={32} />,
     sequence11: <Sequence n={11} />,
+    lengths: <Lengths />,
   };
 };
