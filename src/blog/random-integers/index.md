@@ -209,13 +209,14 @@ That's all I'll say about this sequence for now, but by all means dig further in
 
 ## Conclusion
 
-Hopefully you had fun reading this and learned a bit more about digital dice. I've posted this on Hacker News and on Twitter, so feel free to reply there with any questions or comments!
+Hopefully you had fun reading this and learned a bit more about digital dice. I've posted this on [Hacker News][] and on [Twitter][], so feel free to reply there with any questions or comments!
 
 [binary]: https://youtu.be/sXxwr66Y79Y
 [entropy]: https://en.wikipedia.org/wiki/Entropy_(information_theory)
 [fdr]: https://arxiv.org/abs/1304.1916
 [google die]: https://www.google.com/search?q=roll+a+die
 [google coin]: https://www.google.com/search?q=flip+a+coin
+[hacker news]: https://news.ycombinator.com/user?id=sestep
 [mr-expansions]: https://www.rosolalaboratories.com/2021/07/27/study-of-a-modulo-sequence/
 [oeis a136043]: https://oeis.org/A136043
 [oeis a136044]: https://oeis.org/A136044
@@ -232,3 +233,4 @@ Hopefully you had fun reading this and learned a bit more about digital dice. I'
 [rejection sampling]: https://en.wikipedia.org/wiki/Rejection_sampling
 [stack overflow]: https://stackoverflow.com/a/62920514/5044950
 [three-sided coin]: https://imois.in/posts/3-sided-coin/
+[twitter]: https://twitter.com/sgestep
