@@ -166,6 +166,7 @@ const ExpectedBits = ({ plots }: { plots: Plot[] }) => {
             fill="none"
             stroke={color}
             stroke-width="2"
+            stroke-linejoin="round"
           />
         );
       })}
