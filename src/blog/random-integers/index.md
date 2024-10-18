@@ -175,7 +175,7 @@ Once we enter this cycle, we now only need to flip the coin twice for each attem
 
 {{fdrBits}}
 
-As you can see, while the red curve can be up to double the height of the blue curve at a given point, the green curve is never greater than the blue curve plus 2 bits.
+As you can see, while the red curve can be up to double the height of the blue curve at a given point, the green curve is never more than 2 flips above the blue curve.
 
 Now you know not only how your computer rolls dice, but also how it _could_ roll dice even better. But... look at the shape of that graph. Kinda weird, right? Doesn't it just tug at your brain and make you want to understand it a bit more?
 
