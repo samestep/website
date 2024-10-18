@@ -199,11 +199,11 @@ Turns out, if you look up this sequence, it already has a name! It's called [A13
 
 > Period-lengths of the base-$2$ $\text{MR}$-expansions of the reciprocals of the positive integers.
 
-Neat! The bit about "reciprocals of the positive integers" makes sense, because if you're trying to uniformly sample a nonnegative integer less than $n$, the chance of getting _any specific possibility_ should be equal to $1/n$. What is an $\text{MR}$-expansion, though? I Googled it and found [a secondhand explanation][mr-expansions] (I've edited it a bit to remove a couple errors):
+Neat! The bit about "reciprocals of the positive integers" makes sense, because if you're trying to uniformly sample a nonnegative integer less than $n$, the chance of getting _any specific possibility_ should be equal to $1/n$. What is an $\text{MR}$-expansion, though? Turns out it's defined in [OEIS A136042][] (with a couple errors actually, which I've corrected here):
 
 > The base-$m$ $\text{MR}$-expansion of a positive real number $x$, denoted by $\text{MR}(x, m)$, is the integer sequence $\{s(1), s(2), s(3), \ldots\}$, where $s(i)$ is the smallest exponent $d$ such that $(m^d)x(i) > 1$ and where $x(i + 1) = (m^d)x(i) - 1$, with the initialization $x(1) = x$. The base-$2$ $\text{MR}$-expansion of $1/29$ is periodic with period length $14$. Further computational results (see [A136043][oeis a136043]) suggest that if $p$ is a prime with $2$ as a primitive root, then the base-$2$ $\text{MR}$-expansion of $1/p$ is periodic with period $(p - 1)/2$. This has been confirmed for primes up to $2000$. The base-$2$ $\text{MR}$-expansion of $e = 2.71828\ldots$ is given in [A136044][oeis a136044].
 
-As the author of that post mentions, this is a bit dense. I'm not going to work through it in detail here, but if you think about it, this intuitively matches up with the algorithm we've been examining. See how it mentions "the smallest exponent $d$"? That's the same as our number of coin flips in each row of the diagrams we've been looking at! Each flip doubles `v`, so that's exponentiation right there. The process of defining $x(i + 1)$ in terms of $x(i)$ and $m^d$ (where $m = 2$ in our case) is essentially the same as our process of going from one row of the diagram to the next.
+This is a bit dense and I'm not going to work through it in detail here, but if you think about it, it intuitively matches up with the algorithm we've been examining. See how it mentions "the smallest exponent $d$"? That's the same as our number of coin flips in each row of the diagrams we've been looking at! Each flip doubles `v`, so that's exponentiation right there. The process of defining $x(i + 1)$ in terms of $x(i)$ and $m^d$ (where $m = 2$ in our case) is essentially the same as our process of going from one row of the diagram to the next.
 
 That's all I'll say about this sequence for now, but by all means dig further into this definition if you're curious! And if you think about it and look back at the diagrams we've been drawing, there are a couple other sequences we could define instead... can you find any of those in the OEIS?
 
@@ -217,7 +217,7 @@ Hopefully you had fun reading this and learned a bit more about digital dice. I'
 [google die]: https://www.google.com/search?q=roll+a+die
 [google coin]: https://www.google.com/search?q=flip+a+coin
 [hacker news]: https://news.ycombinator.com/user?id=sestep
-[mr-expansions]: https://www.rosolalaboratories.com/2021/07/27/study-of-a-modulo-sequence/
+[oeis a136042]: https://oeis.org/A136042
 [oeis a136043]: https://oeis.org/A136043
 [oeis a136044]: https://oeis.org/A136044
 [python]: https://www.python.org/
