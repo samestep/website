@@ -144,7 +144,7 @@ If you've been reading carefully, you may have noticed that there's some low-han
 
 <h2 id="fast-dice-roller">A more clever approach</h2>
 
-I say "more clever" instead of "smarter" because there's probably a good reason people don't do this in practice. But we're gonna do it here! It turns out there's a way to avoid wasting these fractions of a random bit; there's a discussion on [Stack Overflow][], which links to a paper about the [Fast Dice Roller algorithm][fdr].
+I say "more clever" instead of "smarter" because there's probably a good reason people don't do this in practice. But we're gonna do it here! It turns out there's a way to avoid wasting these fractions of a random bit; there's a discussion on [Stack Overflow][], which links to a paper about the [Fast Dice Roller algorithm][fdr]. Here's an implementation of that algorithm in Rust:
 
 ```rust
 fn fast_dice_roller(n: u32) -> u32 {
@@ -164,6 +164,26 @@ fn fast_dice_roller(n: u32) -> u32 {
     }
 }
 ```
+
+Let's walk through how this works for 6-sided die example! So, `n = 6`. We'll visualize this process as a flow chart that goes from top to bottom and left to right (same as reading English prose). Each circle in the flow chart contains the value of `v` at that point in the process.
+
+{{sequence6}}
+
+As you can see from the code, we start with `v == 1`. We `flip` the coin (doubling `v` each time) until we have `v >= 6`, which in this case takes three coin flips. At this point we have `v == 8`, and we check to see whether `c < 6`. If so, we return! Otherwise, we subtract `6` from `v`, leaving `v == 2`. Now we only need to flip the coin twice to get back to `v >= 6`. We again check; if `c < 6` then we return, and if not then we subtract `6` from `v` again. But we've seen this before: `8 - 2 == 6`, so we've hit a cycle! This cycle is indicated in the diagram by a big red asterisk.
+
+The key invariant in this algorithm is that, at the start of the `loop`, `c` is always a uniformly random nonnegative integer less than `v`. At the start we have `v == 1`, so the only such integer is `0`, and indeed that is `c`'s value! Now, think about what we do inside the `loop`. We double `v`, so now `c` needs to be uniformly distributed across twice as many possible values. We start by doubling `c`. This always produces a value that is even! So we're missing all the odd values less than `v`. Then, the `flip` function always returns either `0` or `1`, so when we add its result after doubling `c`, we have a 50% chance to stay on an even value, and a 50% to go to the odd value immediately following it. Once again `c` is uniformly sampled from all nonnegative integers less than `v`.
+
+But that's all the same as in our earlier rejection sampling approach. The trick is what we do after we check `if c < n`. When this is true, remember that `c` was uniformly sampled, so all the nonnegative integers less than `n` were equally likely, and so we just `return c`. But if it's _false_, now we know for a fact that `c >= n`. And again, all those nonnegative integers at least `n` but less than `v` were equally likely, so if we subtract `n` from both `v` and `c`, we maintain our invariant! Now `v` is a smaller value, but it's still greater than `1`, so we can use some of the randomness we've already gotten to avoid flipping our coin quite as many times. You can see this in the diagram above: if we were just doing rejection sampling then we'd have to flip the coin three times every time we failed, but in this case we flip three times only at first, and then after that we only flip twice on every subsequent iteration.
+
+That was only a simple example. Actually, there are even simpler ones: if we have a power of two like `n == 32`, there is no cycle at all; we just `flip` our coin a few times and then `return`:
+
+{{sequence32}}
+
+But these cycles can also get much longer: here's `n == 11`.
+
+{{sequence11}}
+
+This is a lot more interesting!
 
 [binary]: https://youtu.be/sXxwr66Y79Y
 [entropy]: https://en.wikipedia.org/wiki/Entropy_(information_theory)

@@ -1,6 +1,8 @@
 import { ComponentChildren } from "preact";
 import { Content } from "../../../blog";
 
+const toDegrees = (radians: number) => (radians * 180) / Math.PI;
+
 const weightsToProbs = (
   weights: (number | undefined)[],
 ): Map<string, number> => {
@@ -187,6 +189,216 @@ const ExpectedBits = () => {
   );
 };
 
+interface State {
+  before: number;
+  flips: number;
+  after: number;
+}
+
+interface Sequence {
+  states: State[];
+  cycle?: number;
+}
+
+const sequence = (n: number) => {
+  const states: State[] = [];
+  const indices = new Map<number, number>();
+  let v = 1;
+  while (!indices.has(v)) {
+    const i = states.length;
+    indices.set(v, i);
+    const before = v;
+    let flips = 0;
+    while (v < n) {
+      ++flips;
+      v *= 2;
+    }
+    states.push({ before, flips, after: v });
+    v -= n;
+    if (v === 0) return { states };
+  }
+  return { states, cycle: indices.get(v) };
+};
+
+const Sequence = ({ n }: { n: number }) => {
+  const r = 15;
+  const y0 = 20;
+  const x0 = 40;
+  const x2 = 280;
+  const x1 = (x0 + x2) / 2;
+  const dy = 80;
+  const d = 10;
+  const dText = d / 2;
+  const l = Math.hypot(x1 - x2, dy);
+  const xd = ((r + d) * (x1 - x0)) / l;
+  const yd = ((r + d) * dy) / l;
+  const strokeWidth = 2;
+  const green = "green";
+  const red = "red";
+  const { states, cycle } = sequence(n);
+  return (
+    <Svg
+      height={y0 + (states.length - 1) * dy + (cycle === undefined ? y0 : x0)}
+    >
+      {states.map(({ before, flips, after }, i) => {
+        const y = y0 + dy * i;
+        const label =
+          cycle === i ? (
+            <text
+              x={x0 - r - d}
+              y={y}
+              fill={red}
+              text-anchor="end"
+              dominant-baseline="central"
+            >
+              ✱
+            </text>
+          ) : (
+            <></>
+          );
+        const check =
+          cycle === undefined ? (
+            <></>
+          ) : (
+            <text
+              x={(x1 + x2) / 2}
+              y={y - dText}
+              fill={green}
+              text-anchor="middle"
+              dominant-baseline="text-bottom"
+            >
+              &lt; {n}?
+            </text>
+          );
+        const xHalf = (x0 + x1) / 2;
+        const yHalf = y + dy / 2 - dText;
+        const next =
+          i + 1 < states.length ? (
+            <>
+              <line
+                x1={x1 - xd}
+                y1={y + yd}
+                x2={x0 + xd}
+                y2={y + dy - yd}
+                stroke={red}
+                stroke-width={strokeWidth}
+              />
+              <text
+                x={xHalf}
+                y={yHalf}
+                fill={red}
+                text-anchor="middle"
+                dominant-baseline="text-bottom"
+                transform={`rotate(${toDegrees(-Math.atan2(dy, x1 - x0))} ${xHalf} ${yHalf})`}
+              >
+                subtract {n}
+              </text>
+            </>
+          ) : cycle === undefined ? (
+            <></>
+          ) : (
+            <>
+              <text
+                x={x1 - d}
+                y={y + r + d}
+                fill={red}
+                text-anchor="end"
+                dominant-baseline="hanging"
+              >
+                subtract {n}
+              </text>
+              <text
+                x={x1}
+                y={y + r + d}
+                fill={red}
+                text-anchor="middle"
+                dominant-baseline="hanging"
+              >
+                ✱
+              </text>
+            </>
+          );
+        return (
+          <>
+            {label}
+            <circle
+              cx={x0}
+              cy={y}
+              r={r}
+              fill="none"
+              stroke="white"
+              stroke-width={strokeWidth}
+            />
+            <text
+              x={x0}
+              y={y}
+              fill="white"
+              text-anchor="middle"
+              dominant-baseline="central"
+            >
+              {before}
+            </text>
+            <line
+              x1={x0 + r + d}
+              y1={y}
+              x2={x1 - r - d}
+              y2={y}
+              stroke="white"
+              stroke-width={strokeWidth}
+            />
+            <text
+              x={(x0 + x1) / 2}
+              y={y - dText}
+              fill="white"
+              text-anchor="middle"
+              dominant-baseline="text-bottom"
+            >
+              {flips}× flip
+            </text>
+            <circle
+              cx={x1}
+              cy={y}
+              r={r}
+              fill="none"
+              stroke="white"
+              stroke-width={strokeWidth}
+            />
+            <text
+              x={x1}
+              y={y}
+              fill="white"
+              text-anchor="middle"
+              dominant-baseline="central"
+            >
+              {after}
+            </text>
+            <line
+              x1={x1 + r + d}
+              y1={y}
+              x2={x2 - r - d}
+              y2={y}
+              stroke={green}
+              stroke-width={strokeWidth}
+            />
+            {check}
+            <circle cx={x2} cy={y} r={r} fill={green} />
+            <text
+              x={x2}
+              y={y}
+              fill="white"
+              text-anchor="middle"
+              dominant-baseline="central"
+            >
+              ✓
+            </text>
+            {next}
+          </>
+        );
+      })}
+    </Svg>
+  );
+};
+
 export const content: Content = async () => {
   const pmax = 0.3;
   return {
@@ -201,5 +413,8 @@ export const content: Content = async () => {
     ),
     histogramBits: <Bitsogram n={6} />,
     expectedBits: <ExpectedBits />,
+    sequence6: <Sequence n={6} />,
+    sequence32: <Sequence n={32} />,
+    sequence11: <Sequence n={11} />,
   };
 };
