@@ -271,7 +271,7 @@ const Sequence = ({ n }: { n: number }) => {
             </text>
           );
         const xHalf = (x0 + x1) / 2;
-        const yHalf = y + dy / 2 - dText;
+        const yHalf = y + dy / 2;
         const next =
           i + 1 < states.length ? (
             <>
@@ -285,7 +285,7 @@ const Sequence = ({ n }: { n: number }) => {
               />
               <text
                 x={xHalf}
-                y={yHalf}
+                y={yHalf - dText}
                 fill={red}
                 text-anchor="middle"
                 dominant-baseline="text-bottom"
