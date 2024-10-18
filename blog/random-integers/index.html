@@ -1197,7 +1197,7 @@
           >, which links to a paper about the
           <a href="https://arxiv.org/abs/1304.1916"
             >Fast Dice Roller algorithm</a
-          >.
+          >. Here's an implementation of that algorithm in Rust:
         </p>
         <pre><code class="language-rust"><span class="hljs-keyword">fn</span> <span class="hljs-title function_">fast_dice_roller</span>(n: <span class="hljs-type">u32</span>) <span class="hljs-punctuation">-&gt;</span> <span class="hljs-type">u32</span> {
     <span class="hljs-keyword">let</span> <span class="hljs-keyword">mut </span><span class="hljs-variable">v</span> = <span class="hljs-number">1</span>;
@@ -1216,6 +1216,845 @@
     }
 }
 </code></pre>
+        <p>
+          Let's walk through how this works for 6-sided die example! So,
+          <code>n = 6</code>. We'll visualize this process as a flow chart that
+          goes from top to bottom and left to right (same as reading English
+          prose). Each circle in the flow chart contains the value of
+          <code>v</code> at that point in the process.
+        </p>
+        <div class="svg">
+          <svg viewBox="0 0 300 140" height="140">
+            <circle
+              cx="40"
+              cy="20"
+              r="15"
+              fill="none"
+              stroke="white"
+              stroke-width="2"
+            ></circle>
+            <text
+              x="40"
+              y="20"
+              fill="white"
+              text-anchor="middle"
+              dominant-baseline="central"
+            >
+              1
+            </text>
+            <line
+              x1="65"
+              y1="20"
+              x2="135"
+              y2="20"
+              stroke="white"
+              stroke-width="2"
+            ></line>
+            <text
+              x="100"
+              y="15"
+              fill="white"
+              text-anchor="middle"
+              dominant-baseline="text-bottom"
+            >
+              3× flip
+            </text>
+            <circle
+              cx="160"
+              cy="20"
+              r="15"
+              fill="none"
+              stroke="white"
+              stroke-width="2"
+            ></circle>
+            <text
+              x="160"
+              y="20"
+              fill="white"
+              text-anchor="middle"
+              dominant-baseline="central"
+            >
+              8
+            </text>
+            <line
+              x1="185"
+              y1="20"
+              x2="255"
+              y2="20"
+              stroke="green"
+              stroke-width="2"
+            ></line>
+            <text
+              x="220"
+              y="15"
+              fill="green"
+              text-anchor="middle"
+              dominant-baseline="text-bottom"
+            >
+              &lt; 6?
+            </text>
+            <circle cx="280" cy="20" r="15" fill="green"></circle>
+            <text
+              x="280"
+              y="20"
+              fill="white"
+              text-anchor="middle"
+              dominant-baseline="central"
+            >
+              ✓
+            </text>
+            <line
+              x1="139.1987426415539"
+              y1="33.867504905630724"
+              x2="60.801257358446094"
+              y2="86.13249509436928"
+              stroke="red"
+              stroke-width="2"
+            ></line>
+            <text
+              x="100"
+              y="55"
+              fill="red"
+              text-anchor="middle"
+              dominant-baseline="text-bottom"
+              transform="rotate(-33.690067525979785 100 55)"
+            >
+              subtract 6
+            </text>
+            <text
+              x="15"
+              y="100"
+              fill="red"
+              text-anchor="end"
+              dominant-baseline="central"
+            >
+              ✱
+            </text>
+            <circle
+              cx="40"
+              cy="100"
+              r="15"
+              fill="none"
+              stroke="white"
+              stroke-width="2"
+            ></circle>
+            <text
+              x="40"
+              y="100"
+              fill="white"
+              text-anchor="middle"
+              dominant-baseline="central"
+            >
+              2
+            </text>
+            <line
+              x1="65"
+              y1="100"
+              x2="135"
+              y2="100"
+              stroke="white"
+              stroke-width="2"
+            ></line>
+            <text
+              x="100"
+              y="95"
+              fill="white"
+              text-anchor="middle"
+              dominant-baseline="text-bottom"
+            >
+              2× flip
+            </text>
+            <circle
+              cx="160"
+              cy="100"
+              r="15"
+              fill="none"
+              stroke="white"
+              stroke-width="2"
+            ></circle>
+            <text
+              x="160"
+              y="100"
+              fill="white"
+              text-anchor="middle"
+              dominant-baseline="central"
+            >
+              8
+            </text>
+            <line
+              x1="185"
+              y1="100"
+              x2="255"
+              y2="100"
+              stroke="green"
+              stroke-width="2"
+            ></line>
+            <text
+              x="220"
+              y="95"
+              fill="green"
+              text-anchor="middle"
+              dominant-baseline="text-bottom"
+            >
+              &lt; 6?
+            </text>
+            <circle cx="280" cy="100" r="15" fill="green"></circle>
+            <text
+              x="280"
+              y="100"
+              fill="white"
+              text-anchor="middle"
+              dominant-baseline="central"
+            >
+              ✓
+            </text>
+            <text
+              x="150"
+              y="125"
+              fill="red"
+              text-anchor="end"
+              dominant-baseline="hanging"
+            >
+              subtract 6
+            </text>
+            <text
+              x="160"
+              y="125"
+              fill="red"
+              text-anchor="middle"
+              dominant-baseline="hanging"
+            >
+              ✱
+            </text>
+          </svg>
+        </div>
+        <p>
+          As you can see from the code, we start with <code>v == 1</code>. We
+          <code>flip</code> the coin (doubling <code>v</code> each time) until
+          we have <code>v &gt;= 6</code>, which in this case takes three coin
+          flips. At this point we have <code>v == 8</code>, and we check to see
+          whether <code>c &lt; 6</code>. If so, we return! Otherwise, we
+          subtract <code>6</code> from <code>v</code>, leaving
+          <code>v == 2</code>. Now we only need to flip the coin twice to get
+          back to <code>v &gt;= 6</code>. We again check; if
+          <code>c &lt; 6</code> then we return, and if not then we subtract
+          <code>6</code> from <code>v</code> again. But we've seen this before:
+          <code>8 - 2 == 6</code>, so we've hit a cycle! This cycle is indicated
+          in the diagram by a big red asterisk.
+        </p>
+        <p>
+          The key invariant in this algorithm is that, at the start of the
+          <code>loop</code>, <code>c</code> is always a uniformly random
+          nonnegative integer less than <code>v</code>. At the start we have
+          <code>v == 1</code>, so the only such integer is <code>0</code>, and
+          indeed that is <code>c</code>'s value! Now, think about what we do
+          inside the <code>loop</code>. We double <code>v</code>, so now
+          <code>c</code> needs to be uniformly distributed across twice as many
+          possible values. We start by doubling <code>c</code>. This always
+          produces a value that is even! So we're missing all the odd values
+          less than <code>v</code>. Then, the <code>flip</code> function always
+          returns either <code>0</code> or <code>1</code>, so when we add its
+          result after doubling <code>c</code>, we have a 50% chance to stay on
+          an even value, and a 50% to go to the odd value immediately following
+          it. Once again <code>c</code> is uniformly sampled from all
+          nonnegative integers less than <code>v</code>.
+        </p>
+        <p>
+          But that's all the same as in our earlier rejection sampling approach.
+          The trick is what we do after we check <code>if c &lt; n</code>. When
+          this is true, remember that <code>c</code> was uniformly sampled, so
+          all the nonnegative integers less than <code>n</code> were equally
+          likely, and so we just <code>return c</code>. But if it's
+          <em>false</em>, now we know for a fact that <code>c &gt;= n</code>.
+          And again, all those nonnegative integers at least <code>n</code> but
+          less than <code>v</code> were equally likely, so if we subtract
+          <code>n</code> from both <code>v</code> and <code>c</code>, we
+          maintain our invariant! Now <code>v</code> is a smaller value, but
+          it's still greater than <code>1</code>, so we can use some of the
+          randomness we've already gotten to avoid flipping our coin quite as
+          many times. You can see this in the diagram above: if we were just
+          doing rejection sampling then we'd have to flip the coin three times
+          every time we failed, but in this case we flip three times only at
+          first, and then after that we only flip twice on every subsequent
+          iteration.
+        </p>
+        <p>
+          That was only a simple example. Actually, there are even simpler ones:
+          if we have a power of two like <code>n == 32</code>, there is no cycle
+          at all; we just <code>flip</code> our coin a few times and then
+          <code>return</code>:
+        </p>
+        <div class="svg">
+          <svg viewBox="0 0 300 40" height="40">
+            <circle
+              cx="40"
+              cy="20"
+              r="15"
+              fill="none"
+              stroke="white"
+              stroke-width="2"
+            ></circle>
+            <text
+              x="40"
+              y="20"
+              fill="white"
+              text-anchor="middle"
+              dominant-baseline="central"
+            >
+              1
+            </text>
+            <line
+              x1="65"
+              y1="20"
+              x2="135"
+              y2="20"
+              stroke="white"
+              stroke-width="2"
+            ></line>
+            <text
+              x="100"
+              y="15"
+              fill="white"
+              text-anchor="middle"
+              dominant-baseline="text-bottom"
+            >
+              5× flip
+            </text>
+            <circle
+              cx="160"
+              cy="20"
+              r="15"
+              fill="none"
+              stroke="white"
+              stroke-width="2"
+            ></circle>
+            <text
+              x="160"
+              y="20"
+              fill="white"
+              text-anchor="middle"
+              dominant-baseline="central"
+            >
+              32
+            </text>
+            <line
+              x1="185"
+              y1="20"
+              x2="255"
+              y2="20"
+              stroke="green"
+              stroke-width="2"
+            ></line>
+            <circle cx="280" cy="20" r="15" fill="green"></circle>
+            <text
+              x="280"
+              y="20"
+              fill="white"
+              text-anchor="middle"
+              dominant-baseline="central"
+            >
+              ✓
+            </text>
+          </svg>
+        </div>
+        <p>
+          But these cycles can also get much longer: here's
+          <code>n == 11</code>.
+        </p>
+        <div class="svg">
+          <svg viewBox="0 0 300 380" height="380">
+            <text
+              x="15"
+              y="20"
+              fill="red"
+              text-anchor="end"
+              dominant-baseline="central"
+            >
+              ✱
+            </text>
+            <circle
+              cx="40"
+              cy="20"
+              r="15"
+              fill="none"
+              stroke="white"
+              stroke-width="2"
+            ></circle>
+            <text
+              x="40"
+              y="20"
+              fill="white"
+              text-anchor="middle"
+              dominant-baseline="central"
+            >
+              1
+            </text>
+            <line
+              x1="65"
+              y1="20"
+              x2="135"
+              y2="20"
+              stroke="white"
+              stroke-width="2"
+            ></line>
+            <text
+              x="100"
+              y="15"
+              fill="white"
+              text-anchor="middle"
+              dominant-baseline="text-bottom"
+            >
+              4× flip
+            </text>
+            <circle
+              cx="160"
+              cy="20"
+              r="15"
+              fill="none"
+              stroke="white"
+              stroke-width="2"
+            ></circle>
+            <text
+              x="160"
+              y="20"
+              fill="white"
+              text-anchor="middle"
+              dominant-baseline="central"
+            >
+              16
+            </text>
+            <line
+              x1="185"
+              y1="20"
+              x2="255"
+              y2="20"
+              stroke="green"
+              stroke-width="2"
+            ></line>
+            <text
+              x="220"
+              y="15"
+              fill="green"
+              text-anchor="middle"
+              dominant-baseline="text-bottom"
+            >
+              &lt; 11?
+            </text>
+            <circle cx="280" cy="20" r="15" fill="green"></circle>
+            <text
+              x="280"
+              y="20"
+              fill="white"
+              text-anchor="middle"
+              dominant-baseline="central"
+            >
+              ✓
+            </text>
+            <line
+              x1="139.1987426415539"
+              y1="33.867504905630724"
+              x2="60.801257358446094"
+              y2="86.13249509436928"
+              stroke="red"
+              stroke-width="2"
+            ></line>
+            <text
+              x="100"
+              y="55"
+              fill="red"
+              text-anchor="middle"
+              dominant-baseline="text-bottom"
+              transform="rotate(-33.690067525979785 100 55)"
+            >
+              subtract 11
+            </text>
+            <circle
+              cx="40"
+              cy="100"
+              r="15"
+              fill="none"
+              stroke="white"
+              stroke-width="2"
+            ></circle>
+            <text
+              x="40"
+              y="100"
+              fill="white"
+              text-anchor="middle"
+              dominant-baseline="central"
+            >
+              5
+            </text>
+            <line
+              x1="65"
+              y1="100"
+              x2="135"
+              y2="100"
+              stroke="white"
+              stroke-width="2"
+            ></line>
+            <text
+              x="100"
+              y="95"
+              fill="white"
+              text-anchor="middle"
+              dominant-baseline="text-bottom"
+            >
+              2× flip
+            </text>
+            <circle
+              cx="160"
+              cy="100"
+              r="15"
+              fill="none"
+              stroke="white"
+              stroke-width="2"
+            ></circle>
+            <text
+              x="160"
+              y="100"
+              fill="white"
+              text-anchor="middle"
+              dominant-baseline="central"
+            >
+              20
+            </text>
+            <line
+              x1="185"
+              y1="100"
+              x2="255"
+              y2="100"
+              stroke="green"
+              stroke-width="2"
+            ></line>
+            <text
+              x="220"
+              y="95"
+              fill="green"
+              text-anchor="middle"
+              dominant-baseline="text-bottom"
+            >
+              &lt; 11?
+            </text>
+            <circle cx="280" cy="100" r="15" fill="green"></circle>
+            <text
+              x="280"
+              y="100"
+              fill="white"
+              text-anchor="middle"
+              dominant-baseline="central"
+            >
+              ✓
+            </text>
+            <line
+              x1="139.1987426415539"
+              y1="113.86750490563072"
+              x2="60.801257358446094"
+              y2="166.13249509436926"
+              stroke="red"
+              stroke-width="2"
+            ></line>
+            <text
+              x="100"
+              y="135"
+              fill="red"
+              text-anchor="middle"
+              dominant-baseline="text-bottom"
+              transform="rotate(-33.690067525979785 100 135)"
+            >
+              subtract 11
+            </text>
+            <circle
+              cx="40"
+              cy="180"
+              r="15"
+              fill="none"
+              stroke="white"
+              stroke-width="2"
+            ></circle>
+            <text
+              x="40"
+              y="180"
+              fill="white"
+              text-anchor="middle"
+              dominant-baseline="central"
+            >
+              9
+            </text>
+            <line
+              x1="65"
+              y1="180"
+              x2="135"
+              y2="180"
+              stroke="white"
+              stroke-width="2"
+            ></line>
+            <text
+              x="100"
+              y="175"
+              fill="white"
+              text-anchor="middle"
+              dominant-baseline="text-bottom"
+            >
+              1× flip
+            </text>
+            <circle
+              cx="160"
+              cy="180"
+              r="15"
+              fill="none"
+              stroke="white"
+              stroke-width="2"
+            ></circle>
+            <text
+              x="160"
+              y="180"
+              fill="white"
+              text-anchor="middle"
+              dominant-baseline="central"
+            >
+              18
+            </text>
+            <line
+              x1="185"
+              y1="180"
+              x2="255"
+              y2="180"
+              stroke="green"
+              stroke-width="2"
+            ></line>
+            <text
+              x="220"
+              y="175"
+              fill="green"
+              text-anchor="middle"
+              dominant-baseline="text-bottom"
+            >
+              &lt; 11?
+            </text>
+            <circle cx="280" cy="180" r="15" fill="green"></circle>
+            <text
+              x="280"
+              y="180"
+              fill="white"
+              text-anchor="middle"
+              dominant-baseline="central"
+            >
+              ✓
+            </text>
+            <line
+              x1="139.1987426415539"
+              y1="193.86750490563074"
+              x2="60.801257358446094"
+              y2="246.13249509436926"
+              stroke="red"
+              stroke-width="2"
+            ></line>
+            <text
+              x="100"
+              y="215"
+              fill="red"
+              text-anchor="middle"
+              dominant-baseline="text-bottom"
+              transform="rotate(-33.690067525979785 100 215)"
+            >
+              subtract 11
+            </text>
+            <circle
+              cx="40"
+              cy="260"
+              r="15"
+              fill="none"
+              stroke="white"
+              stroke-width="2"
+            ></circle>
+            <text
+              x="40"
+              y="260"
+              fill="white"
+              text-anchor="middle"
+              dominant-baseline="central"
+            >
+              7
+            </text>
+            <line
+              x1="65"
+              y1="260"
+              x2="135"
+              y2="260"
+              stroke="white"
+              stroke-width="2"
+            ></line>
+            <text
+              x="100"
+              y="255"
+              fill="white"
+              text-anchor="middle"
+              dominant-baseline="text-bottom"
+            >
+              1× flip
+            </text>
+            <circle
+              cx="160"
+              cy="260"
+              r="15"
+              fill="none"
+              stroke="white"
+              stroke-width="2"
+            ></circle>
+            <text
+              x="160"
+              y="260"
+              fill="white"
+              text-anchor="middle"
+              dominant-baseline="central"
+            >
+              14
+            </text>
+            <line
+              x1="185"
+              y1="260"
+              x2="255"
+              y2="260"
+              stroke="green"
+              stroke-width="2"
+            ></line>
+            <text
+              x="220"
+              y="255"
+              fill="green"
+              text-anchor="middle"
+              dominant-baseline="text-bottom"
+            >
+              &lt; 11?
+            </text>
+            <circle cx="280" cy="260" r="15" fill="green"></circle>
+            <text
+              x="280"
+              y="260"
+              fill="white"
+              text-anchor="middle"
+              dominant-baseline="central"
+            >
+              ✓
+            </text>
+            <line
+              x1="139.1987426415539"
+              y1="273.8675049056307"
+              x2="60.801257358446094"
+              y2="326.1324950943693"
+              stroke="red"
+              stroke-width="2"
+            ></line>
+            <text
+              x="100"
+              y="295"
+              fill="red"
+              text-anchor="middle"
+              dominant-baseline="text-bottom"
+              transform="rotate(-33.690067525979785 100 295)"
+            >
+              subtract 11
+            </text>
+            <circle
+              cx="40"
+              cy="340"
+              r="15"
+              fill="none"
+              stroke="white"
+              stroke-width="2"
+            ></circle>
+            <text
+              x="40"
+              y="340"
+              fill="white"
+              text-anchor="middle"
+              dominant-baseline="central"
+            >
+              3
+            </text>
+            <line
+              x1="65"
+              y1="340"
+              x2="135"
+              y2="340"
+              stroke="white"
+              stroke-width="2"
+            ></line>
+            <text
+              x="100"
+              y="335"
+              fill="white"
+              text-anchor="middle"
+              dominant-baseline="text-bottom"
+            >
+              2× flip
+            </text>
+            <circle
+              cx="160"
+              cy="340"
+              r="15"
+              fill="none"
+              stroke="white"
+              stroke-width="2"
+            ></circle>
+            <text
+              x="160"
+              y="340"
+              fill="white"
+              text-anchor="middle"
+              dominant-baseline="central"
+            >
+              12
+            </text>
+            <line
+              x1="185"
+              y1="340"
+              x2="255"
+              y2="340"
+              stroke="green"
+              stroke-width="2"
+            ></line>
+            <text
+              x="220"
+              y="335"
+              fill="green"
+              text-anchor="middle"
+              dominant-baseline="text-bottom"
+            >
+              &lt; 11?
+            </text>
+            <circle cx="280" cy="340" r="15" fill="green"></circle>
+            <text
+              x="280"
+              y="340"
+              fill="white"
+              text-anchor="middle"
+              dominant-baseline="central"
+            >
+              ✓
+            </text>
+            <text
+              x="150"
+              y="365"
+              fill="red"
+              text-anchor="end"
+              dominant-baseline="hanging"
+            >
+              subtract 11
+            </text>
+            <text
+              x="160"
+              y="365"
+              fill="red"
+              text-anchor="middle"
+              dominant-baseline="hanging"
+            >
+              ✱
+            </text>
+          </svg>
+        </div>
+        <p>This is a lot more interesting!</p>
       </div>
     </main>
   </body>
