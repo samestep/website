@@ -47,11 +47,12 @@
         </p>
         <p>
           <em>(6 minutes later)</em> Welcome back! So yeah, every digit of every
-          number in your computer is either a 0 or a 1. Kind of like how when
-          you flip a coin, it's either heads or tails. (<a
+          number in your computer is either a 0 or a 1. Kind of like when you
+          flip a coin, it's either heads or tails. (<a
             href="https://imois.in/posts/3-sided-coin/"
-            >Or its edge</a
-          >, but that's a different post entirely.) Let's talk about coin flips.
+            >Or edge</a
+          >, but that's a different post entirely.) Let's talk about coin flips,
+          then!
         </p>
         <h2>Coin flips</h2>
         <p>
@@ -64,14 +65,15 @@
         <p>
           This is much closer to the computer's native tongue. All it has to do
           is generate a single random bit. For the remainder of this post, we're
-          going to take &quot;generate a random bit&quot; as a basic primitive,
-          and then build everything else on top of that.
+          going to take &quot;generate a random bit&quot; (or equivalently,
+          &quot;flip a coin&quot;) as a basic primitive, and then build
+          everything else on top of that.
         </p>
         <p>
           Let's say we want to simulate a die roll but all we have is a coin to
           flip. How can we give each number on the die an equal chance? Well, we
-          can flip the coin once. This at least lets us narrow down the
-          possibilities:
+          can start by flipping the coin once. This at least lets us narrow down
+          the possibilities:
         </p>
         <ul>
           <li>
@@ -233,9 +235,9 @@
         </div>
         <h2>Python!</h2>
         <p>
-          Let's look at how real computers do it. Boot up
-          <a href="https://www.python.org/">the snake language</a> and it's
-          pretty straightforward to use the
+          Let's look at how real computers do it. If you have
+          <a href="https://www.python.org/">the snake language</a> installed,
+          it's pretty straightforward to use the
           <a href="https://docs.python.org/3/library/random.html"
             >builtin <code>random</code> module</a
           >
@@ -243,10 +245,10 @@
         </p>
         <pre><code>$ python
 &gt;&gt;&gt; import random
-&gt;&gt;&gt; random.randrange(1, 6)
+&gt;&gt;&gt; random.randint(1, 6)
 5
-&gt;&gt;&gt; random.randrange(1, 6)
-3
+&gt;&gt;&gt; random.randint(1, 6)
+2
 </code></pre>
         <p>
           Now, you and I may have different ideas of fun, but I always enjoy
@@ -254,10 +256,10 @@
           software that I'm running.
           <a
             href="https://github.com/python/cpython/blob/v3.12.7/Lib/random.py#L925"
-            >How is <code>randrange</code> defined?</a
+            >How is <code>randint</code> defined?</a
           >
         </p>
-        <pre><code class="language-python">randrange = _inst.randrange
+        <pre><code class="language-python">randint = _inst.randint
 </code></pre>
         <p>
           <a
@@ -337,11 +339,12 @@
             href="https://github.com/python/cpython/blob/v3.12.7/Lib/random.py#L889-L895"
             ><code>getrandbits</code></a
           >? Like we said before, in the end it all goes back to coin flips.
-          First we use
+          First we call
           <a
             href="https://docs.python.org/3/library/stdtypes.html#int.bit_length"
             ><code>bit_length</code></a
           >
+          on <code>n</code>, which works like this:
         </p>
         <pre><code>&gt;&gt;&gt; n = 6
 &gt;&gt;&gt; bin(n)
@@ -350,17 +353,17 @@
 3
 </code></pre>
         <p>
-          So Python first looks at the upper limit for the range of integers we
-          care about, and asks: how many bits do I need to represent that
-          integer? In the case of rolling a die, the answer is three bits, or
-          three coin flips. So far nothing is different from what we did before,
-          because if you recall, in the worst case we did need to flip our coin
-          three times. But here instead of deciding what to do after each coin
-          flip, we simply start off by flipping the coin three times. This gives
-          a <em>uniform</em> random three-bit integer. The smallest integer we
-          can represent with three bits is 0, and the largest is 7. And indeed,
-          if you run <code>random.getrandbits(3)</code> many times, you'll see
-          this uniform distribution!
+          So Python looks at the upper limit for the range of integers we care
+          about, and asks: how many bits do I need to represent that integer? In
+          the case of rolling a die, the answer is three bits, or three coin
+          flips. So far, nothing is different from what we did before, because
+          if you recall, in the worst case we did need to flip our coin three
+          times. But here instead of deciding what to do after each coin flip,
+          we simply flip the coin three times right at the start. This gives a
+          <em>uniform</em> random three-bit integer. The smallest integer we can
+          represent with three bits is 0, and the largest is 7. And indeed, if
+          you run <code>random.getrandbits(3)</code> many times, you'll see this
+          uniform distribution!
         </p>
         <div class="svg">
           <svg viewBox="0 0 300 200" height="200">
@@ -1040,7 +1043,7 @@
               ></span
             ></span
           >-axis, we can plot the entropy (in blue) and Python's expected number
-          of sampled bits (in red) on the
+          of coin flips (in red) on the
           <span class="katex"
             ><span class="katex-mathml"
               ><math
@@ -1190,17 +1193,20 @@
         </p>
         <h2 id="fast-dice-roller">A more clever approach</h2>
         <p>
-          I say &quot;more clever&quot; instead of &quot;smarter&quot; because
-          there's probably a good reason people don't do this in practice. But
-          we're gonna do it here! It turns out there's a way to avoid wasting
-          these fractions of a random bit; there's a discussion on
+          I say &quot;more clever&quot; instead of &quot;more smarter&quot;
+          because there's probably a good reason people don't do this in
+          practice. But we're gonna do it anyway! It turns out that when we
+          reject a sample, we can save some of the randomness we've already
+          accumulated; there's a discussion about this on
           <a href="https://stackoverflow.com/a/62920514/5044950"
             >Stack Overflow</a
           >, which links to a paper about the
           <a href="https://arxiv.org/abs/1304.1916"
             >Fast Dice Roller algorithm</a
           >. Here's an implementation of that algorithm in Rust (modified
-          slightly for the <code>n == 1</code> case):
+          slightly for the <code>n == 1</code> case); again, we assume that we
+          have a <code>flip</code> function that returns <code>0</code> half the
+          time and <code>1</code> the other half of the time:
         </p>
         <pre><code class="language-rust"><span class="hljs-keyword">fn</span> <span class="hljs-title function_">fast_dice_roller</span>(n: <span class="hljs-type">u32</span>) <span class="hljs-punctuation">-&gt;</span> <span class="hljs-type">u32</span> {
     <span class="hljs-keyword">let</span> <span class="hljs-keyword">mut </span><span class="hljs-variable">v</span> = <span class="hljs-number">1</span>;
@@ -1436,20 +1442,20 @@
           <code>flip</code> the coin (doubling <code>v</code> each time) until
           we have <code>v &gt;= 6</code>, which in this case takes three coin
           flips. At this point we have <code>v == 8</code>, and we check to see
-          whether <code>c &lt; 6</code>. If so, we return! Otherwise, we
+          whether <code>c &lt; 6</code>. If so, we're all done! Otherwise, we
           subtract <code>6</code> from <code>v</code>, leaving
-          <code>v == 2</code>. Now we only need to flip the coin twice to get
-          back to <code>v &gt;= 6</code>. We again check; if
-          <code>c &lt; 6</code> then we return, and if not then we subtract
+          <code>v == 2</code>. Now we only need to flip the coin
+          <em>twice</em> to get back to <code>v &gt;= 6</code>. We again check;
+          if <code>c &lt; 6</code> then we return, and if not then we subtract
           <code>6</code> from <code>v</code> again. But we've seen this before:
           <code>8 - 6 == 2</code>, so we've hit a cycle! This cycle is indicated
           in the diagram by a big red asterisk.
         </p>
         <p>
-          Once we enter this cycle, we now only need to flip the coin twice for
-          each attempt, instead of three times. OK, but does that actually help
-          us? Turns out, yes, it does! Here's its expected number of coin flips
-          for a given <code>n</code>, plotted in green.
+          We saw that once we've entered this cycle, we now only need to flip
+          the coin twice for each attempt, instead of three times. OK, but does
+          that actually help us? Turns out, yes, it does! Here's its expected
+          number of coin flips for a given <code>n</code>, plotted in green.
         </p>
         <div class="svg">
           <svg viewBox="0 0 300 200" height="200">
@@ -1558,46 +1564,47 @@
         </p>
         <h2>More math</h2>
         <p>
-          The key invariant in this algorithm is that, at the start of the
-          <code>loop</code>, <code>c</code> is always a uniformly random
-          nonnegative integer less than <code>v</code>. At the start we have
-          <code>v == 1</code>, so the only such integer is <code>0</code>, and
-          indeed that is <code>c</code>'s value! Now, think about what we do
-          inside the <code>loop</code>. We double <code>v</code>, so now
-          <code>c</code> needs to be uniformly distributed across twice as many
-          possible values. We start by doubling <code>c</code>. This always
-          produces a value that is even! So we're missing all the odd values
-          less than <code>v</code>. Then, the <code>flip</code> function always
-          returns either <code>0</code> or <code>1</code>, so when we add its
-          result after doubling <code>c</code>, we have a 50% chance to stay on
-          an even value, and a 50% to go to the odd value immediately following
-          it. Once again <code>c</code> is uniformly sampled from all
+          The key invariant in this algorithm is that, at the start every
+          iteration of the <code>loop</code>, <code>c</code> is always a
+          uniformly random nonnegative integer less than <code>v</code>. At the
+          start we have <code>v == 1</code>, so the only such integer is
+          <code>0</code>, and indeed that is <code>c</code>'s value! Now, think
+          about what we do inside the inner <code>while</code> loop. We double
+          <code>v</code>, so now <code>c</code> needs to be uniformly
+          distributed across twice as many possible values. We start by doubling
+          <code>c</code>. This always produces a value that is even! So we're
+          missing all the odd values less than <code>v</code>. Then, the
+          <code>flip</code> function always returns either <code>0</code> or
+          <code>1</code>, so when we add its result after doubling
+          <code>c</code>, we have a 50% chance to stay on an even value, and a
+          50% to go to the odd value immediately following it. We've restored
+          the invariant that <code>c</code> is uniformly sampled from all
           nonnegative integers less than <code>v</code>.
         </p>
         <p>
           But that's all the same as in our earlier rejection sampling approach.
           The trick is what we do after we check <code>if c &lt; n</code>. When
-          this is true, remember that <code>c</code> was uniformly sampled, so
-          all the nonnegative integers less than <code>n</code> were equally
-          likely, and so we just <code>return c</code>. But if it's
-          <em>false</em>, now we know for a fact that <code>c &gt;= n</code>.
-          And again, all those nonnegative integers at least <code>n</code> but
-          less than <code>v</code> were equally likely, so if we subtract
-          <code>n</code> from both <code>v</code> and <code>c</code>, we
-          maintain our invariant! Now <code>v</code> is a smaller value, but
-          it's still greater than <code>1</code>, so we can use some of the
-          randomness we've already gotten to avoid flipping our coin quite as
-          many times. You can see this in the diagram above: if we were just
-          doing rejection sampling then we'd have to flip the coin three times
-          every time we failed, but in this case we flip three times only at
-          first, and then after that we only flip twice on every subsequent
-          iteration.
+          this is <code>true</code>, remember that <code>c</code> was uniformly
+          sampled, so all the nonnegative integers less than <code>n</code> were
+          equally likely, and so we just <code>return c</code>. But if it's
+          <code>false</code>, now we know for a fact that
+          <code>c &gt;= n</code>. And again, all those nonnegative integers at
+          least <code>n</code> but less than <code>v</code> were equally likely,
+          so if we subtract <code>n</code> from both <code>v</code> and
+          <code>c</code>, we maintain our invariant! Now <code>v</code> is a
+          smaller value, but it's often still greater than <code>1</code>, so we
+          can use some of the randomness we've already gotten to avoid flipping
+          our coin quite as many times. You can see this in the diagram above:
+          if we were just doing rejection sampling then we'd have to flip the
+          coin three times every time we failed, but in this case we flip three
+          times only at first, and then after that we only flip twice on every
+          subsequent iteration.
         </p>
         <p>
           That was only a simple example. Actually, there are even simpler ones:
           if we have a power of two like <code>n == 32</code>, there is no cycle
           at all; we just <code>flip</code> our coin a few times and then
-          <code>return</code>:
+          <code>return</code>.
         </p>
         <div class="svg">
           <svg viewBox="0 0 300 40" height="40">
@@ -2319,8 +2326,8 @@
               ></span
             ></span
           >-expansion, though? Turns out it's defined in
-          <a href="https://oeis.org/A136042">OEIS A136042</a> (with a couple
-          errors actually, which I've corrected here):
+          <a href="https://oeis.org/A136042">OEIS A136042</a> (that page
+          actually has a couple errors, which I've corrected here):
         </p>
         <blockquote>
           <p>
@@ -2980,7 +2987,7 @@
         </blockquote>
         <p>
           This is a bit dense and I'm not going to work through it in detail
-          here, but if you think about it, it intuitively matches up with the
+          here, but if you think about it, it roughly matches up with the
           algorithm we've been examining. See how it mentions &quot;the smallest
           exponent
           <span class="katex"
@@ -3130,7 +3137,7 @@
         <h2>Conclusion</h2>
         <p>
           Hopefully you had fun reading this and learned a bit more about
-          digital dice. I've posted this on
+          digital dice. Once I've published this I'll post it on
           <a href="https://news.ycombinator.com/user?id=sestep">Hacker News</a>
           and on <a href="https://twitter.com/sgestep">Twitter</a>, so feel free
           to reply there with any questions or comments!
