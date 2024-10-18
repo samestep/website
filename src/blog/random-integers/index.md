@@ -10,7 +10,7 @@ But how does it do that?
 
 To start: you may have heard that computers use binary numbers. That's true! This has been well-explained by many other people, so if you're unfamiliar, check out one of those explanations, e.g. [Khan Academy][binary].
 
-_(6 minutes later)_ Welcome back! So yeah, every digit of every number in your computer is either a 0 or a 1. Kind of like how when you flip a coin, it's either heads or tails. ([Or its edge][three-sided coin], but that's a different post entirely.) Let's talk about coin flips.
+_(6 minutes later)_ Welcome back! So yeah, every digit of every number in your computer is either a 0 or a 1. Kind of like when you flip a coin, it's either heads or tails. ([Or edge][three-sided coin], but that's a different post entirely.) Let's talk about coin flips, then!
 
 ## Coin flips
 
@@ -18,9 +18,9 @@ You can also [Google "flip a coin"][google coin]:
 
 ![Google "flip a coin"](coin.png)
 
-This is much closer to the computer's native tongue. All it has to do is generate a single random bit. For the remainder of this post, we're going to take "generate a random bit" as a basic primitive, and then build everything else on top of that.
+This is much closer to the computer's native tongue. All it has to do is generate a single random bit. For the remainder of this post, we're going to take "generate a random bit" (or equivalently, "flip a coin") as a basic primitive, and then build everything else on top of that.
 
-Let's say we want to simulate a die roll but all we have is a coin to flip. How can we give each number on the die an equal chance? Well, we can flip the coin once. This at least lets us narrow down the possibilities:
+Let's say we want to simulate a die roll but all we have is a coin to flip. How can we give each number on the die an equal chance? Well, we can start by flipping the coin once. This at least lets us narrow down the possibilities:
 
 - If we got **heads**, we'll say that the die roll is even: **2**, **4**, or **6**.
 - If we got **tails**, we'll say that the die roll is odd: **1**, **3**, or **5**.
@@ -36,21 +36,21 @@ And then if we got tails, we need to flip a third time to choose between **4** a
 
 ## Python!
 
-Let's look at how real computers do it. Boot up [the snake language][python] and it's pretty straightforward to use the [builtin `random` module][python random] to simulate rolling a die:
+Let's look at how real computers do it. If you have [the snake language][python] installed, it's pretty straightforward to use the [builtin `random` module][python random] to simulate rolling a die:
 
 ```
 $ python
 >>> import random
->>> random.randrange(1, 6)
+>>> random.randint(1, 6)
 5
->>> random.randrange(1, 6)
-3
+>>> random.randint(1, 6)
+2
 ```
 
-Now, you and I may have different ideas of fun, but I always enjoy doing a little deep dive of the source code for other people's software that I'm running. [How is `randrange` defined?][python randint toplevel]
+Now, you and I may have different ideas of fun, but I always enjoy doing a little deep dive of the source code for other people's software that I'm running. [How is `randint` defined?][python randint toplevel]
 
 ```python
-randrange = _inst.randrange
+randint = _inst.randint
 ```
 
 [Alright.][python inst]
@@ -105,7 +105,7 @@ So to generate a random integer between 1 (inclusive) and 7 (exclusive), that's 
         return r
 ```
 
-Now that's what I'm talkin' about! See how it's defined entirely in terms of [`getrandbits`][python getrandbits]? Like we said before, in the end it all goes back to coin flips. First we use [`bit_length`][python bit_length]
+Now that's what I'm talkin' about! See how it's defined entirely in terms of [`getrandbits`][python getrandbits]? Like we said before, in the end it all goes back to coin flips. First we call [`bit_length`][python bit_length] on `n`, which works like this:
 
 ```
 >>> n = 6
@@ -115,7 +115,7 @@ Now that's what I'm talkin' about! See how it's defined entirely in terms of [`g
 3
 ```
 
-So Python first looks at the upper limit for the range of integers we care about, and asks: how many bits do I need to represent that integer? In the case of rolling a die, the answer is three bits, or three coin flips. So far nothing is different from what we did before, because if you recall, in the worst case we did need to flip our coin three times. But here instead of deciding what to do after each coin flip, we simply start off by flipping the coin three times. This gives a _uniform_ random three-bit integer. The smallest integer we can represent with three bits is 0, and the largest is 7. And indeed, if you run `random.getrandbits(3)` many times, you'll see this uniform distribution!
+So Python looks at the upper limit for the range of integers we care about, and asks: how many bits do I need to represent that integer? In the case of rolling a die, the answer is three bits, or three coin flips. So far, nothing is different from what we did before, because if you recall, in the worst case we did need to flip our coin three times. But here instead of deciding what to do after each coin flip, we simply flip the coin three times right at the start. This gives a _uniform_ random three-bit integer. The smallest integer we can represent with three bits is 0, and the largest is 7. And indeed, if you run `random.getrandbits(3)` many times, you'll see this uniform distribution!
 
 {{histogramEight}}
 
@@ -134,7 +134,7 @@ and draw those in a different kind of histogram.
 
 {{histogramBits}}
 
-This shows that it's not _horrible_: the chance of having to retry $n$ times is exponential in $n$. Actually, how well should we _expect_ to be able to do? Well, in the case where $n$ is a power of two, uniformly sampling a nonnegative integer less than $n$ is equivalent to flipping a coin $\log_2 n$ times; no need to retry. If $n$ is not a power of two then instead of directly giving the number of coin flips, that logarithm gives the [entropy][] of the distribution; if we're using random bits to faithfully sampling from the distribution, we can't do better than the entropy on average. So for varying values of $n$ on the $x$-axis, we can plot the entropy (in blue) and Python's expected number of sampled bits (in red) on the $y$-axis.
+This shows that it's not _horrible_: the chance of having to retry $n$ times is exponential in $n$. Actually, how well should we _expect_ to be able to do? Well, in the case where $n$ is a power of two, uniformly sampling a nonnegative integer less than $n$ is equivalent to flipping a coin $\log_2 n$ times; no need to retry. If $n$ is not a power of two then instead of directly giving the number of coin flips, that logarithm gives the [entropy][] of the distribution; if we're using random bits to faithfully sampling from the distribution, we can't do better than the entropy on average. So for varying values of $n$ on the $x$-axis, we can plot the entropy (in blue) and Python's expected number of coin flips (in red) on the $y$-axis.
 
 {{expectedBits}}
 
@@ -144,7 +144,7 @@ If you've been reading carefully, you may have noticed that there's some low-han
 
 <h2 id="fast-dice-roller">A more clever approach</h2>
 
-I say "more clever" instead of "smarter" because there's probably a good reason people don't do this in practice. But we're gonna do it here! It turns out there's a way to avoid wasting these fractions of a random bit; there's a discussion on [Stack Overflow][], which links to a paper about the [Fast Dice Roller algorithm][fdr]. Here's an implementation of that algorithm in Rust (modified slightly for the `n == 1` case):
+I say "more clever" instead of "more smarter" because there's probably a good reason people don't do this in practice. But we're gonna do it anyway! It turns out that when we reject a sample, we can save some of the randomness we've already accumulated; there's a discussion about this on [Stack Overflow][], which links to a paper about the [Fast Dice Roller algorithm][fdr]. Here's an implementation of that algorithm in Rust (modified slightly for the `n == 1` case); again, we assume that we have a `flip` function that returns `0` half the time and `1` the other half of the time:
 
 ```rust
 fn fast_dice_roller(n: u32) -> u32 {
@@ -169,9 +169,9 @@ Let's walk through how this works for our 6-sided die example! So, `n == 6`. We'
 
 {{sequence6}}
 
-As you can see from the code, we start with `v == 1`. We `flip` the coin (doubling `v` each time) until we have `v >= 6`, which in this case takes three coin flips. At this point we have `v == 8`, and we check to see whether `c < 6`. If so, we return! Otherwise, we subtract `6` from `v`, leaving `v == 2`. Now we only need to flip the coin twice to get back to `v >= 6`. We again check; if `c < 6` then we return, and if not then we subtract `6` from `v` again. But we've seen this before: `8 - 6 == 2`, so we've hit a cycle! This cycle is indicated in the diagram by a big red asterisk.
+As you can see from the code, we start with `v == 1`. We `flip` the coin (doubling `v` each time) until we have `v >= 6`, which in this case takes three coin flips. At this point we have `v == 8`, and we check to see whether `c < 6`. If so, we're all done! Otherwise, we subtract `6` from `v`, leaving `v == 2`. Now we only need to flip the coin _twice_ to get back to `v >= 6`. We again check; if `c < 6` then we return, and if not then we subtract `6` from `v` again. But we've seen this before: `8 - 6 == 2`, so we've hit a cycle! This cycle is indicated in the diagram by a big red asterisk.
 
-Once we enter this cycle, we now only need to flip the coin twice for each attempt, instead of three times. OK, but does that actually help us? Turns out, yes, it does! Here's its expected number of coin flips for a given `n`, plotted in green.
+We saw that once we've entered this cycle, we now only need to flip the coin twice for each attempt, instead of three times. OK, but does that actually help us? Turns out, yes, it does! Here's its expected number of coin flips for a given `n`, plotted in green.
 
 {{fdrBits}}
 
@@ -181,11 +181,11 @@ Now you know not only how your computer rolls dice, but also how it _could_ roll
 
 ## More math
 
-The key invariant in this algorithm is that, at the start of the `loop`, `c` is always a uniformly random nonnegative integer less than `v`. At the start we have `v == 1`, so the only such integer is `0`, and indeed that is `c`'s value! Now, think about what we do inside the `loop`. We double `v`, so now `c` needs to be uniformly distributed across twice as many possible values. We start by doubling `c`. This always produces a value that is even! So we're missing all the odd values less than `v`. Then, the `flip` function always returns either `0` or `1`, so when we add its result after doubling `c`, we have a 50% chance to stay on an even value, and a 50% to go to the odd value immediately following it. Once again `c` is uniformly sampled from all nonnegative integers less than `v`.
+The key invariant in this algorithm is that, at the start every iteration of the `loop`, `c` is always a uniformly random nonnegative integer less than `v`. At the start we have `v == 1`, so the only such integer is `0`, and indeed that is `c`'s value! Now, think about what we do inside the inner `while` loop. We double `v`, so now `c` needs to be uniformly distributed across twice as many possible values. We start by doubling `c`. This always produces a value that is even! So we're missing all the odd values less than `v`. Then, the `flip` function always returns either `0` or `1`, so when we add its result after doubling `c`, we have a 50% chance to stay on an even value, and a 50% to go to the odd value immediately following it. We've restored the invariant that `c` is uniformly sampled from all nonnegative integers less than `v`.
 
-But that's all the same as in our earlier rejection sampling approach. The trick is what we do after we check `if c < n`. When this is true, remember that `c` was uniformly sampled, so all the nonnegative integers less than `n` were equally likely, and so we just `return c`. But if it's _false_, now we know for a fact that `c >= n`. And again, all those nonnegative integers at least `n` but less than `v` were equally likely, so if we subtract `n` from both `v` and `c`, we maintain our invariant! Now `v` is a smaller value, but it's still greater than `1`, so we can use some of the randomness we've already gotten to avoid flipping our coin quite as many times. You can see this in the diagram above: if we were just doing rejection sampling then we'd have to flip the coin three times every time we failed, but in this case we flip three times only at first, and then after that we only flip twice on every subsequent iteration.
+But that's all the same as in our earlier rejection sampling approach. The trick is what we do after we check `if c < n`. When this is `true`, remember that `c` was uniformly sampled, so all the nonnegative integers less than `n` were equally likely, and so we just `return c`. But if it's `false`, now we know for a fact that `c >= n`. And again, all those nonnegative integers at least `n` but less than `v` were equally likely, so if we subtract `n` from both `v` and `c`, we maintain our invariant! Now `v` is a smaller value, but it's often still greater than `1`, so we can use some of the randomness we've already gotten to avoid flipping our coin quite as many times. You can see this in the diagram above: if we were just doing rejection sampling then we'd have to flip the coin three times every time we failed, but in this case we flip three times only at first, and then after that we only flip twice on every subsequent iteration.
 
-That was only a simple example. Actually, there are even simpler ones: if we have a power of two like `n == 32`, there is no cycle at all; we just `flip` our coin a few times and then `return`:
+That was only a simple example. Actually, there are even simpler ones: if we have a power of two like `n == 32`, there is no cycle at all; we just `flip` our coin a few times and then `return`.
 
 {{sequence32}}
 
@@ -201,17 +201,17 @@ Turns out, if you look up this sequence, it already has a name! It's called [A13
 
 > Period-lengths of the base-$2$ $\text{MR}$-expansions of the reciprocals of the positive integers.
 
-Neat! The bit about "reciprocals of the positive integers" makes sense, because if you're trying to uniformly sample a nonnegative integer less than $n$, the chance of getting _any specific possibility_ should be equal to $1/n$. What is an $\text{MR}$-expansion, though? Turns out it's defined in [OEIS A136042][] (with a couple errors actually, which I've corrected here):
+Neat! The bit about "reciprocals of the positive integers" makes sense, because if you're trying to uniformly sample a nonnegative integer less than $n$, the chance of getting _any specific possibility_ should be equal to $1/n$. What is an $\text{MR}$-expansion, though? Turns out it's defined in [OEIS A136042][] (that page actually has a couple errors, which I've corrected here):
 
 > The base-$m$ $\text{MR}$-expansion of a positive real number $x$, denoted by $\text{MR}(x, m)$, is the integer sequence $\{s(1), s(2), s(3), \ldots\}$, where $s(i)$ is the smallest exponent $d$ such that $(m^d)x(i) > 1$ and where $x(i + 1) = (m^d)x(i) - 1$, with the initialization $x(1) = x$. The base-$2$ $\text{MR}$-expansion of $1/29$ is periodic with period length $14$. Further computational results (see [A136043][oeis a136043]) suggest that if $p$ is a prime with $2$ as a primitive root, then the base-$2$ $\text{MR}$-expansion of $1/p$ is periodic with period $(p - 1)/2$. This has been confirmed for primes up to $2000$. The base-$2$ $\text{MR}$-expansion of $e = 2.71828\ldots$ is given in [A136044][oeis a136044].
 
-This is a bit dense and I'm not going to work through it in detail here, but if you think about it, it intuitively matches up with the algorithm we've been examining. See how it mentions "the smallest exponent $d$"? That's the same as our number of coin flips in each row of the diagrams we've been looking at! Each flip doubles `v`, so that's exponentiation right there. The process of defining $x(i + 1)$ in terms of $x(i)$ and $m^d$ (where $m = 2$ in our case) is essentially the same as our process of going from one row of the diagram to the next.
+This is a bit dense and I'm not going to work through it in detail here, but if you think about it, it roughly matches up with the algorithm we've been examining. See how it mentions "the smallest exponent $d$"? That's the same as our number of coin flips in each row of the diagrams we've been looking at! Each flip doubles `v`, so that's exponentiation right there. The process of defining $x(i + 1)$ in terms of $x(i)$ and $m^d$ (where $m = 2$ in our case) is essentially the same as our process of going from one row of the diagram to the next.
 
 That's all I'll say about this sequence for now, but by all means dig further into this definition if you're curious! And if you think about it and look back at the diagrams we've been drawing, there are a couple other sequences we could define instead... can you find any of those in the OEIS?
 
 ## Conclusion
 
-Hopefully you had fun reading this and learned a bit more about digital dice. I've posted this on [Hacker News][] and on [Twitter][], so feel free to reply there with any questions or comments!
+Hopefully you had fun reading this and learned a bit more about digital dice. Once I've published this I'll post it on [Hacker News][] and on [Twitter][], so feel free to reply there with any questions or comments!
 
 [binary]: https://youtu.be/sXxwr66Y79Y
 [entropy]: https://en.wikipedia.org/wiki/Entropy_(information_theory)
