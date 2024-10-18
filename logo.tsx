@@ -80,26 +80,6 @@ const intersectLineCircle = (l: Line, c: Circle): Point[] => {
 
 const s = 100;
 
-const Gradient = ({ id, l }: { id: string; l: number }) => {
-  return (
-    <linearGradient
-      id={id}
-      gradientUnits="userSpaceOnUse"
-      x1="0"
-      x2={s}
-      y1={s}
-      y2="0"
-    >
-      <stop offset="0%" stop-color={`hsl(0 100% ${l}%)`} />
-      <stop offset="20%" stop-color={`hsl(33 100% ${l}%)`} />
-      <stop offset="40%" stop-color={`hsl(66 100% ${l}%)`} />
-      <stop offset="60%" stop-color={`hsl(111 100% ${l}%)`} />
-      <stop offset="80%" stop-color={`hsl(222 100% ${l}%)`} />
-      <stop offset="100%" stop-color={`hsl(333 100% ${l}%)`} />
-    </linearGradient>
-  );
-};
-
 export const Logo = () => {
   const r2 = s / 3;
   const r1 = (s - 2 * r2) * Math.sqrt(2) - r2;
@@ -158,20 +138,17 @@ export const Logo = () => {
     `Z`,
   ];
 
+  const color = "#2c64de";
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
       version="1.1"
       viewBox={`0 0 ${s} ${s}`}
     >
-      <defs>
-        <Gradient id="one" l={90} />
-        <Gradient id="both" l={75} />
-      </defs>
-      <path d={first.join(" ")} fill="url(#one)" />
-      <path d={last.join(" ")} fill="url(#one)" />
-      <path d={both1.join(" ")} fill="url(#both)" />
-      <path d={both2.join(" ")} fill="url(#both)" />
+      <path d={first.join(" ")} fill={`${color}bb`} />
+      <path d={last.join(" ")} fill={`${color}bb`} />
+      <path d={both1.join(" ")} fill={`${color}`} />
+      <path d={both2.join(" ")} fill={`${color}`} />
     </svg>
   );
 };
