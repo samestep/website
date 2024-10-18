@@ -90,7 +90,7 @@ const generate = async () => {
     );
     const filename = `src/blog/${name}/index.md`;
     const markdown = (await Bun.file(filename).text()).replaceAll(
-      /\{\{(\w+)\}\}/g,
+      /^\{\{(\w+)\}\}$/gm,
       (_, key) => {
         const val = replacements.get(key);
         if (val === undefined) throw Error(`${filename} unknown key: ${key}`);
