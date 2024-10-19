@@ -167,6 +167,7 @@ export const blogHtml = ({ title, date, body }: Post) => (
         href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.5.1/katex.min.css"
       />
       <link rel="stylesheet" href="/blog.css" />
+      <link rel="stylesheet" href="style.css" />
       <title>{title} | Sam Estep</title>
     </head>
     <body>

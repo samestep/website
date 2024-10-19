@@ -24,7 +24,11 @@ const Svg = (props: { height: number; children: ComponentChildren }) => (
   </div>
 );
 
-const Histogram = (props: { probs: Map<string, number>; pmax: number }) => {
+const Histogram = (props: {
+  probs: Map<string, number>;
+  pmax: number;
+  label?: string;
+}) => {
   const { probs, pmax } = props;
 
   const height = 200;
@@ -76,11 +80,27 @@ const Histogram = (props: { probs: Map<string, number>; pmax: number }) => {
     ++i;
   }
 
+  const fullHeight = props.label === undefined ? height : height + 25;
+  const label =
+    props.label === undefined ? (
+      <></>
+    ) : (
+      <text
+        x={width / 2}
+        y={fullHeight - 5}
+        fill="white"
+        text-anchor="middle"
+        dominant-baseline="text-bottom"
+      >
+        {props.label}
+      </text>
+    );
   return (
-    <Svg height={height}>
+    <Svg height={fullHeight}>
       {bars}
       {ylabels}
       {xlabels}
+      {label}
       <polyline
         points={`${left},${top} ${left},${bottom} ${right},${bottom}`}
         fill="none"
@@ -103,7 +123,7 @@ const Bitsogram = ({ n }: { n: number }) => {
     probs.set(`${i * k}`, q * p);
     q *= 1 - p;
   }
-  return <Histogram probs={probs} pmax={1} />;
+  return <Histogram probs={probs} pmax={1} label="number of coin flips" />;
 };
 
 interface Plot {
@@ -430,7 +450,7 @@ export const content: Content = async () => {
         const b = { x, p }; // after exiting this state
         return [a, b];
       });
-      let e = 0; // expected value
+      let e = 0; // contribution to expected value without entering cycle
       for (let i = 0; i < cycle; ++i) {
         const pi = n / states[i].after; // conditional chance of ending here
         const [a, b] = accum[i];
@@ -438,20 +458,22 @@ export const content: Content = async () => {
       }
       const [c] = accum[cycle]; // information on entering first cycle iteration
       const pc = c.p - p; // probability of terminating in first cycle iteration
-      let ec = 0; // conditional expectation for first cycle iteration
+      let ec1 = 0; // conditional expectation for first cycle iteration
       for (let i = cycle; i < states.length; ++i) {
         const pi = n / states[i].after; // conditional chance of ending here
         const [a, b] = accum[i];
-        ec += (b.x * a.p * pi) / pc;
+        ec1 += (b.x * a.p * pi) / pc;
       }
-      // add the contribution from first cycle iteration
-      e += (c.p - p) * ec;
-      // further cycle iterations: multiply the probability of getting past the
-      // first iteration by that conditional expectation, by lumping together
-      // each iteration of the cycle into one Bernoulli trial to use the formula
-      // for geometric distribution
-      e += p * (ec + (x - c.x) / (1 - p / c.p));
-      return e;
+      // conditional expectation for a geometric distribution representing the
+      // entire cycle, by lumping together each iteration of the cycle into one
+      // Bernoulli trial to use the formula for the geometric distribution
+      // including zero as a possibility
+      const geometric = 1 / (1 - p / c.p) - 1;
+      // scale that geometric distribution by the number of flips used by each
+      // iteration of the cycle, then offset by the expected value for the very
+      // first iteration to get the conditional expectation for the entire cycle
+      const ec = ec1 + (x - c.x) * geometric;
+      return e + c.p * ec; // add expected value contribution from the cycle
     },
   };
   return {
