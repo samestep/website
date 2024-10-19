@@ -86,7 +86,7 @@ const Histogram = (props: {
       <></>
     ) : (
       <text
-        x={width / 2}
+        x={(left + right) / 2}
         y={fullHeight - 5}
         fill="white"
         text-anchor="middle"
