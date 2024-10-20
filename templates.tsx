@@ -1,6 +1,22 @@
 import { JSX } from "preact";
 
-const Favicon = () => <link rel="icon" type="image/png" href="/icon.png" />;
+const Head = () => (
+  <>
+    <meta charset="utf-8" />
+    <link rel="icon" type="image/png" href="/icon.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+      rel="preconnect"
+      href="https://fonts.gstatic.com"
+      crossorigin={true as any} // hack around Preact's JSX type checking
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap"
+      rel="stylesheet"
+    />
+  </>
+);
 
 export const indexHtml = ({
   pubs,
@@ -11,9 +27,7 @@ export const indexHtml = ({
 }) => (
   <html lang="en-us">
     <head>
-      <meta charset="utf-8" />
-      <Favicon />
-      <meta name="viewport" content="width=device-width, initial-scale=1" />
+      <Head />
       <link
         rel="stylesheet"
         href="https://cdn.jsdelivr.net/npm/fork-awesome@1.2.0/css/fork-awesome.min.css"
@@ -154,9 +168,7 @@ export interface Post {
 export const blogHtml = ({ title, date, body }: Post) => (
   <html lang="en-us">
     <head>
-      <meta charset="utf-8" />
-      <Favicon />
-      <meta name="viewport" content="width=device-width, initial-scale=1" />
+      <Head />
       <link
         rel="stylesheet"
         href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.10.0/styles/monokai.min.css"
