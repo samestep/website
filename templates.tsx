@@ -139,7 +139,6 @@ export const indexHtml = ({
         <h2>Publications</h2>
         {pubs}
         <h2>Blog</h2>
-        <p>I don't blog much.</p>
         {blog}
       </main>
     </body>

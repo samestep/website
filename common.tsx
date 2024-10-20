@@ -24,7 +24,10 @@ interface BlogPost {
 }
 
 const blogPosts: Record<string, BlogPost> = {
-  "random-integers": { title: "How can computers roll dice?" },
+  "random-integers": {
+    date: "2024-10-20",
+    title: "How can computers roll dice?",
+  },
   "parallelizing-nvcc": { date: "2021-02-20", title: "Parallelizing nvcc" },
 };
 
