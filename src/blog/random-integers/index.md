@@ -211,14 +211,14 @@ And there you have it: we learned
 
 One question you may still have is, how do computers flip coins in the first place? We kind of swept that under the rug at the beginning. Others have already written more about this, but simplifying a lot, your computer looks at something unpredictable in the real world, e.g. [lava lamps][], and uses some math to slice and dice what it sees into a sequence of random bits. Then your computer hands out those random bits to programs that ask for them, like the functions we've been looking at in this post.
 
-Hopefully you had fun reading this! Once I've published this I'll post it on [Hacker News][] and on [Twitter][], so feel free to reply there with any questions or comments!
+Hopefully you had fun reading this! I've posted it on [Hacker News][] and on [Twitter][], so feel free to reply there with any questions or comments!
 
 [binary]: https://youtu.be/sXxwr66Y79Y
 [entropy]: https://en.wikipedia.org/wiki/Entropy_(information_theory)
 [fdr]: https://arxiv.org/abs/1304.1916
 [google die]: https://www.google.com/search?q=roll+a+die
 [google coin]: https://www.google.com/search?q=flip+a+coin
-[hacker news]: https://news.ycombinator.com/user?id=sestep
+[hacker news]: https://news.ycombinator.com/item?id=41895360
 [lava lamps]: https://blog.cloudflare.com/lavarand-in-production-the-nitty-gritty-technical-details/
 [oeis a136042]: https://oeis.org/A136042
 [oeis a136043]: https://oeis.org/A136043
@@ -236,4 +236,4 @@ Hopefully you had fun reading this! Once I've published this I'll post it on [Ha
 [rejection sampling]: https://en.wikipedia.org/wiki/Rejection_sampling
 [stack overflow]: https://stackoverflow.com/a/62920514/5044950
 [three-sided coin]: https://imois.in/posts/3-sided-coin/
-[twitter]: https://twitter.com/sgestep
+[twitter]: https://x.com/sgestep/status/1847998964437537044
