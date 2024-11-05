@@ -1,0 +1,161 @@
+<!doctype html>
+<html lang="en-us">
+  <head>
+    <meta charset="utf-8" />
+    <link rel="icon" type="image/png" href="/icon.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,100..700;1,100..700&amp;family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&amp;display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.10.0/styles/monokai.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.5.1/katex.min.css"
+    />
+    <link rel="stylesheet" href="/blog.css" />
+    <link rel="stylesheet" href="style.css" />
+    <title>Differentiable Programming in General | Sam Estep</title>
+  </head>
+  <body>
+    <main>
+      <h1>Differentiable Programming in General</h1>
+      <p>
+        <em>by <a href="/">Sam Estep</a>, unpublished</em>
+      </p>
+      <div>
+        <p>You may have taken the derivative of a function:</p>
+        <p>
+          <span class="katex-display"
+            ><span class="katex"
+              ><span class="katex-mathml"
+                ><math
+                  ><semantics
+                    ><mrow
+                      ><mi>f</mi><mo>(</mo><mi>x</mi><mo>)</mo><mo>=</mo
+                      ><msup><mi>x</mi><mn>2</mn></msup
+                      ><mspace width="1em"></mspace><mo>⟹</mo
+                      ><mspace width="1em"></mspace
+                      ><msup
+                        ><mi>f</mi
+                        ><mrow><mi mathvariant="normal">′</mi></mrow></msup
+                      ><mo>(</mo><mi>x</mi><mo>)</mo><mo>=</mo><mn>2</mn
+                      ><mi>x</mi></mrow
+                    ><annotation encoding="application/x-tex"
+                      >f(x) = x^2 \quad\Longrightarrow\quad f&#x27;(x) = 2x
+                    </annotation></semantics
+                  ></math
+                ></span
+              ><span class="katex-html" aria-hidden="true"
+                ><span class="strut" style="height: 0.8641079999999999em"></span
+                ><span
+                  class="strut bottom"
+                  style="height: 1.1141079999999999em; vertical-align: -0.25em"
+                ></span
+                ><span class="base displaystyle textstyle uncramped"
+                  ><span class="mord mathit" style="margin-right: 0.10764em"
+                    >f</span
+                  ><span class="mopen">(</span><span class="mord mathit">x</span
+                  ><span class="mclose">)</span><span class="mrel">=</span
+                  ><span class="mord"
+                    ><span class="mord mathit">x</span
+                    ><span class="vlist"
+                      ><span style="top: -0.413em; margin-right: 0.05em"
+                        ><span class="fontsize-ensurer reset-size5 size5"
+                          ><span style="font-size: 0em">​</span></span
+                        ><span class="reset-textstyle scriptstyle uncramped"
+                          ><span class="mord mathrm">2</span></span
+                        ></span
+                      ><span class="baseline-fix"
+                        ><span class="fontsize-ensurer reset-size5 size5"
+                          ><span style="font-size: 0em">​</span></span
+                        >​</span
+                      ></span
+                    ></span
+                  ><span class="mord mspace quad"></span
+                  ><span class="mrel">⟹</span
+                  ><span class="mord mspace quad"></span
+                  ><span class="mord"
+                    ><span class="mord mathit" style="margin-right: 0.10764em"
+                      >f</span
+                    ><span class="vlist"
+                      ><span style="top: -0.413em; margin-right: 0.05em"
+                        ><span class="fontsize-ensurer reset-size5 size5"
+                          ><span style="font-size: 0em">​</span></span
+                        ><span class="reset-textstyle scriptstyle uncramped"
+                          ><span class="mord scriptstyle uncramped"
+                            ><span class="mord mathrm">′</span></span
+                          ></span
+                        ></span
+                      ><span class="baseline-fix"
+                        ><span class="fontsize-ensurer reset-size5 size5"
+                          ><span style="font-size: 0em">​</span></span
+                        >​</span
+                      ></span
+                    ></span
+                  ><span class="mopen">(</span><span class="mord mathit">x</span
+                  ><span class="mclose">)</span><span class="mrel">=</span
+                  ><span class="mord mathrm">2</span
+                  ><span class="mord mathit">x</span></span
+                ></span
+              ></span
+            ></span
+          >
+        </p>
+        <p>
+          Of course, that's a pretty simple function. An
+          <a href="https://en.wikipedia.org/wiki/Elementary_function"
+            >elementary function</a
+          >, one might say. And it turns out that for any elementary function,
+          you can take the derivative and get another elementary function. Neat!
+        </p>
+        <p>
+          But what if you have a function that's not so elementary? Maybe it's
+          not written in flowy math notation with an italic font; maybe it's
+          code in a monospace font, and it has <code>if</code> statements and
+          <code>while</code> loops and recursion:
+        </p>
+        <pre><code>def f x = x * x
+</code></pre>
+        <p>
+          Why would I ever want to take the derivative of such a function? Well,
+          because it lets me do this:
+        </p>
+        <p>TODO</p>
+        <p>
+          There's a technique called <em>automatic differentiation</em> (often
+          abbreviated &quot;autodiff&quot; or just &quot;AD&quot;) which lets
+          you take a program that computes a mathematical function, and turn it
+          into a computer that computes the derivative of that function. This is
+          pretty much a tale as old as time, so lots of people have written
+          about it already: for instance, there's a great
+          <a
+            href="https://nickmccleery.com/posts/05-differentiable-programming-in-engineering/"
+            >post by Nick McCleery</a
+          >
+          describing applications of differentiable programming in engineering,
+          and there's also a great
+          <a href="https://thenumb.at/Autodiff/">post by Max Slater</a>
+          describing how to do autodiff on simpler programs that are expressed
+          as fixed-shape computation graphs, along with some applications in
+          computer graphics. You should read either or both of those if you're
+          interested!
+        </p>
+        <p>
+          Here though, I'm gonna do something a bit different: I'm going to
+          explain how you can take the derivative of <em>general programs</em>,
+          not just computation graphs. And unlike all the many academic papers
+          written on this topic, every example is going to be editable so you
+          can play around and see the generated derivative code in real-time.
+        </p>
+        <hr />
+        <p>OK.</p>
+      </div>
+    </main>
+  </body>
+</html>
