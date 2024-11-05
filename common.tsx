@@ -24,6 +24,7 @@ interface BlogPost {
 }
 
 const blogPosts: Record<string, BlogPost> = {
+  autodiff: { title: "Differentiable Programming in General" },
   "random-integers": {
     date: "2024-10-20",
     title: "How can computers roll dice?",
