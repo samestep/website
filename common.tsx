@@ -116,7 +116,7 @@ const generate = async () => {
 };
 
 export const build = async () => {
-  await fs.rm(out, { recursive: true });
+  await fs.rm(out, { force: true, recursive: true });
   await generate();
   const tmp = "tmp";
   const dist = "dist";
@@ -124,5 +124,5 @@ export const build = async () => {
     await fs.rename(dist, tmp);
   } catch (_) {}
   await fs.rename(out, dist);
-  await fs.rm(tmp, { recursive: true });
+  await fs.rm(tmp, { force: true, recursive: true });
 };
