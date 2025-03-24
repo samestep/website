@@ -1,6 +1,6 @@
 # My website
 
-To develop locally, install [Bun][] and run these commands:
+To develop locally, run these commands:
 
 ```sh
 bun install
@@ -12,5 +12,3 @@ Then in a separate terminal:
 ```sh
 bun run serve
 ```
-
-[bun]: https://bun.sh/
