@@ -13,5 +13,5 @@ img {
 hr {
   border: none;
   height: 2px;
-  background-color: var(--color-text);
+  background-color: var(--color-text-dark);
 }
