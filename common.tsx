@@ -18,6 +18,16 @@ const renderHtml = async (element: JSX.Element) =>
 
 const out = "out";
 
+const getBlogPostContent = async (
+  name: string,
+): Promise<Map<string, string>> => {
+  if (!(await fs.exists(`src/blog/${name}/content.tsx`))) return new Map();
+  const content: Content = (await import(`./src/blog/${name}/content`)).content;
+  return new Map(
+    Object.entries(await content()).map(([k, v]) => [k, render(v)]),
+  );
+};
+
 interface BlogPost {
   date?: string;
   title: string;
@@ -86,12 +96,8 @@ const generate = async () => {
   for (const [name, { date, title }] of Object.entries(blogPosts)) {
     await fs.cp(`src/blog/${name}`, `${out}/blog/${name}`, { recursive: true });
     await fs.rm(`out/blog/${name}/index.md`);
-    await fs.rm(`out/blog/${name}/content.tsx`);
-    const content: Content = (await import(`./src/blog/${name}/content`))
-      .content;
-    const replacements = new Map(
-      Object.entries(await content()).map(([k, v]) => [k, render(v)]),
-    );
+    await fs.rm(`out/blog/${name}/content.tsx`, { force: true });
+    const replacements = await getBlogPostContent(name);
     const filename = `src/blog/${name}/index.md`;
     const markdown = (await Bun.file(filename).text()).replaceAll(
       /^\{\{(\w+)\}\}$/gm,
@@ -108,9 +114,12 @@ const generate = async () => {
         }}
       ></div>
     );
+    const css = await fs.exists(`src/blog/${name}/style.css`);
     await Bun.write(
       `${out}/blog/${name}/index.html`,
-      await renderHtml(blogHtml({ date: date ?? "unpublished", title, body })),
+      await renderHtml(
+        blogHtml({ css, date: date ?? "unpublished", title, body }),
+      ),
     );
   }
 };
