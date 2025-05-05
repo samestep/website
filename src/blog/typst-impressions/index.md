@@ -14,7 +14,7 @@ There seems to be some pretty smart behavior for automatically scrolling the ren
 
 - Interestingly, it only seems to jump when adding characters, not when deleting them.
 
-- Unlike [Overleaf](https://www.overleaf.com/), I don't see a button you can just click to scroll the rendered output to the point corresponding to a location in the source. This doesn't really matter though, since you can just type in the source to make it automatically scroll.
+- ~~Unlike [Overleaf](https://www.overleaf.com/), I don't see a button you can just click to scroll the rendered output to the point corresponding to a location in the source. This doesn't really matter though, since you can just type in the source to make it automatically scroll.~~ Edit (Cinco de Mayo 2025): apparently there is actually a "Scroll preview to cursor position" button. Not sure if they added it recently or if I just missed it before.
 
 Just like with LaTeX, you can click on a reference number to jump to the corresponding bibliography item. I kind of wish there were a keyboard shortcut to jump back (similar to [`^-` in VS Code](https://code.visualstudio.com/docs/getstarted/tips-and-tricks#_go-to-definition)), but again, I can achieve that by just typing in the source.
 
