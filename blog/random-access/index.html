@@ -1,0 +1,229 @@
+<!doctype html>
+<html lang="en-us">
+  <head>
+    <meta charset="utf-8" />
+    <link rel="icon" type="image/png" href="/icon.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,100..700;1,100..700&amp;family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&amp;display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.10.0/styles/monokai.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.5.1/katex.min.css"
+    />
+    <link rel="stylesheet" href="/blog.css" />
+    <title>How much slower is random access, really? | Sam Estep</title>
+  </head>
+  <body>
+    <main>
+      <h1>How much slower is random access, really?</h1>
+      <p>
+        <em>by <a href="/">Sam Estep</a>, unpublished</em>
+      </p>
+      <div>
+        <p>
+          I've been enjoying learning about data-oriented design (DoD) lately.
+          It's exciting to dream of a future where all our compilers are faster!
+        </p>
+        <ul>
+          <li>
+            <a href="https://blog.nelhage.com/post/why-sorbet-is-fast/"
+              >Sorbet</a
+            >
+          </li>
+          <li><a href="https://youtu.be/ZI198eFghJk">Carbon</a></li>
+          <li><a href="https://youtu.be/IroPQ150F6c">Zig</a></li>
+          <li>Jai (I don't have a good video link for this one)</li>
+        </ul>
+        <p>
+          When I mentioned some of these ideas with a friend, he asked
+          <em>how much</em> of a difference it actually makes to access data in
+          cache-friendly vs cache-unfriendly ways. He's working in the more
+          theoretical context of
+          <a href="https://en.wikipedia.org/wiki/Streaming_algorithm"
+            >streaming algorithms</a
+          >, so really he just wanted to know how justified he is in switching
+          between &quot;arbitrary order&quot; and &quot;random order&quot; as
+          necessary.
+        </p>
+        <p>
+          But I realized that, while I have some high-level intuitions, and some
+          of those videos I've been watching give performance numbers for whole
+          pieces of software, I don't actually know what the numbers look like
+          for simple programs. So let's measure!
+        </p>
+        <h2>The setup</h2>
+        <p>
+          Let's say you have an array of floating-point numbers in memory. You
+          can add those numbers up in any order you like. Let's consider two
+          possible orderings:
+        </p>
+        <ol>
+          <li>First to last.</li>
+          <li>Random.</li>
+        </ol>
+        <p>
+          You won't necessarily get the same answer because
+          <a href="https://walkingrandomly.com/?p=5380"
+            >floating-point addition is not associative</a
+          >; I kind of like that for this experiment because it means I can more
+          easily trust the compiler not to do optimizations I don't expect.
+        </p>
+        <p>
+          To specify the order, we'll just have another array that holds
+          integers. That way, once we've chosen the precisions for our
+          floating-point and integer data types, we should be using the
+          <em>exact same machine code</em> for forward order, random order, or
+          any other order we want. The performance should be entirely determined
+          by <em>dynamic</em> behavior in the CPU based on the data we're using.
+        </p>
+        <details>
+          <summary>
+            Expand this to see Rust code for what we just talked about.
+          </summary>
+          <pre><code class="language-rust"><span class="hljs-keyword">use</span> std::ops::{AddAssign, Index};
+
+<span class="hljs-keyword">use</span> num::{Float, Num, traits::ToBytes};
+
+<span class="hljs-keyword">trait</span> <span class="hljs-title class_">Number</span>: <span class="hljs-built_in">Sized</span> + <span class="hljs-built_in">Copy</span> + AddAssign + Num + Float + ToBytes {}
+
+<span class="hljs-keyword">impl</span> <span class="hljs-title class_">Number</span> <span class="hljs-keyword">for</span> <span class="hljs-title class_">f32</span> {}
+
+<span class="hljs-keyword">impl</span> <span class="hljs-title class_">Number</span> <span class="hljs-keyword">for</span> <span class="hljs-title class_">f64</span> {}
+
+<span class="hljs-keyword">fn</span> <span class="hljs-title function_">sum</span>&lt;T: Number, I: <span class="hljs-built_in">Copy</span>&gt;(floats: &amp;[T], indices: &amp;[I]) <span class="hljs-punctuation">-&gt;</span> T
+<span class="hljs-keyword">where</span>
+    [T]: Index&lt;I, Output = T&gt;,
+{
+    <span class="hljs-keyword">let</span> <span class="hljs-keyword">mut </span><span class="hljs-variable">total</span> = T::<span class="hljs-title function_ invoke__">zero</span>();
+    <span class="hljs-keyword">for</span> &amp;i <span class="hljs-keyword">in</span> indices {
+        total += floats[i];
+    }
+    total
+}
+
+<span class="hljs-meta">#[test]</span>
+<span class="hljs-keyword">fn</span> <span class="hljs-title function_">test_sum_f64_usize_not_associative</span>() {
+    <span class="hljs-keyword">let</span> <span class="hljs-variable">floats</span>: &amp;[<span class="hljs-type">f64</span>] = &amp;[<span class="hljs-number">0.1</span>, <span class="hljs-number">0.2</span>, <span class="hljs-number">0.3</span>];
+    <span class="hljs-keyword">let</span> <span class="hljs-variable">forward</span>: &amp;[<span class="hljs-type">usize</span>] = &amp;[<span class="hljs-number">0</span>, <span class="hljs-number">1</span>, <span class="hljs-number">2</span>];
+    <span class="hljs-keyword">let</span> <span class="hljs-variable">backward</span>: &amp;[<span class="hljs-type">usize</span>] = &amp;[<span class="hljs-number">2</span>, <span class="hljs-number">1</span>, <span class="hljs-number">0</span>];
+    <span class="hljs-built_in">assert_eq!</span>(<span class="hljs-title function_ invoke__">sum</span>(floats, forward), <span class="hljs-number">0.6000000000000001</span>);
+    <span class="hljs-built_in">assert_eq!</span>(<span class="hljs-title function_ invoke__">sum</span>(floats, backward), <span class="hljs-number">0.6</span>);
+}
+</code></pre>
+        </details>
+        <p>
+          Now all we need to do is generate some random data. For the
+          floating-point numbers we can just use a
+          <a href="https://en.wikipedia.org/wiki/Normal_distribution"
+            >normal distribution</a
+          >, and for the integer indices we can just take the list of integers
+          up to the length of our array, and
+          <a href="https://en.wikipedia.org/wiki/Fisher%E2%80%93Yates_shuffle"
+            >shuffle</a
+          >
+          it to get a random order.
+        </p>
+        <p>
+          Or rather, that's what I thought at first. Small spoiler: further down
+          we're going to do some experiments with arrays too big to fit in
+          memory, and for those, Fisher–Yates turned out to be way too slow. So
+          instead I implemented a
+          <a href="https://blog.janestreet.com/how-to-shuffle-a-big-dataset/"
+            >two-pass shuffle</a
+          >
+          which first partitions the array into chunks that are about a gigabyte
+          each.
+        </p>
+        <details>
+          <summary>Code for generating our random data files.</summary>
+          <pre><code class="language-rust"><span class="hljs-keyword">use</span> std::{
+    fmt, fs,
+    io::{<span class="hljs-keyword">self</span>, Read, Seek, Write},
+};
+
+<span class="hljs-keyword">use</span> rand::Rng;
+<span class="hljs-keyword">use</span> rand_distr::{Distribution, Normal, StandardNormal};
+<span class="hljs-keyword">use</span> tempfile::tempfile;
+
+<span class="hljs-keyword">trait</span> <span class="hljs-title class_">Int</span>: TryFrom&lt;<span class="hljs-type">usize</span>, Error: fmt::<span class="hljs-built_in">Debug</span>&gt; + ToBytes {}
+
+<span class="hljs-keyword">impl</span> <span class="hljs-title class_">Int</span> <span class="hljs-keyword">for</span> <span class="hljs-title class_">usize</span> {}
+
+<span class="hljs-keyword">trait</span> <span class="hljs-title class_">Progress</span> {
+    <span class="hljs-keyword">fn</span> <span class="hljs-title function_">new</span>(len: <span class="hljs-type">usize</span>) <span class="hljs-punctuation">-&gt;</span> <span class="hljs-keyword">Self</span>;
+
+    <span class="hljs-keyword">fn</span> <span class="hljs-title function_">inc</span>(&amp;<span class="hljs-keyword">mut</span> <span class="hljs-keyword">self</span>);
+}
+
+<span class="hljs-keyword">impl</span> <span class="hljs-title class_">Progress</span> <span class="hljs-keyword">for</span> () {
+    <span class="hljs-keyword">fn</span> <span class="hljs-title function_">new</span>(_: <span class="hljs-type">usize</span>) <span class="hljs-punctuation">-&gt;</span> <span class="hljs-keyword">Self</span> {}
+
+    <span class="hljs-keyword">fn</span> <span class="hljs-title function_">inc</span>(&amp;<span class="hljs-keyword">mut</span> <span class="hljs-keyword">self</span>) {}
+}
+
+<span class="hljs-keyword">fn</span> <span class="hljs-title function_">random_floats</span>&lt;T: Number, P: Progress&gt;(rng: &amp;<span class="hljs-keyword">mut</span> <span class="hljs-keyword">impl</span> <span class="hljs-title class_">Rng</span>, <span class="hljs-keyword">mut</span> writer: <span class="hljs-keyword">impl</span> <span class="hljs-title class_">Write</span>, n: <span class="hljs-type">usize</span>)
+<span class="hljs-keyword">where</span>
+    StandardNormal: Distribution&lt;T&gt;,
+{
+    <span class="hljs-keyword">let</span> <span class="hljs-keyword">mut </span><span class="hljs-variable">progress</span> = P::<span class="hljs-title function_ invoke__">new</span>(n);
+    <span class="hljs-keyword">let</span> <span class="hljs-variable">normal</span> = Normal::&lt;T&gt;::<span class="hljs-title function_ invoke__">new</span>(T::<span class="hljs-title function_ invoke__">zero</span>(), T::<span class="hljs-title function_ invoke__">one</span>()).<span class="hljs-title function_ invoke__">unwrap</span>();
+    <span class="hljs-keyword">for</span> <span class="hljs-variable">_</span> <span class="hljs-keyword">in</span> <span class="hljs-number">0</span>..n {
+        <span class="hljs-keyword">let</span> <span class="hljs-variable">x</span> = normal.<span class="hljs-title function_ invoke__">sample</span>(rng);
+        writer.<span class="hljs-title function_ invoke__">write_all</span>(x.<span class="hljs-title function_ invoke__">to_ne_bytes</span>().<span class="hljs-title function_ invoke__">as_ref</span>()).<span class="hljs-title function_ invoke__">unwrap</span>();
+        progress.<span class="hljs-title function_ invoke__">inc</span>();
+    }
+}
+
+<span class="hljs-keyword">fn</span> <span class="hljs-title function_">first_to_last</span>&lt;I: Int, P: Progress&gt;(<span class="hljs-keyword">mut</span> writer: <span class="hljs-keyword">impl</span> <span class="hljs-title class_">Write</span>, n: <span class="hljs-type">usize</span>) {
+    <span class="hljs-keyword">let</span> <span class="hljs-keyword">mut </span><span class="hljs-variable">progress</span> = P::<span class="hljs-title function_ invoke__">new</span>(n);
+    <span class="hljs-keyword">for</span> <span class="hljs-variable">i</span> <span class="hljs-keyword">in</span> <span class="hljs-number">0</span>..n {
+        writer
+            .<span class="hljs-title function_ invoke__">write_all</span>(I::<span class="hljs-title function_ invoke__">try_from</span>(i).<span class="hljs-title function_ invoke__">unwrap</span>().<span class="hljs-title function_ invoke__">to_ne_bytes</span>().<span class="hljs-title function_ invoke__">as_ref</span>())
+            .<span class="hljs-title function_ invoke__">unwrap</span>();
+        progress.<span class="hljs-title function_ invoke__">inc</span>();
+    }
+}
+
+<span class="hljs-keyword">fn</span> <span class="hljs-title function_">permutation</span>&lt;I: Int, P: Progress&gt;(rng: &amp;<span class="hljs-keyword">mut</span> <span class="hljs-keyword">impl</span> <span class="hljs-title class_">Rng</span>, <span class="hljs-keyword">mut</span> writer: <span class="hljs-keyword">impl</span> <span class="hljs-title class_">Write</span>, n: <span class="hljs-type">usize</span>) {
+    <span class="hljs-keyword">let</span> <span class="hljs-variable">m</span> = (n * size_of::&lt;I&gt;()).<span class="hljs-title function_ invoke__">div_ceil</span>(<span class="hljs-number">1</span> &lt;&lt; <span class="hljs-number">30</span>);
+    <span class="hljs-keyword">let</span> <span class="hljs-keyword">mut </span><span class="hljs-variable">progress</span> = P::<span class="hljs-title function_ invoke__">new</span>(<span class="hljs-number">2</span> * n);
+    <span class="hljs-keyword">let</span> <span class="hljs-keyword">mut </span><span class="hljs-variable">files</span>: <span class="hljs-type">Vec</span>&lt;fs::File&gt; = (<span class="hljs-number">0</span>..m).<span class="hljs-title function_ invoke__">map</span>(|_| <span class="hljs-title function_ invoke__">tempfile</span>().<span class="hljs-title function_ invoke__">unwrap</span>()).<span class="hljs-title function_ invoke__">collect</span>();
+    {
+        <span class="hljs-keyword">let</span> <span class="hljs-keyword">mut </span><span class="hljs-variable">writers</span>: <span class="hljs-type">Vec</span>&lt;io::BufWriter&lt;_&gt;&gt; = files.<span class="hljs-title function_ invoke__">iter_mut</span>().<span class="hljs-title function_ invoke__">map</span>(io::BufWriter::new).<span class="hljs-title function_ invoke__">collect</span>();
+        <span class="hljs-keyword">for</span> <span class="hljs-variable">i</span> <span class="hljs-keyword">in</span> <span class="hljs-number">0</span>..n {
+            <span class="hljs-keyword">let</span> <span class="hljs-variable">j</span> = rng.<span class="hljs-title function_ invoke__">random_range</span>(<span class="hljs-number">0</span>..m);
+            writers[j]
+                .<span class="hljs-title function_ invoke__">write_all</span>(I::<span class="hljs-title function_ invoke__">try_from</span>(i).<span class="hljs-title function_ invoke__">unwrap</span>().<span class="hljs-title function_ invoke__">to_ne_bytes</span>().<span class="hljs-title function_ invoke__">as_ref</span>())
+                .<span class="hljs-title function_ invoke__">unwrap</span>();
+            progress.<span class="hljs-title function_ invoke__">inc</span>();
+        }
+    }
+    <span class="hljs-keyword">for</span> <span class="hljs-title class_">mut</span> file <span class="hljs-keyword">in</span> files {
+        <span class="hljs-keyword">let</span> <span class="hljs-keyword">mut </span><span class="hljs-variable">bytes</span> = <span class="hljs-type">Vec</span>::<span class="hljs-title function_ invoke__">new</span>();
+        file.<span class="hljs-title function_ invoke__">seek</span>(io::SeekFrom::<span class="hljs-title function_ invoke__">Start</span>(<span class="hljs-number">0</span>)).<span class="hljs-title function_ invoke__">unwrap</span>();
+        file.<span class="hljs-title function_ invoke__">read_to_end</span>(&amp;<span class="hljs-keyword">mut</span> bytes).<span class="hljs-title function_ invoke__">unwrap</span>();
+        <span class="hljs-keyword">let</span> (prefix, values, suffix) = <span class="hljs-keyword">unsafe</span> { bytes.align_to_mut::&lt;I&gt;() };
+        <span class="hljs-built_in">assert!</span>(prefix.<span class="hljs-title function_ invoke__">is_empty</span>());
+        <span class="hljs-built_in">assert!</span>(suffix.<span class="hljs-title function_ invoke__">is_empty</span>());
+        <span class="hljs-keyword">for</span> <span class="hljs-variable">i</span> <span class="hljs-keyword">in</span> <span class="hljs-number">0</span>..values.<span class="hljs-title function_ invoke__">len</span>() {
+            <span class="hljs-keyword">let</span> <span class="hljs-variable">j</span> = rng.<span class="hljs-title function_ invoke__">random_range</span>(..=i);
+            values.<span class="hljs-title function_ invoke__">swap</span>(i, j);
+            progress.<span class="hljs-title function_ invoke__">inc</span>();
+        }
+        writer.<span class="hljs-title function_ invoke__">write_all</span>(&amp;bytes).<span class="hljs-title function_ invoke__">unwrap</span>();
+    }
+}
+</code></pre>
+        </details>
+      </div>
+    </main>
+  </body>
+</html>
