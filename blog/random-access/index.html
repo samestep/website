@@ -88,7 +88,7 @@
           By the way, all the code to reproduce the measurements in this blog
           post can be found in a
           <a
-            href="https://github.com/samestep/random-access/tree/62a9624ddccbb96a2948d27065030b2ee45c900c"
+            href="https://github.com/samestep/random-access/tree/45ffc8fa71afefbe3a9c5e2ed68f1974335b1b25"
             >supplementary repository on GitHub</a
           >.
         </p>
@@ -169,12 +169,6 @@
     <span class="hljs-keyword">fn</span> <span class="hljs-title function_">new</span>(len: <span class="hljs-type">usize</span>) <span class="hljs-punctuation">-&gt;</span> <span class="hljs-keyword">Self</span>;
 
     <span class="hljs-keyword">fn</span> <span class="hljs-title function_">step</span>(&amp;<span class="hljs-keyword">mut</span> <span class="hljs-keyword">self</span>);
-}
-
-<span class="hljs-keyword">impl</span> <span class="hljs-title class_">Progress</span> <span class="hljs-keyword">for</span> () {
-    <span class="hljs-keyword">fn</span> <span class="hljs-title function_">new</span>(_: <span class="hljs-type">usize</span>) <span class="hljs-punctuation">-&gt;</span> <span class="hljs-keyword">Self</span> {}
-
-    <span class="hljs-keyword">fn</span> <span class="hljs-title function_">step</span>(&amp;<span class="hljs-keyword">mut</span> <span class="hljs-keyword">self</span>) {}
 }
 
 <span class="hljs-keyword">fn</span> <span class="hljs-title function_">random_floats</span>&lt;T: Number, P: Progress&gt;(rng: &amp;<span class="hljs-keyword">mut</span> <span class="hljs-keyword">impl</span> <span class="hljs-title class_">Rng</span>, <span class="hljs-keyword">mut</span> writer: <span class="hljs-keyword">impl</span> <span class="hljs-title class_">Write</span>, n: <span class="hljs-type">usize</span>)
@@ -332,7 +326,7 @@
     indices: &amp;<span class="hljs-symbol">&#x27;a</span> <span class="hljs-type">str</span>,
     exponent: <span class="hljs-type">usize</span>,
     iteration: <span class="hljs-type">usize</span>,
-    total: <span class="hljs-type">f64</span>,
+    output: <span class="hljs-type">f64</span>,
     seconds: <span class="hljs-type">f64</span>,
 }
 
@@ -387,7 +381,7 @@
             indices: dir_indices,
             exponent,
             iteration,
-            total: total.<span class="hljs-title function_ invoke__">into</span>(),
+            output: total.<span class="hljs-title function_ invoke__">into</span>(),
             seconds: duration.<span class="hljs-title function_ invoke__">as_secs_f64</span>(),
         };
         <span class="hljs-built_in">println!</span>(<span class="hljs-string">&quot;{}&quot;</span>, serde_json::<span class="hljs-title function_ invoke__">to_string</span>(&amp;measurement).<span class="hljs-title function_ invoke__">unwrap</span>());
