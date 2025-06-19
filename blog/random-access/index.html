@@ -59,7 +59,7 @@
           pieces of software, I don't actually know what the numbers look like
           for simple programs. So let's measure!
         </p>
-        <h2>The setup</h2>
+        <h2>Setup</h2>
         <p>
           Let's say you have an array of floating-point numbers in memory. You
           can add those numbers up in any order you like. Let's consider two
@@ -84,15 +84,21 @@
           any other order we want. The performance should be entirely determined
           by <em>dynamic</em> behavior in the CPU based on the data we're using.
         </p>
+        <p>
+          By the way, all the code to reproduce the measurements in this blog
+          post can be found in a
+          <a
+            href="https://github.com/samestep/random-access/tree/62a9624ddccbb96a2948d27065030b2ee45c900c"
+            >supplementary repository on GitHub</a
+          >.
+        </p>
         <details>
-          <summary>
-            Expand this to see Rust code for what we just talked about.
-          </summary>
+          <summary>Expand this to see some Rust code.</summary>
           <pre><code class="language-rust"><span class="hljs-keyword">use</span> std::ops::{AddAssign, Index};
 
 <span class="hljs-keyword">use</span> num::{Float, Num, traits::ToBytes};
 
-<span class="hljs-keyword">trait</span> <span class="hljs-title class_">Number</span>: <span class="hljs-built_in">Sized</span> + <span class="hljs-built_in">Copy</span> + AddAssign + Num + Float + ToBytes {}
+<span class="hljs-keyword">trait</span> <span class="hljs-title class_">Number</span>: <span class="hljs-built_in">Sized</span> + <span class="hljs-built_in">Copy</span> + <span class="hljs-built_in">Into</span>&lt;<span class="hljs-type">f64</span>&gt; + AddAssign + Num + Float + ToBytes {}
 
 <span class="hljs-keyword">impl</span> <span class="hljs-title class_">Number</span> <span class="hljs-keyword">for</span> <span class="hljs-title class_">f32</span> {}
 
@@ -143,7 +149,7 @@
           each.
         </p>
         <details>
-          <summary>Code for generating our random data files.</summary>
+          <summary>Code to generate our random data.</summary>
           <pre><code class="language-rust"><span class="hljs-keyword">use</span> std::{
     fmt, fs,
     io::{<span class="hljs-keyword">self</span>, Read, Seek, Write},
@@ -155,18 +161,20 @@
 
 <span class="hljs-keyword">trait</span> <span class="hljs-title class_">Int</span>: TryFrom&lt;<span class="hljs-type">usize</span>, Error: fmt::<span class="hljs-built_in">Debug</span>&gt; + ToBytes {}
 
-<span class="hljs-keyword">impl</span> <span class="hljs-title class_">Int</span> <span class="hljs-keyword">for</span> <span class="hljs-title class_">usize</span> {}
+<span class="hljs-keyword">impl</span> <span class="hljs-title class_">Int</span> <span class="hljs-keyword">for</span> <span class="hljs-title class_">u32</span> {}
+
+<span class="hljs-keyword">impl</span> <span class="hljs-title class_">Int</span> <span class="hljs-keyword">for</span> <span class="hljs-title class_">u64</span> {}
 
 <span class="hljs-keyword">trait</span> <span class="hljs-title class_">Progress</span> {
     <span class="hljs-keyword">fn</span> <span class="hljs-title function_">new</span>(len: <span class="hljs-type">usize</span>) <span class="hljs-punctuation">-&gt;</span> <span class="hljs-keyword">Self</span>;
 
-    <span class="hljs-keyword">fn</span> <span class="hljs-title function_">inc</span>(&amp;<span class="hljs-keyword">mut</span> <span class="hljs-keyword">self</span>);
+    <span class="hljs-keyword">fn</span> <span class="hljs-title function_">step</span>(&amp;<span class="hljs-keyword">mut</span> <span class="hljs-keyword">self</span>);
 }
 
 <span class="hljs-keyword">impl</span> <span class="hljs-title class_">Progress</span> <span class="hljs-keyword">for</span> () {
     <span class="hljs-keyword">fn</span> <span class="hljs-title function_">new</span>(_: <span class="hljs-type">usize</span>) <span class="hljs-punctuation">-&gt;</span> <span class="hljs-keyword">Self</span> {}
 
-    <span class="hljs-keyword">fn</span> <span class="hljs-title function_">inc</span>(&amp;<span class="hljs-keyword">mut</span> <span class="hljs-keyword">self</span>) {}
+    <span class="hljs-keyword">fn</span> <span class="hljs-title function_">step</span>(&amp;<span class="hljs-keyword">mut</span> <span class="hljs-keyword">self</span>) {}
 }
 
 <span class="hljs-keyword">fn</span> <span class="hljs-title function_">random_floats</span>&lt;T: Number, P: Progress&gt;(rng: &amp;<span class="hljs-keyword">mut</span> <span class="hljs-keyword">impl</span> <span class="hljs-title class_">Rng</span>, <span class="hljs-keyword">mut</span> writer: <span class="hljs-keyword">impl</span> <span class="hljs-title class_">Write</span>, n: <span class="hljs-type">usize</span>)
@@ -178,7 +186,7 @@
     <span class="hljs-keyword">for</span> <span class="hljs-variable">_</span> <span class="hljs-keyword">in</span> <span class="hljs-number">0</span>..n {
         <span class="hljs-keyword">let</span> <span class="hljs-variable">x</span> = normal.<span class="hljs-title function_ invoke__">sample</span>(rng);
         writer.<span class="hljs-title function_ invoke__">write_all</span>(x.<span class="hljs-title function_ invoke__">to_ne_bytes</span>().<span class="hljs-title function_ invoke__">as_ref</span>()).<span class="hljs-title function_ invoke__">unwrap</span>();
-        progress.<span class="hljs-title function_ invoke__">inc</span>();
+        progress.<span class="hljs-title function_ invoke__">step</span>();
     }
 }
 
@@ -188,7 +196,7 @@
         writer
             .<span class="hljs-title function_ invoke__">write_all</span>(I::<span class="hljs-title function_ invoke__">try_from</span>(i).<span class="hljs-title function_ invoke__">unwrap</span>().<span class="hljs-title function_ invoke__">to_ne_bytes</span>().<span class="hljs-title function_ invoke__">as_ref</span>())
             .<span class="hljs-title function_ invoke__">unwrap</span>();
-        progress.<span class="hljs-title function_ invoke__">inc</span>();
+        progress.<span class="hljs-title function_ invoke__">step</span>();
     }
 }
 
@@ -203,7 +211,7 @@
             writers[j]
                 .<span class="hljs-title function_ invoke__">write_all</span>(I::<span class="hljs-title function_ invoke__">try_from</span>(i).<span class="hljs-title function_ invoke__">unwrap</span>().<span class="hljs-title function_ invoke__">to_ne_bytes</span>().<span class="hljs-title function_ invoke__">as_ref</span>())
                 .<span class="hljs-title function_ invoke__">unwrap</span>();
-            progress.<span class="hljs-title function_ invoke__">inc</span>();
+            progress.<span class="hljs-title function_ invoke__">step</span>();
         }
     }
     <span class="hljs-keyword">for</span> <span class="hljs-title class_">mut</span> file <span class="hljs-keyword">in</span> files {
@@ -216,13 +224,203 @@
         <span class="hljs-keyword">for</span> <span class="hljs-variable">i</span> <span class="hljs-keyword">in</span> <span class="hljs-number">0</span>..values.<span class="hljs-title function_ invoke__">len</span>() {
             <span class="hljs-keyword">let</span> <span class="hljs-variable">j</span> = rng.<span class="hljs-title function_ invoke__">random_range</span>(..=i);
             values.<span class="hljs-title function_ invoke__">swap</span>(i, j);
-            progress.<span class="hljs-title function_ invoke__">inc</span>();
+            progress.<span class="hljs-title function_ invoke__">step</span>();
         }
         writer.<span class="hljs-title function_ invoke__">write_all</span>(&amp;bytes).<span class="hljs-title function_ invoke__">unwrap</span>();
     }
 }
 </code></pre>
         </details>
+        <p>
+          Now all we need to do is use this to make a bunch of files with data
+          of different sizes. We'll just do all the powers of two up whatever
+          fits comfortably on our SSD.
+        </p>
+        <details>
+          <summary>Code for bulk data generation into files.</summary>
+          <pre><code class="language-rust"><span class="hljs-keyword">use</span> std::{ops::RangeInclusive, path::Path};
+
+<span class="hljs-keyword">use</span> indicatif::ProgressBar;
+<span class="hljs-keyword">use</span> rand::SeedableRng;
+
+<span class="hljs-keyword">impl</span> <span class="hljs-title class_">Progress</span> <span class="hljs-keyword">for</span> <span class="hljs-title class_">ProgressBar</span> {
+    <span class="hljs-keyword">fn</span> <span class="hljs-title function_">new</span>(len: <span class="hljs-type">usize</span>) <span class="hljs-punctuation">-&gt;</span> <span class="hljs-keyword">Self</span> {
+        <span class="hljs-keyword">let</span> <span class="hljs-variable">bar</span> = ProgressBar::<span class="hljs-title function_ invoke__">new</span>(len <span class="hljs-keyword">as</span> <span class="hljs-type">u64</span>);
+        bar.<span class="hljs-title function_ invoke__">set_position</span>(<span class="hljs-number">0</span>);
+        bar
+    }
+
+    <span class="hljs-keyword">fn</span> <span class="hljs-title function_">step</span>(&amp;<span class="hljs-keyword">mut</span> <span class="hljs-keyword">self</span>) {
+        <span class="hljs-keyword">self</span>.<span class="hljs-title function_ invoke__">inc</span>(<span class="hljs-number">1</span>);
+    }
+}
+
+<span class="hljs-keyword">fn</span> <span class="hljs-title function_">make_rng</span>(seed: <span class="hljs-type">u64</span>) <span class="hljs-punctuation">-&gt;</span> <span class="hljs-keyword">impl</span> <span class="hljs-title class_">Rng</span> {
+    rand_pcg::Pcg64Mcg::<span class="hljs-title function_ invoke__">seed_from_u64</span>(seed)
+}
+
+<span class="hljs-keyword">fn</span> <span class="hljs-title function_">generate_file</span>(dir_name: &amp;<span class="hljs-type">str</span>, file_name: &amp;<span class="hljs-type">str</span>, f: <span class="hljs-keyword">impl</span> <span class="hljs-title class_">FnOnce</span>(io::BufWriter&lt;fs::File&gt;)) {
+    <span class="hljs-keyword">let</span> <span class="hljs-variable">dir</span> = Path::<span class="hljs-title function_ invoke__">new</span>(dir_name);
+    <span class="hljs-keyword">let</span> <span class="hljs-variable">path</span> = dir.<span class="hljs-title function_ invoke__">join</span>(file_name);
+    <span class="hljs-built_in">println!</span>(<span class="hljs-string">&quot;generating {}&quot;</span>, path.<span class="hljs-title function_ invoke__">display</span>());
+    fs::<span class="hljs-title function_ invoke__">create_dir_all</span>(dir).<span class="hljs-title function_ invoke__">unwrap</span>();
+    <span class="hljs-title function_ invoke__">f</span>(io::BufWriter::<span class="hljs-title function_ invoke__">new</span>(fs::File::<span class="hljs-title function_ invoke__">create</span>(path).<span class="hljs-title function_ invoke__">unwrap</span>()));
+}
+
+<span class="hljs-keyword">struct</span> <span class="hljs-title class_">Options</span> {
+    <span class="hljs-type">f32</span>: <span class="hljs-type">bool</span>,
+    <span class="hljs-type">f64</span>: <span class="hljs-type">bool</span>,
+    <span class="hljs-type">u32</span>: <span class="hljs-type">bool</span>,
+    <span class="hljs-type">u64</span>: <span class="hljs-type">bool</span>,
+}
+
+<span class="hljs-keyword">const</span> FLOAT32: &amp;<span class="hljs-type">str</span> = <span class="hljs-string">&quot;float32&quot;</span>;
+<span class="hljs-keyword">const</span> FLOAT64: &amp;<span class="hljs-type">str</span> = <span class="hljs-string">&quot;float64&quot;</span>;
+<span class="hljs-keyword">const</span> UNSHUFFLED32: &amp;<span class="hljs-type">str</span> = <span class="hljs-string">&quot;unshuffled32&quot;</span>;
+<span class="hljs-keyword">const</span> SHUFFLED32: &amp;<span class="hljs-type">str</span> = <span class="hljs-string">&quot;shuffled32&quot;</span>;
+<span class="hljs-keyword">const</span> UNSHUFFLED64: &amp;<span class="hljs-type">str</span> = <span class="hljs-string">&quot;unshuffled64&quot;</span>;
+<span class="hljs-keyword">const</span> SHUFFLED64: &amp;<span class="hljs-type">str</span> = <span class="hljs-string">&quot;shuffled64&quot;</span>;
+
+<span class="hljs-keyword">fn</span> <span class="hljs-title function_">generate</span>(exponents: RangeInclusive&lt;<span class="hljs-type">usize</span>&gt;, options: Options) {
+    <span class="hljs-keyword">for</span> <span class="hljs-variable">exponent</span> <span class="hljs-keyword">in</span> exponents {
+        <span class="hljs-keyword">let</span> <span class="hljs-variable">n</span> = <span class="hljs-number">1</span> &lt;&lt; exponent;
+        <span class="hljs-keyword">let</span> <span class="hljs-variable">name</span> = <span class="hljs-built_in">format!</span>(<span class="hljs-string">&quot;{exponent}.dat&quot;</span>);
+        <span class="hljs-keyword">if</span> options.<span class="hljs-type">f32</span> {
+            <span class="hljs-title function_ invoke__">generate_file</span>(FLOAT32, &amp;name, |writer| {
+                random_floats::&lt;<span class="hljs-type">f32</span>, ProgressBar&gt;(&amp;<span class="hljs-keyword">mut</span> <span class="hljs-title function_ invoke__">make_rng</span>(<span class="hljs-number">0</span>), writer, n);
+            });
+        }
+        <span class="hljs-keyword">if</span> options.<span class="hljs-type">f64</span> {
+            <span class="hljs-title function_ invoke__">generate_file</span>(FLOAT64, &amp;name, |writer| {
+                random_floats::&lt;<span class="hljs-type">f64</span>, ProgressBar&gt;(&amp;<span class="hljs-keyword">mut</span> <span class="hljs-title function_ invoke__">make_rng</span>(<span class="hljs-number">1</span>), writer, n);
+            });
+        }
+        <span class="hljs-keyword">if</span> options.<span class="hljs-type">u32</span> {
+            <span class="hljs-title function_ invoke__">generate_file</span>(UNSHUFFLED32, &amp;name, |writer| {
+                first_to_last::&lt;<span class="hljs-type">u32</span>, ProgressBar&gt;(writer, n);
+            });
+            <span class="hljs-title function_ invoke__">generate_file</span>(SHUFFLED32, &amp;name, |writer| {
+                permutation::&lt;<span class="hljs-type">u32</span>, ProgressBar&gt;(&amp;<span class="hljs-keyword">mut</span> <span class="hljs-title function_ invoke__">make_rng</span>(<span class="hljs-number">2</span>), writer, n);
+            });
+        }
+        <span class="hljs-keyword">if</span> options.<span class="hljs-type">u64</span> {
+            <span class="hljs-title function_ invoke__">generate_file</span>(UNSHUFFLED64, &amp;name, |writer| {
+                first_to_last::&lt;<span class="hljs-type">u64</span>, ProgressBar&gt;(writer, n);
+            });
+            <span class="hljs-title function_ invoke__">generate_file</span>(SHUFFLED64, &amp;name, |writer| {
+                permutation::&lt;<span class="hljs-type">u64</span>, ProgressBar&gt;(&amp;<span class="hljs-keyword">mut</span> <span class="hljs-title function_ invoke__">make_rng</span>(<span class="hljs-number">3</span>), writer, n);
+            });
+        }
+    }
+}
+</code></pre>
+        </details>
+        <h2>Results</h2>
+        <p>
+          Alrighty, now that we have all these files, let's finally run our code
+          on them!
+        </p>
+        <details>
+          <summary>Code to calculate sums of our generated data.</summary>
+          <pre><code class="language-rust"><span class="hljs-keyword">use</span> std::time::Instant;
+
+<span class="hljs-keyword">use</span> serde::Serialize;
+
+<span class="hljs-meta">#[derive(Serialize)]</span>
+<span class="hljs-keyword">struct</span> <span class="hljs-title class_">Measurement</span>&lt;<span class="hljs-symbol">&#x27;a</span>&gt; {
+    floats: &amp;<span class="hljs-symbol">&#x27;a</span> <span class="hljs-type">str</span>,
+    indices: &amp;<span class="hljs-symbol">&#x27;a</span> <span class="hljs-type">str</span>,
+    exponent: <span class="hljs-type">usize</span>,
+    iteration: <span class="hljs-type">usize</span>,
+    total: <span class="hljs-type">f64</span>,
+    seconds: <span class="hljs-type">f64</span>,
+}
+
+<span class="hljs-meta">#[derive(Clone, Copy)]</span>
+<span class="hljs-keyword">struct</span> <span class="hljs-title class_">Index32</span>(<span class="hljs-type">u32</span>);
+
+<span class="hljs-meta">#[derive(Clone, Copy)]</span>
+<span class="hljs-keyword">struct</span> <span class="hljs-title class_">Index64</span>(<span class="hljs-type">u64</span>);
+
+<span class="hljs-keyword">impl</span>&lt;T&gt; Index&lt;Index32&gt; <span class="hljs-keyword">for</span> [T] {
+    <span class="hljs-keyword">type</span> <span class="hljs-title class_">Output</span> = T;
+
+    <span class="hljs-keyword">fn</span> <span class="hljs-title function_">index</span>(&amp;<span class="hljs-keyword">self</span>, index: Index32) <span class="hljs-punctuation">-&gt;</span> &amp;<span class="hljs-keyword">Self</span>::Output {
+        <span class="hljs-keyword">unsafe</span> { <span class="hljs-keyword">self</span>.<span class="hljs-title function_ invoke__">get_unchecked</span>(index.<span class="hljs-number">0</span> <span class="hljs-keyword">as</span> <span class="hljs-type">usize</span>) }
+    }
+}
+
+<span class="hljs-keyword">impl</span>&lt;T&gt; Index&lt;Index64&gt; <span class="hljs-keyword">for</span> [T] {
+    <span class="hljs-keyword">type</span> <span class="hljs-title class_">Output</span> = T;
+
+    <span class="hljs-keyword">fn</span> <span class="hljs-title function_">index</span>(&amp;<span class="hljs-keyword">self</span>, index: Index64) <span class="hljs-punctuation">-&gt;</span> &amp;<span class="hljs-keyword">Self</span>::Output {
+        <span class="hljs-keyword">unsafe</span> { <span class="hljs-keyword">self</span>.<span class="hljs-title function_ invoke__">get_unchecked</span>(index.<span class="hljs-number">0</span> <span class="hljs-keyword">as</span> <span class="hljs-type">usize</span>) }
+    }
+}
+
+<span class="hljs-keyword">unsafe</span> <span class="hljs-keyword">fn</span> <span class="hljs-title function_">reinterpret</span>&lt;T&gt;(bytes: &amp;[<span class="hljs-type">u8</span>]) <span class="hljs-punctuation">-&gt;</span> &amp;[T] {
+    <span class="hljs-keyword">let</span> (prefix, values, suffix) = <span class="hljs-keyword">unsafe</span> { bytes.align_to::&lt;T&gt;() };
+    <span class="hljs-built_in">assert!</span>(prefix.<span class="hljs-title function_ invoke__">is_empty</span>());
+    <span class="hljs-built_in">assert!</span>(suffix.<span class="hljs-title function_ invoke__">is_empty</span>());
+    values
+}
+
+<span class="hljs-keyword">fn</span> <span class="hljs-title function_">measure_files</span>&lt;T: Number, I: <span class="hljs-built_in">Copy</span>&gt;(
+    dir_floats: &amp;<span class="hljs-type">str</span>,
+    dir_indices: &amp;<span class="hljs-type">str</span>,
+    exponent: <span class="hljs-type">usize</span>,
+    repeat: <span class="hljs-type">usize</span>,
+) <span class="hljs-keyword">where</span>
+    [T]: Index&lt;I, Output = T&gt;,
+{
+    <span class="hljs-keyword">let</span> <span class="hljs-variable">name</span> = <span class="hljs-built_in">format!</span>(<span class="hljs-string">&quot;{exponent}.dat&quot;</span>);
+    <span class="hljs-keyword">let</span> <span class="hljs-variable">bytes_floats</span> = fs::<span class="hljs-title function_ invoke__">read</span>(Path::<span class="hljs-title function_ invoke__">new</span>(dir_floats).<span class="hljs-title function_ invoke__">join</span>(&amp;name)).<span class="hljs-title function_ invoke__">unwrap</span>();
+    <span class="hljs-keyword">let</span> <span class="hljs-variable">bytes_indices</span> = fs::<span class="hljs-title function_ invoke__">read</span>(Path::<span class="hljs-title function_ invoke__">new</span>(dir_indices).<span class="hljs-title function_ invoke__">join</span>(&amp;name)).<span class="hljs-title function_ invoke__">unwrap</span>();
+    <span class="hljs-keyword">let</span> <span class="hljs-variable">floats</span> = <span class="hljs-keyword">unsafe</span> { reinterpret::&lt;T&gt;(&amp;bytes_floats) };
+    <span class="hljs-keyword">let</span> <span class="hljs-variable">indices</span> = <span class="hljs-keyword">unsafe</span> { reinterpret::&lt;I&gt;(&amp;bytes_indices) };
+    <span class="hljs-keyword">for</span> <span class="hljs-variable">iteration</span> <span class="hljs-keyword">in</span> <span class="hljs-number">0</span>..repeat {
+        <span class="hljs-keyword">let</span> <span class="hljs-variable">start</span> = Instant::<span class="hljs-title function_ invoke__">now</span>();
+        <span class="hljs-keyword">let</span> <span class="hljs-variable">total</span> = <span class="hljs-title function_ invoke__">sum</span>(floats, indices);
+        <span class="hljs-keyword">let</span> <span class="hljs-variable">duration</span> = start.<span class="hljs-title function_ invoke__">elapsed</span>();
+        <span class="hljs-keyword">let</span> <span class="hljs-variable">measurement</span> = Measurement {
+            floats: dir_floats,
+            indices: dir_indices,
+            exponent,
+            iteration,
+            total: total.<span class="hljs-title function_ invoke__">into</span>(),
+            seconds: duration.<span class="hljs-title function_ invoke__">as_secs_f64</span>(),
+        };
+        <span class="hljs-built_in">println!</span>(<span class="hljs-string">&quot;{}&quot;</span>, serde_json::<span class="hljs-title function_ invoke__">to_string</span>(&amp;measurement).<span class="hljs-title function_ invoke__">unwrap</span>());
+    }
+}
+
+<span class="hljs-keyword">fn</span> <span class="hljs-title function_">measure</span>(exponents: RangeInclusive&lt;<span class="hljs-type">usize</span>&gt;, options: Options, repeat: <span class="hljs-type">usize</span>) {
+    <span class="hljs-keyword">for</span> <span class="hljs-variable">exponent</span> <span class="hljs-keyword">in</span> exponents {
+        <span class="hljs-keyword">if</span> options.<span class="hljs-type">f32</span> {
+            <span class="hljs-keyword">if</span> options.<span class="hljs-type">u32</span> {
+                measure_files::&lt;<span class="hljs-type">f32</span>, Index32&gt;(FLOAT32, UNSHUFFLED32, exponent, repeat);
+                measure_files::&lt;<span class="hljs-type">f32</span>, Index32&gt;(FLOAT32, SHUFFLED32, exponent, repeat);
+            }
+            <span class="hljs-keyword">if</span> options.<span class="hljs-type">u64</span> {
+                measure_files::&lt;<span class="hljs-type">f32</span>, Index64&gt;(FLOAT32, UNSHUFFLED64, exponent, repeat);
+                measure_files::&lt;<span class="hljs-type">f32</span>, Index64&gt;(FLOAT32, SHUFFLED64, exponent, repeat);
+            }
+        }
+        <span class="hljs-keyword">if</span> options.<span class="hljs-type">f64</span> {
+            <span class="hljs-keyword">if</span> options.<span class="hljs-type">u32</span> {
+                measure_files::&lt;<span class="hljs-type">f64</span>, Index32&gt;(FLOAT64, UNSHUFFLED32, exponent, repeat);
+                measure_files::&lt;<span class="hljs-type">f64</span>, Index32&gt;(FLOAT64, SHUFFLED32, exponent, repeat);
+            }
+            <span class="hljs-keyword">if</span> options.<span class="hljs-type">u64</span> {
+                measure_files::&lt;<span class="hljs-type">f64</span>, Index64&gt;(FLOAT64, UNSHUFFLED64, exponent, repeat);
+                measure_files::&lt;<span class="hljs-type">f64</span>, Index64&gt;(FLOAT64, SHUFFLED64, exponent, repeat);
+            }
+        }
+    }
+}
+</code></pre>
+        </details>
+        <p>Charts coming soon!</p>
       </div>
     </main>
   </body>
