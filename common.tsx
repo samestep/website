@@ -35,6 +35,7 @@ interface BlogPost {
 
 const blogPosts: Record<string, BlogPost> = {
   autodiff: { title: "Differentiable Programming in General" },
+  "random-access": { title: "How much slower is random access, really?" },
   "typst-impressions": {
     date: "2025-03-27",
     title: "First impressions with Typst",
