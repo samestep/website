@@ -20,7 +20,7 @@ You won't necessarily get the same answer because [floating-point addition is no
 
 To specify the order, we'll just have another array that holds integers. That way, once we've chosen the precisions for our floating-point and integer data types, we should be using the _exact same machine code_ for forward order, random order, or any other order we want. The performance should be entirely determined by _dynamic_ behavior in the CPU based on the data we're using.
 
-By the way, all the code to reproduce the measurements in this blog post can be found in a [supplementary repository on GitHub](https://github.com/samestep/random-access/tree/62a9624ddccbb96a2948d27065030b2ee45c900c).
+By the way, all the code to reproduce the measurements in this blog post can be found in a [supplementary repository on GitHub](https://github.com/samestep/random-access/tree/45ffc8fa71afefbe3a9c5e2ed68f1974335b1b25).
 
 <details>
 <summary>Expand this to see some Rust code.</summary>
@@ -86,12 +86,6 @@ trait Progress {
     fn new(len: usize) -> Self;
 
     fn step(&mut self);
-}
-
-impl Progress for () {
-    fn new(_: usize) -> Self {}
-
-    fn step(&mut self) {}
 }
 
 fn random_floats<T: Number, P: Progress>(rng: &mut impl Rng, mut writer: impl Write, n: usize)
@@ -253,7 +247,7 @@ struct Measurement<'a> {
     indices: &'a str,
     exponent: usize,
     iteration: usize,
-    total: f64,
+    output: f64,
     seconds: f64,
 }
 
@@ -308,7 +302,7 @@ fn measure_files<T: Number, I: Copy>(
             indices: dir_indices,
             exponent,
             iteration,
-            total: total.into(),
+            output: total.into(),
             seconds: duration.as_secs_f64(),
         };
         println!("{}", serde_json::to_string(&measurement).unwrap());
