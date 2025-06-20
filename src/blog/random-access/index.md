@@ -337,4 +337,8 @@ fn measure(exponents: RangeInclusive<usize>, options: Options, repeat: usize) {
 
 </details>
 
-Charts coming soon!
+And now, a chart:
+
+{{chart}}
+
+Look! It is labeled yet currently meaningless.

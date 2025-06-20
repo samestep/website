@@ -1,5 +1,4 @@
-import { ComponentChildren } from "preact";
-import { Content } from "../../../blog";
+import { Content, Svg, width } from "../../../blog";
 
 const toDegrees = (radians: number) => (radians * 180) / Math.PI;
 
@@ -13,16 +12,6 @@ const weightsToProbs = (
       .filter(() => true), // get rid of holes in the array
   );
 };
-
-const width = 300;
-
-const Svg = (props: { height: number; children: ComponentChildren }) => (
-  <div class="svg">
-    <svg viewBox={`0 0 ${width} ${props.height}`} height={props.height}>
-      {props.children}
-    </svg>
-  </div>
-);
 
 const Histogram = (props: {
   probs: Map<string, number>;
