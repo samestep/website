@@ -337,8 +337,20 @@ fn measure(exponents: RangeInclusive<usize>, options: Options, repeat: usize) {
 
 </details>
 
-And now, a chart:
+Here are the results from running on my 2020 MacBook Pro with M1 chip, using single-precision floating-point and 32-bit integer indices:
 
-{{chart}}
+{{float32int32}}
 
-Look! It is labeled yet currently meaningless.
+Here's single-precision with 64-bit indices; basically the same:
+
+{{float32int64}}
+
+Now here's double-precision floating-point and 32-bit integer indices:
+
+{{float64int32}}
+
+And finally, here's double-precision and 64-bit indices:
+
+{{float64int64}}
+
+Neat!

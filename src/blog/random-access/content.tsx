@@ -1,9 +1,73 @@
-import { Content, Svg, width } from "../../../blog";
+import { Content, splitlines, Svg, width } from "../../../blog";
+import macbook from "./macbook.jsonl" with { type: "text" };
+
+interface Measurement {
+  floats: "float32" | "float64";
+  indices: "unshuffled32" | "shuffled32" | "unshuffled64" | "shuffled64";
+  exponent: number;
+  iteration: number;
+  seconds: number;
+}
 
 interface Plot {
   color: string;
-  f: (n: number) => number;
+  f: (n: number) => number | undefined;
 }
+
+const process = (jsonl: string): Plot[][] => {
+  const groups: {
+    float: 32 | 64;
+    index: 32 | 64;
+    shuffle: boolean;
+    points: Map<number, number[]>;
+  }[] = [
+    { float: 32, index: 32, shuffle: false, points: new Map() },
+    { float: 32, index: 32, shuffle: true, points: new Map() },
+    { float: 32, index: 64, shuffle: false, points: new Map() },
+    { float: 32, index: 64, shuffle: true, points: new Map() },
+    { float: 64, index: 32, shuffle: false, points: new Map() },
+    { float: 64, index: 32, shuffle: true, points: new Map() },
+    { float: 64, index: 64, shuffle: false, points: new Map() },
+    { float: 64, index: 64, shuffle: true, points: new Map() },
+  ];
+  const exponents = new Set();
+  for (const line of splitlines(jsonl)) {
+    const { floats, indices, exponent, iteration, seconds }: Measurement =
+      JSON.parse(line);
+    if (iteration < 5) continue;
+    exponents.add(exponent);
+    const { points } = groups.find(
+      ({ float, index, shuffle }) =>
+        floats === `float${float}` &&
+        indices === `${shuffle ? "shuffled" : "unshuffled"}${index}`,
+    )!;
+    let array = points.get(exponent);
+    if (!array) {
+      array = [];
+      points.set(exponent, array);
+    }
+    array.push(seconds);
+  }
+  return [
+    [groups[1], groups[0]],
+    [groups[3], groups[2]],
+    [groups[5], groups[4]],
+    [groups[7], groups[6]],
+  ].map((pair) =>
+    pair.map(({ shuffle, points }) => ({
+      color: shuffle ? "hsl(0 100% 75%)" : "hsl(222 100% 75%)",
+      f: (exponent) => {
+        const n = 1 << exponent;
+        const array = points.get(exponent);
+        if (!array) return undefined;
+        let total = 0;
+        for (const timing of array) total += timing;
+        const mean = total / array.length;
+        return (mean / n) * 1000000000;
+      },
+    })),
+  );
+};
 
 const MeanTimePerElement = ({ plots }: { plots: Plot[] }) => {
   const height = 250;
@@ -78,8 +142,9 @@ const MeanTimePerElement = ({ plots }: { plots: Plot[] }) => {
     <Svg height={height}>
       {plots.map(({ color, f }) => {
         const points: string[] = [];
-        for (let n = 1; n <= xmax; ++n) {
+        for (let n = 0; n <= xmax; ++n) {
           const p = f(n);
+          if (p === undefined) break;
           const x = left + (n / xmax) * (right - left);
           const y = bottom - (p / ymax) * (bottom - top);
           points.push(`${x},${y}`);
@@ -109,11 +174,12 @@ const MeanTimePerElement = ({ plots }: { plots: Plot[] }) => {
 };
 
 export const content: Content = async () => {
-  const line: Plot = {
-    color: "hsl(0 100% 75%)",
-    f: (n) => n / 5,
-  };
+  const [float32int32, float32int64, float64int32, float64int64] =
+    process(macbook);
   return {
-    chart: <MeanTimePerElement plots={[line]} />,
+    float32int32: <MeanTimePerElement plots={float32int32} />,
+    float32int64: <MeanTimePerElement plots={float32int64} />,
+    float64int32: <MeanTimePerElement plots={float64int32} />,
+    float64int64: <MeanTimePerElement plots={float64int64} />,
   };
 };

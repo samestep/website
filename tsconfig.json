@@ -1,9 +1,10 @@
 {
   "compilerOptions": {
+    "allowArbitraryExtensions": true,
     "esModuleInterop": true,
     "jsx": "react-jsx",
     "jsxImportSource": "preact",
-    "module": "NodeNext",
+    "module": "preserve",
     "strict": true,
     "target": "ESNext"
   }
