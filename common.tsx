@@ -99,9 +99,11 @@ const generate = async () => {
   );
 
   for (const [name, { date, title }] of Object.entries(blogPosts)) {
-    await fs.cp(`src/blog/${name}`, `${out}/blog/${name}`, { recursive: true });
-    await fs.rm(`out/blog/${name}/index.md`);
-    await fs.rm(`out/blog/${name}/content.tsx`, { force: true });
+    try {
+      await fs.cp(`src/blog/${name}/assets`, `${out}/blog/${name}/assets`, {
+        recursive: true,
+      });
+    } catch (_) {}
     const replacements = await getBlogPostContent(name);
     const filename = `src/blog/${name}/index.md`;
     const markdown = (await Bun.file(filename).text()).replaceAll(
@@ -119,7 +121,9 @@ const generate = async () => {
         }}
       ></div>
     );
-    const css = await fs.exists(`src/blog/${name}/style.css`);
+    const style = `src/blog/${name}/style.css`;
+    const css = await fs.exists(style);
+    if (css) await fs.cp(style, `${out}/blog/${name}/style.css`);
     await Bun.write(
       `${out}/blog/${name}/index.html`,
       await renderHtml(

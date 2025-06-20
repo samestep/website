@@ -1,6 +1,6 @@
 If you [type "roll a die" into Google][google die], it... well, it rolls a die:
 
-![Google "roll a die"](die.png)
+![Google "roll a die"](assets/die.png)
 
 But how does it do that?
 
@@ -12,7 +12,7 @@ _(6 minutes later)_ Welcome back! So yeah, every digit of every number in your c
 
 You can also [Google "flip a coin"][google coin]:
 
-![Google "flip a coin"](coin.png)
+![Google "flip a coin"](assets/coin.png)
 
 This is much closer to the computer's native tongue. All it has to do is generate a single random bit. For the remainder of this post, we're going to take "generate a random bit" (or equivalently, "flip a coin") as a basic primitive, and then build everything else on top of that.
 
