@@ -1,0 +1,35 @@
+.selection > div {
+  display: none;
+}
+
+body:has(#f32-macbook:checked):has(#u32-macbook:checked) .f32-u32-macbook {
+  display: block;
+}
+
+body:has(#f32-macbook:checked):has(#u64-macbook:checked) .f32-u64-macbook {
+  display: block;
+}
+
+body:has(#f64-macbook:checked):has(#u32-macbook:checked) .f64-u32-macbook {
+  display: block;
+}
+
+body:has(#f64-macbook:checked):has(#u64-macbook:checked) .f64-u64-macbook {
+  display: block;
+}
+
+body:has(#f32-desktop:checked):has(#u32-desktop:checked) .f32-u32-desktop {
+  display: block;
+}
+
+body:has(#f32-desktop:checked):has(#u64-desktop:checked) .f32-u64-desktop {
+  display: block;
+}
+
+body:has(#f64-desktop:checked):has(#u32-desktop:checked) .f64-u32-desktop {
+  display: block;
+}
+
+body:has(#f64-desktop:checked):has(#u64-desktop:checked) .f64-u64-desktop {
+  display: block;
+}

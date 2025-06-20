@@ -15,13 +15,17 @@ interface Plot {
   f: (n: number) => number | undefined;
 }
 
-const process = (jsonl: string): Plot[][] => {
-  const groups: {
-    float: 32 | 64;
-    index: 32 | 64;
-    shuffle: boolean;
-    points: Map<number, number[]>;
-  }[] = [
+interface Group {
+  float: 32 | 64;
+  index: 32 | 64;
+  shuffle: boolean;
+  points: Map<number, number[]>;
+}
+
+const process = (
+  jsonl: string,
+): { float: 32 | 64; index: 32 | 64; plots: Plot[] }[] => {
+  const groups: Group[] = [
     { float: 32, index: 32, shuffle: false, points: new Map() },
     { float: 32, index: 32, shuffle: true, points: new Map() },
     { float: 32, index: 64, shuffle: false, points: new Map() },
@@ -49,13 +53,16 @@ const process = (jsonl: string): Plot[][] => {
     }
     array.push(seconds);
   }
-  return [
-    [groups[1], groups[0]],
-    [groups[3], groups[2]],
-    [groups[5], groups[4]],
-    [groups[7], groups[6]],
-  ].map((pair) =>
-    pair.map(({ shuffle, points }) => ({
+  const regrouped: { float: 32 | 64; index: 32 | 64; pair: Group[] }[] = [
+    { float: 32, index: 32, pair: [groups[1], groups[0]] },
+    { float: 32, index: 64, pair: [groups[3], groups[2]] },
+    { float: 64, index: 32, pair: [groups[5], groups[4]] },
+    { float: 64, index: 64, pair: [groups[7], groups[6]] },
+  ];
+  return regrouped.map(({ float, index, pair }) => ({
+    float,
+    index,
+    plots: pair.map(({ shuffle, points }) => ({
       color: shuffle ? "hsl(0 100% 75%)" : "hsl(222 100% 75%)",
       f: (exponent) => {
         const n = 1 << exponent;
@@ -67,7 +74,7 @@ const process = (jsonl: string): Plot[][] => {
         return (mean / n) * 1000000000;
       },
     })),
-  );
+  }));
 };
 
 const MeanTimePerElement = ({ plots }: { plots: Plot[] }) => {
@@ -174,27 +181,52 @@ const MeanTimePerElement = ({ plots }: { plots: Plot[] }) => {
   );
 };
 
+const FourCharts = ({ name, jsonl }: { name: string; jsonl: string }) => {
+  const floats = `floats-${name}`;
+  const indices = `indices-${name}`;
+  const f32 = `f32-${name}`;
+  const f64 = `f64-${name}`;
+  const u32 = `u32-${name}`;
+  const u64 = `u64-${name}`;
+  return (
+    <div>
+      <div class="selection">
+        {process(jsonl).map(({ float, index }) => (
+          <div class={`f${float}-u${index}-${name}`}>
+            <p>
+              Here are the results with{" "}
+              <strong>
+                {{ 32: "single", 64: "double" }[float]}
+                -precision floating-point
+              </strong>{" "}
+              and <strong>{index}-bit integer indices</strong> (use the toggles
+              to select other configurations):
+            </p>
+          </div>
+        ))}
+      </div>
+      <input type="radio" id={f32} name={floats} checked />
+      <label for={f32}>f32</label>
+      <input type="radio" id={f64} name={floats} />
+      <label for={f64}>f64</label>
+      <input type="radio" id={u32} name={indices} checked />
+      <label for={u32}>u32</label>
+      <input type="radio" id={u64} name={indices} />
+      <label for={u64}>u64</label>
+      <div class="selection">
+        {process(jsonl).map(({ float, index, plots }) => (
+          <div class={`f${float}-u${index}-${name}`}>
+            <MeanTimePerElement plots={plots} />
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+};
+
 export const content: Content = async () => {
-  const [
-    float32int32macbook,
-    float32int64macbook,
-    float64int32macbook,
-    float64int64macbook,
-  ] = process(macbook);
-  const [
-    float32int32desktop,
-    float32int64desktop,
-    float64int32desktop,
-    float64int64desktop,
-  ] = process(desktop);
   return {
-    float32int32macbook: <MeanTimePerElement plots={float32int32macbook} />,
-    float32int64macbook: <MeanTimePerElement plots={float32int64macbook} />,
-    float64int32macbook: <MeanTimePerElement plots={float64int32macbook} />,
-    float64int64macbook: <MeanTimePerElement plots={float64int64macbook} />,
-    float32int32desktop: <MeanTimePerElement plots={float32int32desktop} />,
-    float32int64desktop: <MeanTimePerElement plots={float32int64desktop} />,
-    float64int32desktop: <MeanTimePerElement plots={float64int32desktop} />,
-    float64int64desktop: <MeanTimePerElement plots={float64int64desktop} />,
+    macbook: <FourCharts name="macbook" jsonl={macbook} />,
+    desktop: <FourCharts name="desktop" jsonl={desktop} />,
   };
 };

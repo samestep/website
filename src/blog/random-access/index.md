@@ -340,44 +340,16 @@ fn measure(exponents: RangeInclusive<usize>, options: Options, repeat: usize) {
 I ran this on two different machines:
 
 - A 2020 MacBook Pro with M1 chip, 16 GiB of RAM, and a 1 TB SSD.
-- A Linux desktop with an AMD Ryzen 5 3600X, 24 GiB of Corsair Vengeance LPX DDR4 3000MHz DRAM, and a Western Digital 1 TB 3D NAND SATA SSD. Unfortunately the RAM is not all exactly the same:
+- A Linux desktop with an AMD Ryzen 5 3600X, 24 GiB of Corsair Vengeance LPX DDR4 3000MHz DRAM, and a Western Digital 1 TB 3D NAND SATA SSD.
 
 ### MacBook
 
-Here are the results with single-precision floating-point and 32-bit integer indices:
+{{macbook}}
 
-{{float32int32macbook}}
-
-Here's single-precision with 64-bit indices; basically the same:
-
-{{float32int64macbook}}
-
-Now here's double-precision floating-point and 32-bit integer indices:
-
-{{float64int32macbook}}
-
-And finally, here's double-precision and 64-bit indices:
-
-{{float64int64macbook}}
-
-Neat!
+As you can see, ...
 
 ### Linux desktop
 
-Here are the results with single-precision floating-point and 32-bit integer indices:
+{{desktop}}
 
-{{float32int32desktop}}
-
-Here's single-precision with 64-bit indices; basically the same:
-
-{{float32int64desktop}}
-
-Now here's double-precision floating-point and 32-bit integer indices:
-
-{{float64int32desktop}}
-
-And finally, here's double-precision and 64-bit indices:
-
-{{float64int64desktop}}
-
-Again, neat!
+As you can see, ...
