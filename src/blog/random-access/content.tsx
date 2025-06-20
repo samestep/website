@@ -1,4 +1,5 @@
 import { Content, splitlines, Svg, width } from "../../../blog";
+import desktop from "./desktop.jsonl" with { type: "text" };
 import macbook from "./macbook.jsonl" with { type: "text" };
 
 interface Measurement {
@@ -73,7 +74,7 @@ const MeanTimePerElement = ({ plots }: { plots: Plot[] }) => {
   const height = 250;
   const top = 10;
   const bottom = height - 40;
-  const left = 50;
+  const left = 60;
   const right = width - 15;
 
   const xmax = 30;
@@ -174,12 +175,26 @@ const MeanTimePerElement = ({ plots }: { plots: Plot[] }) => {
 };
 
 export const content: Content = async () => {
-  const [float32int32, float32int64, float64int32, float64int64] =
-    process(macbook);
+  const [
+    float32int32macbook,
+    float32int64macbook,
+    float64int32macbook,
+    float64int64macbook,
+  ] = process(macbook);
+  const [
+    float32int32desktop,
+    float32int64desktop,
+    float64int32desktop,
+    float64int64desktop,
+  ] = process(desktop);
   return {
-    float32int32: <MeanTimePerElement plots={float32int32} />,
-    float32int64: <MeanTimePerElement plots={float32int64} />,
-    float64int32: <MeanTimePerElement plots={float64int32} />,
-    float64int64: <MeanTimePerElement plots={float64int64} />,
+    float32int32macbook: <MeanTimePerElement plots={float32int32macbook} />,
+    float32int64macbook: <MeanTimePerElement plots={float32int64macbook} />,
+    float64int32macbook: <MeanTimePerElement plots={float64int32macbook} />,
+    float64int64macbook: <MeanTimePerElement plots={float64int64macbook} />,
+    float32int32desktop: <MeanTimePerElement plots={float32int32desktop} />,
+    float32int64desktop: <MeanTimePerElement plots={float32int64desktop} />,
+    float64int32desktop: <MeanTimePerElement plots={float64int32desktop} />,
+    float64int64desktop: <MeanTimePerElement plots={float64int64desktop} />,
   };
 };
