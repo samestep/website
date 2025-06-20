@@ -104,9 +104,9 @@ $ nvcc --dryrun $NVCC_ARGS
 </code></pre>
         <p>
           This command runs almost instantly, produces no files, and prints to
-          stderr something similar to <a href="dryrun.txt">this</a>, listing all
-          the commands <code>nvcc</code> would run and the environment variables
-          it would set while running them.
+          stderr something similar to <a href="assets/dryrun.txt">this</a>,
+          listing all the commands <code>nvcc</code> would run and the
+          environment variables it would set while running them.
         </p>
         <p>
           So at this point we can reproduce the behavior of nvcc by running it
@@ -151,14 +151,16 @@ $ fast_nvcc.py --graph=graph.dot --save=files --table=table.csv --verbose=verbos
 $ dot -Tpng graph.dot -o graph.png
 </code></pre>
         <p>
-          This populates <a href="files.txt"><code>files</code></a> and
-          generates <a href="graph.dot"><code>graph.dot</code></a
-          >, <a href="table.csv"><code>table.csv</code></a
-          >, and <a href="verbose.txt"><code>verbose.txt</code></a
+          This populates <a href="assets/files.txt"><code>files</code></a> and
+          generates <a href="assets/graph.dot"><code>graph.dot</code></a
+          >, <a href="assets/table.csv"><code>table.csv</code></a
+          >, and <a href="assets/verbose.txt"><code>verbose.txt</code></a
           >. And if you have <code>dot</code> installed, that last command
           generates <code>graph.png</code> which looks like this:
         </p>
-        <p><img src="graph.png" alt="The generated graph.png file." /></p>
+        <p>
+          <img src="assets/graph.png" alt="The generated graph.png file." />
+        </p>
         <p>A few notes:</p>
         <ul>
           <li>
@@ -198,7 +200,7 @@ $ dot -Tpng graph.dot -o graph.png
         </p>
         <p>
           <img
-            src="table.png"
+            src="assets/table.png"
             alt="An Excel chart generated from the first two columns of the table.csv
 file."
           />
@@ -302,7 +304,12 @@ file."
         <pre><code>$ fast_nvcc.py --faithful --graph=faithful.dot -- $NVCC_ARGS
 $ dot -Tpng faithful.dot -o faithful.png
 </code></pre>
-        <p><img src="faithful.png" alt="The generated faithful.png file." /></p>
+        <p>
+          <img
+            src="assets/faithful.png"
+            alt="The generated faithful.png file."
+          />
+        </p>
         <h3>Leftovers</h3>
         <p>
           As is plainly visible from the above graphs, this diff doesn't
