@@ -11,6 +11,7 @@ import {
   yticks,
 } from "../../../plot";
 import { range, splitlines } from "../../../util";
+import desktopMmap from "./desktop-mmap.jsonl" with { type: "text" };
 import desktop from "./desktop.jsonl" with { type: "text" };
 import macbookMmap from "./macbook-mmap.jsonl" with { type: "text" };
 import macbook from "./macbook.jsonl" with { type: "text" };
@@ -178,6 +179,7 @@ export const content: Content = async () => {
   return {
     macbook: <FourCharts name="macbook" jsonl={macbook} />,
     desktop: <FourCharts name="desktop" jsonl={desktop} />,
-    macbookMmap: <FourCharts name="macbook" jsonl={macbookMmap} />,
+    macbookMmap: <FourCharts name="macbook-mmap" jsonl={macbookMmap} />,
+    desktopMmap: <FourCharts name="desktop-mmap" jsonl={desktopMmap} />,
   };
 };

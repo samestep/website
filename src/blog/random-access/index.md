@@ -386,3 +386,7 @@ impl Reader for Mmap {
 {{macbookMmap}}
 
 Explanation...
+
+{{desktopMmap}}
+
+More explanation...
