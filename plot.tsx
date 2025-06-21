@@ -141,69 +141,42 @@ export const logScale = (min: number, max: number): Scale => {
   return (value) => linear(Math.log(value));
 };
 
-export interface MajorTick {
+export interface Tick {
   value: number;
   text: string;
 }
 
-export interface Ticks {
-  minor?: number[];
-  major: MajorTick[];
-}
-
 export const yticks =
-  ({ minor, major }: Ticks): ScalesChild =>
-  ({ h, t, l, y }) => (
-    <>
-      {major.map(({ value, text }) => (
-        <text
-          x={l - tickSize}
-          y={t + h - h * y(value)}
-          fill="white"
-          text-anchor="end"
-          dominant-baseline="central"
-        >
-          {text}
-        </text>
-      ))}
-      {(minor ?? []).map((value) => {
-        const y0 = t + h - h * y(value);
-        return <line x1={l} y1={y0} x2={l + tickSize} y2={y0} stroke="grey" />;
-      })}
-    </>
-  );
+  (ticks: Tick[]): ScalesChild =>
+  ({ h, t, l, y }) =>
+    ticks.map(({ value, text }) => (
+      <text
+        x={l - tickSize}
+        y={t + h - h * y(value)}
+        fill="white"
+        text-anchor="end"
+        dominant-baseline="central"
+      >
+        {text}
+      </text>
+    ));
 
 export const xticks =
-  ({ minor, major }: Ticks): ScalesChild =>
-  ({ w, h, t, l, x }) => (
-    <>
-      {(minor ?? []).map((value) => {
-        const x0 = l + w * x(value);
-        return (
-          <line
-            x1={x0}
-            y1={t + h}
-            x2={x0}
-            y2={t + h - tickSize}
-            stroke="grey"
-          />
-        );
-      })}
-      {major.map(({ value, text }) => (
-        <text
-          x={l + w * x(value)}
-          y={t + h + tickSize}
-          fill="white"
-          text-anchor="middle"
-          dominant-baseline="hanging"
-        >
-          {text}
-        </text>
-      ))}
-    </>
-  );
+  (ticks: Tick[]): ScalesChild =>
+  ({ w, h, t, l, x }) =>
+    ticks.map(({ value, text }) => (
+      <text
+        x={l + w * x(value)}
+        y={t + h + tickSize}
+        fill="white"
+        text-anchor="middle"
+        dominant-baseline="hanging"
+      >
+        {text}
+      </text>
+    ));
 
-export const tick = (value: number, text: string): MajorTick => {
+export const tick = (value: number, text: string): Tick => {
   return { value, text };
 };
 

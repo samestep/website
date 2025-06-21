@@ -5,6 +5,7 @@ import {
   logScale,
   Plot,
   scales,
+  ScalesChild,
   tick,
   xticks,
   yticks,
@@ -12,6 +13,23 @@ import {
 import { range, splitlines } from "../../../util";
 import desktop from "./desktop.jsonl" with { type: "text" };
 import macbook from "./macbook.jsonl" with { type: "text" };
+
+const gridColor = "#444";
+
+const grid =
+  (ticks: { x: number[]; y: number[] }): ScalesChild =>
+  ({ w, h, t, l, x, y }) => (
+    <>
+      {ticks.x.map((value) => {
+        const x0 = l + w * x(value);
+        return <line x1={x0} y1={t} x2={x0} y2={t + h} stroke={gridColor} />;
+      })}
+      {ticks.y.map((value) => {
+        const y0 = t + h - h * y(value);
+        return <line x1={l} y1={y0} x2={l + w} y2={y0} stroke={gridColor} />;
+      })}
+    </>
+  );
 
 interface Measurement {
   floats: "float32" | "float64";
@@ -112,42 +130,39 @@ const FourCharts = ({ name, jsonl }: { name: string; jsonl: string }) => {
       <input type="radio" id={u64} name={indices} />
       <label for={u64}>u64</label>
       <div class="selection">
-        {process(jsonl).map(({ float, index, plots }) => (
-          <div class={`f${float}-u${index}-${name}`}>
-            <AxesLabeled
-              height={250}
-              top={10}
-              left={35}
-              right={5}
-              bottom={20}
-              xlabel="number of elements"
-              ylabel="time per element"
-              content={[
-                scales({
-                  x: logScale(1, 2 ** 31),
-                  y: logScale(0.5, 50),
-                  content: [
-                    yticks({
-                      minor: [1, 2, 4, 8, 16, 32],
-                      major: [1, 2, 4, 8, 16, 32].map((ns) =>
-                        tick(ns, `${ns}ns`),
-                      ),
-                    }),
-                    ...plots.map(linePlot),
-                    xticks({
-                      minor: range(1, 31).map((i) => 2 ** i),
-                      major: [
-                        { value: 10 ** 3, text: "1K" },
-                        { value: 10 ** 6, text: "1M" },
-                        { value: 10 ** 9, text: "1B" },
-                      ],
-                    }),
-                  ],
-                }),
-              ]}
-            />
-          </div>
-        ))}
+        {process(jsonl).map(({ float, index, plots }) => {
+          const xtickVals = range(0, 31).map((i) => 2 ** i);
+          const ytickVals = range(0, 8).map((i) => 2 ** i);
+          return (
+            <div class={`f${float}-u${index}-${name}`}>
+              <AxesLabeled
+                height={250}
+                top={10}
+                left={35}
+                right={5}
+                bottom={20}
+                xlabel="number of elements"
+                ylabel="time per element"
+                content={[
+                  scales({
+                    x: logScale(1, 2 ** 31),
+                    y: logScale(0.5, 200),
+                    content: [
+                      yticks(ytickVals.map((ns) => tick(ns, `${ns}ns`))),
+                      grid({ x: xtickVals, y: ytickVals }),
+                      ...plots.map(linePlot),
+                      xticks([
+                        tick(10 ** 3, "1K"),
+                        tick(10 ** 6, "1M"),
+                        tick(10 ** 9, "1B"),
+                      ]),
+                    ],
+                  }),
+                ]}
+              />
+            </div>
+          );
+        })}
       </div>
     </div>
   );
