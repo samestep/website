@@ -1,4 +1,15 @@
-import { Content, splitlines, Svg, width } from "../../../blog";
+import { Content } from "../../../blog";
+import {
+  AxesLabeled,
+  linePlot,
+  logScale,
+  Plot,
+  scales,
+  tick,
+  xticks,
+  yticks,
+} from "../../../plot";
+import { range, splitlines } from "../../../util";
 import desktop from "./desktop.jsonl" with { type: "text" };
 import macbook from "./macbook.jsonl" with { type: "text" };
 
@@ -8,11 +19,6 @@ interface Measurement {
   exponent: number;
   iteration: number;
   seconds: number;
-}
-
-interface Plot {
-  color: string;
-  f: (n: number) => number | undefined;
 }
 
 interface Group {
@@ -35,12 +41,10 @@ const process = (
     { float: 64, index: 64, shuffle: false, points: new Map() },
     { float: 64, index: 64, shuffle: true, points: new Map() },
   ];
-  const exponents = new Set();
   for (const line of splitlines(jsonl)) {
     const { floats, indices, exponent, iteration, seconds }: Measurement =
       JSON.parse(line);
     if (iteration < 5) continue;
-    exponents.add(exponent);
     const { points } = groups.find(
       ({ float, index, shuffle }) =>
         floats === `float${float}` &&
@@ -64,121 +68,15 @@ const process = (
     index,
     plots: pair.map(({ shuffle, points }) => ({
       color: shuffle ? "hsl(0 100% 75%)" : "hsl(222 100% 75%)",
-      f: (exponent) => {
+      points: [...points].map(([exponent, array]) => {
         const n = 1 << exponent;
-        const array = points.get(exponent);
-        if (!array) return undefined;
         let total = 0;
         for (const timing of array) total += timing;
         const mean = total / array.length;
-        return (mean / n) * 1000000000;
-      },
+        return { x: 2 ** exponent, y: (mean / n) * 1000000000 };
+      }),
     })),
   }));
-};
-
-const MeanTimePerElement = ({ plots }: { plots: Plot[] }) => {
-  const height = 250;
-  const top = 10;
-  const bottom = height - 40;
-  const left = 60;
-  const right = width - 15;
-
-  const xmax = 30;
-  const ymax = 6;
-
-  const ylabel = (
-    <text
-      x="0"
-      y={bottom / 2}
-      fill="white"
-      text-anchor="middle"
-      dominant-baseline="hanging"
-      transform={`rotate(-90 0 ${bottom / 2})`}
-    >
-      time per element
-    </text>
-  );
-
-  const yticks = [];
-  const ygap = 1;
-  for (let i = ymax; i >= 0; --i) {
-    const y = i * ygap;
-    yticks.push(
-      <text
-        x={left - 5}
-        y={(y / ymax) * top + (1 - y / ymax) * bottom}
-        fill="white"
-        text-anchor="end"
-        dominant-baseline="central"
-      >
-        {y}ns
-      </text>,
-    );
-  }
-
-  const xticks = [];
-  const xgap = 4;
-  for (let i = 1; i * xgap <= xmax; ++i) {
-    const x = i * xgap;
-    xticks.push(
-      <text
-        x={left + (x / xmax) * (right - left)}
-        y={bottom + 5}
-        fill="white"
-        text-anchor="middle"
-        dominant-baseline="hanging"
-      >
-        {x}
-      </text>,
-    );
-  }
-
-  const xlabel = (
-    <text
-      x={(left + right) / 2}
-      y={height - 5}
-      fill="white"
-      text-anchor="middle"
-      dominant-baseline="text-bottom"
-    >
-      logarithm of array length
-    </text>
-  );
-
-  return (
-    <Svg height={height}>
-      {plots.map(({ color, f }) => {
-        const points: string[] = [];
-        for (let n = 0; n <= xmax; ++n) {
-          const p = f(n);
-          if (p === undefined) break;
-          const x = left + (n / xmax) * (right - left);
-          const y = bottom - (p / ymax) * (bottom - top);
-          points.push(`${x},${y}`);
-        }
-        return (
-          <polyline
-            points={points.join(" ")}
-            fill="none"
-            stroke={color}
-            stroke-width="2"
-            stroke-linejoin="round"
-          />
-        );
-      })}
-      {ylabel}
-      {yticks}
-      {xticks}
-      {xlabel}
-      <polyline
-        points={`${left},${top} ${left},${bottom} ${right},${bottom}`}
-        fill="none"
-        stroke="white"
-        stroke-width="2"
-      />
-    </Svg>
-  );
 };
 
 const FourCharts = ({ name, jsonl }: { name: string; jsonl: string }) => {
@@ -216,7 +114,38 @@ const FourCharts = ({ name, jsonl }: { name: string; jsonl: string }) => {
       <div class="selection">
         {process(jsonl).map(({ float, index, plots }) => (
           <div class={`f${float}-u${index}-${name}`}>
-            <MeanTimePerElement plots={plots} />
+            <AxesLabeled
+              height={250}
+              top={10}
+              left={35}
+              right={5}
+              bottom={20}
+              xlabel="number of elements"
+              ylabel="time per element"
+              content={[
+                scales({
+                  x: logScale(1, 2 ** 31),
+                  y: logScale(0.5, 50),
+                  content: [
+                    yticks({
+                      minor: [1, 2, 4, 8, 16, 32],
+                      major: [1, 2, 4, 8, 16, 32].map((ns) =>
+                        tick(ns, `${ns}ns`),
+                      ),
+                    }),
+                    ...plots.map(linePlot),
+                    xticks({
+                      minor: range(1, 31).map((i) => 2 ** i),
+                      major: [
+                        { value: 10 ** 3, text: "1K" },
+                        { value: 10 ** 6, text: "1M" },
+                        { value: 10 ** 9, text: "1B" },
+                      ],
+                    }),
+                  ],
+                }),
+              ]}
+            />
           </div>
         ))}
       </div>
