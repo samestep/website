@@ -12,6 +12,7 @@ import {
 } from "../../../plot";
 import { range, splitlines } from "../../../util";
 import desktop from "./desktop.jsonl" with { type: "text" };
+import macbookMmap from "./macbook-mmap.jsonl" with { type: "text" };
 import macbook from "./macbook.jsonl" with { type: "text" };
 
 const colorGrid = "#444";
@@ -177,5 +178,6 @@ export const content: Content = async () => {
   return {
     macbook: <FourCharts name="macbook" jsonl={macbook} />,
     desktop: <FourCharts name="desktop" jsonl={desktop} />,
+    macbookMmap: <FourCharts name="macbook" jsonl={macbookMmap} />,
   };
 };

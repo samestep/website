@@ -20,7 +20,7 @@ You won't necessarily get the same answer because [floating-point addition is no
 
 To specify the order, we'll just have another array that holds integers. That way, once we've chosen the precisions for our floating-point and integer data types, we should be using the _exact same machine code_ for forward order, random order, or any other order we want. The performance should be entirely determined by _dynamic_ behavior in the CPU based on the data we're using.
 
-By the way, all the code to reproduce the measurements in this blog post can be found in a [supplementary repository on GitHub](https://github.com/samestep/random-access/tree/45ffc8fa71afefbe3a9c5e2ed68f1974335b1b25).
+By the way, all the code to reproduce the measurements in this blog post can be found in a [supplementary repository on GitHub](https://github.com/samestep/random-access/tree/224afe878088acc2b48e63595091b1c0758289c9).
 
 <details>
 <summary>Expand this to see some Rust code.</summary>
@@ -241,6 +241,16 @@ use std::time::Instant;
 
 use serde::Serialize;
 
+trait Reader: AsRef<[u8]> {
+    fn new(path: &Path) -> Self;
+}
+
+impl Reader for Vec<u8> {
+    fn new(path: &Path) -> Self {
+        fs::read(path).unwrap()
+    }
+}
+
 #[derive(Serialize)]
 struct Measurement<'a> {
     floats: &'a str,
@@ -280,7 +290,7 @@ unsafe fn reinterpret<T>(bytes: &[u8]) -> &[T] {
     values
 }
 
-fn measure_files<T: Number, I: Copy>(
+fn measure_files<R: Reader, T: Number, I: Copy>(
     dir_floats: &str,
     dir_indices: &str,
     exponent: usize,
@@ -289,10 +299,10 @@ fn measure_files<T: Number, I: Copy>(
     [T]: Index<I, Output = T>,
 {
     let name = format!("{exponent}.dat");
-    let bytes_floats = fs::read(Path::new(dir_floats).join(&name)).unwrap();
-    let bytes_indices = fs::read(Path::new(dir_indices).join(&name)).unwrap();
-    let floats = unsafe { reinterpret::<T>(&bytes_floats) };
-    let indices = unsafe { reinterpret::<I>(&bytes_indices) };
+    let bytes_floats = R::new(&Path::new(dir_floats).join(&name));
+    let bytes_indices = R::new(&Path::new(dir_indices).join(&name));
+    let floats = unsafe { reinterpret::<T>(bytes_floats.as_ref()) };
+    let indices = unsafe { reinterpret::<I>(bytes_indices.as_ref()) };
     for iteration in 0..repeat {
         let start = Instant::now();
         let total = sum(floats, indices);
@@ -309,26 +319,26 @@ fn measure_files<T: Number, I: Copy>(
     }
 }
 
-fn measure(exponents: RangeInclusive<usize>, options: Options, repeat: usize) {
+fn measure<R: Reader>(exponents: RangeInclusive<usize>, options: Options, repeat: usize) {
     for exponent in exponents {
         if options.f32 {
             if options.u32 {
-                measure_files::<f32, Index32>(FLOAT32, UNSHUFFLED32, exponent, repeat);
-                measure_files::<f32, Index32>(FLOAT32, SHUFFLED32, exponent, repeat);
+                measure_files::<R, f32, Index32>(FLOAT32, UNSHUFFLED32, exponent, repeat);
+                measure_files::<R, f32, Index32>(FLOAT32, SHUFFLED32, exponent, repeat);
             }
             if options.u64 {
-                measure_files::<f32, Index64>(FLOAT32, UNSHUFFLED64, exponent, repeat);
-                measure_files::<f32, Index64>(FLOAT32, SHUFFLED64, exponent, repeat);
+                measure_files::<R, f32, Index64>(FLOAT32, UNSHUFFLED64, exponent, repeat);
+                measure_files::<R, f32, Index64>(FLOAT32, SHUFFLED64, exponent, repeat);
             }
         }
         if options.f64 {
             if options.u32 {
-                measure_files::<f64, Index32>(FLOAT64, UNSHUFFLED32, exponent, repeat);
-                measure_files::<f64, Index32>(FLOAT64, SHUFFLED32, exponent, repeat);
+                measure_files::<R, f64, Index32>(FLOAT64, UNSHUFFLED32, exponent, repeat);
+                measure_files::<R, f64, Index32>(FLOAT64, SHUFFLED32, exponent, repeat);
             }
             if options.u64 {
-                measure_files::<f64, Index64>(FLOAT64, UNSHUFFLED64, exponent, repeat);
-                measure_files::<f64, Index64>(FLOAT64, SHUFFLED64, exponent, repeat);
+                measure_files::<R, f64, Index64>(FLOAT64, UNSHUFFLED64, exponent, repeat);
+                measure_files::<R, f64, Index64>(FLOAT64, SHUFFLED64, exponent, repeat);
             }
         }
     }
@@ -353,3 +363,26 @@ As you can see, ...
 {{desktop}}
 
 As you can see, ...
+
+## Memory mapping
+
+<details>
+<summary>Code to memory-map files.</summary>
+
+```rust
+use memmap2::Mmap;
+
+impl Reader for Mmap {
+    fn new(path: &Path) -> Self {
+        unsafe { Mmap::map(&fs::File::open(path).unwrap()) }.unwrap()
+    }
+}
+```
+
+</details>
+
+### MacBook
+
+{{macbookMmap}}
+
+Explanation...
