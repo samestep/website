@@ -14,7 +14,9 @@ import { range, splitlines } from "../../../util";
 import desktop from "./desktop.jsonl" with { type: "text" };
 import macbook from "./macbook.jsonl" with { type: "text" };
 
-const gridColor = "#444";
+const colorGrid = "#444";
+const colorUnshuffled = "hsl(222 100% 75%)";
+const colorShuffled = "hsl(42 100% 75%)";
 
 const grid =
   (ticks: { x: number[]; y: number[] }): ScalesChild =>
@@ -22,11 +24,11 @@ const grid =
     <>
       {ticks.x.map((value) => {
         const x0 = l + w * x(value);
-        return <line x1={x0} y1={t} x2={x0} y2={t + h} stroke={gridColor} />;
+        return <line x1={x0} y1={t} x2={x0} y2={t + h} stroke={colorGrid} />;
       })}
       {ticks.y.map((value) => {
         const y0 = t + h - h * y(value);
-        return <line x1={l} y1={y0} x2={l + w} y2={y0} stroke={gridColor} />;
+        return <line x1={l} y1={y0} x2={l + w} y2={y0} stroke={colorGrid} />;
       })}
     </>
   );
@@ -85,7 +87,7 @@ const process = (
     float,
     index,
     plots: pair.map(({ shuffle, points }) => ({
-      color: shuffle ? "hsl(0 100% 75%)" : "hsl(222 100% 75%)",
+      color: shuffle ? colorShuffled : colorUnshuffled,
       points: [...points].map(([exponent, array]) => {
         const n = 1 << exponent;
         let total = 0;
@@ -110,7 +112,10 @@ const FourCharts = ({ name, jsonl }: { name: string; jsonl: string }) => {
         {process(jsonl).map(({ float, index }) => (
           <div class={`f${float}-u${index}-${name}`}>
             <p>
-              Here are the results with{" "}
+              Here are the{" "}
+              <span style={{ color: colorUnshuffled }}>unshuffled</span> and{" "}
+              <span style={{ color: colorShuffled }}>shuffled</span> results
+              with{" "}
               <strong>
                 {{ 32: "single", 64: "double" }[float]}
                 -precision floating-point
