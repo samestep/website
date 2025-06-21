@@ -66,7 +66,7 @@ const process = (
   for (const line of splitlines(jsonl)) {
     const { floats, indices, exponent, iteration, seconds }: Measurement =
       JSON.parse(line);
-    if (iteration < 5) continue;
+    if (iteration < 2) continue;
     const { points } = groups.find(
       ({ float, index, shuffle }) =>
         floats === `float${float}` &&
