@@ -33,3 +33,43 @@ body:has(#f64-desktop:checked):has(#u32-desktop:checked) .f64-u32-desktop {
 body:has(#f64-desktop:checked):has(#u64-desktop:checked) .f64-u64-desktop {
   display: block;
 }
+
+body:has(#f32-macbook-mmap:checked):has(#u32-macbook-mmap:checked)
+  .f32-u32-macbook-mmap {
+  display: block;
+}
+
+body:has(#f32-macbook-mmap:checked):has(#u64-macbook-mmap:checked)
+  .f32-u64-macbook-mmap {
+  display: block;
+}
+
+body:has(#f64-macbook-mmap:checked):has(#u32-macbook-mmap:checked)
+  .f64-u32-macbook-mmap {
+  display: block;
+}
+
+body:has(#f64-macbook-mmap:checked):has(#u64-macbook-mmap:checked)
+  .f64-u64-macbook-mmap {
+  display: block;
+}
+
+body:has(#f32-desktop-mmap:checked):has(#u32-desktop-mmap:checked)
+  .f32-u32-desktop-mmap {
+  display: block;
+}
+
+body:has(#f32-desktop-mmap:checked):has(#u64-desktop-mmap:checked)
+  .f32-u64-desktop-mmap {
+  display: block;
+}
+
+body:has(#f64-desktop-mmap:checked):has(#u32-desktop-mmap:checked)
+  .f64-u32-desktop-mmap {
+  display: block;
+}
+
+body:has(#f64-desktop-mmap:checked):has(#u64-desktop-mmap:checked)
+  .f64-u64-desktop-mmap {
+  display: block;
+}
