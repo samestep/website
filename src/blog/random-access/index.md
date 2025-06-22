@@ -16,6 +16,7 @@ Let's just consider the two cases where the indices are in **first-to-last order
 4. How much slower is random order than first-to-last order for arrays that don't fit in RAM?
 5. To construct these shuffled index arrays for the random ordering, is standard Fisher-Yates sufficient?
 6. How much slower is first-to-last order for arrays that don't fit in RAM, when using memory-mapped files?
+7. Are memory-mapped files as fast as you can get?
 
 If you already know the answers to all these questions, sweet! Otherwise, make your guesses and check them when you reach the bottom of this post :)
 
@@ -481,6 +482,7 @@ And there you have it! Here are the answers we learned for the questions posed a
 3. For arrays too big for the L3 cache but under about a gigabyte, random order is about 4x slower on my MacBook, and about 8-16x slower on my Linux desktop.
 4. On Linux, random order starts getting even slower for arrays over a gigabyte, becoming more than 50x slower than first-to-last order; in contrast, random order on the MacBook seems to just level out as long as everything fits in RAM.
 5. Fisher-Yates is way too slow for data too big to fit in memory! Use a two-pass shuffle instead.
-6. Memory-mapped files are not magic: for data too big to fit in RAM, first-to-last order finally gets slower, by about 20x. After this point, random order still seems to be slower on Linux, but seems about the same speed as first-to-last order on the MacBook. Interestingly, while this effect stays when switching to a more direct approach on Linux, it seems to magically go away on macOS; perhaps due to a difference in how the two OSes handle memory-mapped files?
+6. Memory-mapped files are not magic: for data too big to fit in RAM, first-to-last order finally gets slower, by about 20x. After this point, random order still seems to be slower on Linux, but seems about the same speed as first-to-last order on the MacBook.
+7. Interestingly, while that effect stays when switching to a more direct approach on Linux, it seems to magically go away on macOS; perhaps due to a difference in how the two OSes handle memory-mapped files?
 
 Let me know if I got anything wrong! And I hope you enjoyed.
