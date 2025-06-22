@@ -2,6 +2,33 @@
   display: none;
 }
 
+.selectors {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+}
+
+.selector {
+  border: 1px solid #555;
+  border-radius: 10px;
+  display: flex;
+  overflow: hidden;
+}
+
+.selector input[type="radio"] {
+  appearance: none;
+  display: none;
+}
+
+.selector label {
+  padding: 5px;
+}
+
+.selector input[type="radio"]:checked + label {
+  background: #ddd;
+  color: #222;
+}
+
 body:has(#f32-macbook:checked):has(#u32-macbook:checked) .f32-u32-macbook {
   display: block;
 }
