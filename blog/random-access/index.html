@@ -46,8 +46,8 @@
                 <stop offset="100%" stop-color="hsl(0 50% 50% / 0%)"></stop>
               </linearGradient>
               <linearGradient id="ramStroke" x1="0" x2="0" y1="0" y2="1">
-                <stop offset="0%" stop-color="#555"></stop>
-                <stop offset="100%" stop-color="#5550"></stop>
+                <stop offset="0%" stop-color="#666"></stop>
+                <stop offset="100%" stop-color="#6660"></stop>
               </linearGradient>
             </defs>
             <text
@@ -64,7 +64,7 @@
               y1="16"
               x2="46"
               y2="16"
-              stroke="grey"
+              stroke="#666"
               stroke-width="3"
             ></line>
             <rect
@@ -73,7 +73,7 @@
               width="42"
               height="16"
               fill="hsl(111 50% 50%)"
-              stroke="grey"
+              stroke="#666"
               stroke-width="2"
             ></rect>
             <text
@@ -99,7 +99,7 @@
               y1="16"
               x2="96"
               y2="16"
-              stroke="grey"
+              stroke="#666"
               stroke-width="3"
             ></line>
             <rect
@@ -108,7 +108,7 @@
               width="42"
               height="16"
               fill="hsl(111 50% 50%)"
-              stroke="grey"
+              stroke="#666"
               stroke-width="2"
             ></rect>
             <text
@@ -134,7 +134,7 @@
               y1="16"
               x2="146"
               y2="16"
-              stroke="grey"
+              stroke="#666"
               stroke-width="3"
             ></line>
             <rect
@@ -143,7 +143,7 @@
               width="42"
               height="16"
               fill="hsl(111 50% 50%)"
-              stroke="grey"
+              stroke="#666"
               stroke-width="2"
             ></rect>
             <text
@@ -169,7 +169,7 @@
               y1="16"
               x2="196"
               y2="16"
-              stroke="grey"
+              stroke="#666"
               stroke-width="3"
             ></line>
             <rect
@@ -178,7 +178,7 @@
               width="42"
               height="16"
               fill="hsl(111 50% 50%)"
-              stroke="grey"
+              stroke="#666"
               stroke-width="2"
             ></rect>
             <text
@@ -204,7 +204,7 @@
               y1="16"
               x2="246"
               y2="16"
-              stroke="grey"
+              stroke="#666"
               stroke-width="3"
             ></line>
             <rect
@@ -213,7 +213,7 @@
               width="42"
               height="16"
               fill="hsl(111 50% 50%)"
-              stroke="grey"
+              stroke="#666"
               stroke-width="2"
             ></rect>
             <text
@@ -239,7 +239,7 @@
               y1="16"
               x2="296"
               y2="16"
-              stroke="grey"
+              stroke="#666"
               stroke-width="3"
             ></line>
             <rect
@@ -248,7 +248,7 @@
               width="42"
               height="16"
               fill="hsl(111 50% 50%)"
-              stroke="grey"
+              stroke="#666"
               stroke-width="2"
             ></rect>
             <text
@@ -266,7 +266,7 @@
               width="292"
               height="248"
               fill="hsl(222 50% 50%)"
-              stroke="grey"
+              stroke="#666"
               stroke-width="2"
             ></rect>
             <text
@@ -301,8 +301,265 @@
           instance, let's say you have an array of floating-point numbers, and
           an array of all the indices of the first array. You have a program
           that adds up the numbers from the first array in the order given by
-          the second array.
+          the second array. So, for this example, we'd add
+          <code>ε + α + δ + ζ + β + γ</code> in that order:
         </p>
+        <div class="svg">
+          <svg viewBox="0 0 300 150" height="150">
+            <rect
+              x="5"
+              y="5"
+              width="40"
+              height="40"
+              fill="none"
+              stroke="white"
+              stroke-width="2"
+            ></rect>
+            <text
+              x="25"
+              y="25"
+              fill="white"
+              text-anchor="middle"
+              dominant-baseline="central"
+            >
+              4
+            </text>
+            <path
+              d="M 25 50 C 25 75, 225 75, 225 100"
+              fill="none"
+              stroke="white"
+              stroke-width="2"
+            ></path>
+            <rect
+              x="55"
+              y="5"
+              width="40"
+              height="40"
+              fill="none"
+              stroke="white"
+              stroke-width="2"
+            ></rect>
+            <text
+              x="75"
+              y="25"
+              fill="white"
+              text-anchor="middle"
+              dominant-baseline="central"
+            >
+              0
+            </text>
+            <path
+              d="M 75 50 C 75 75, 25 75, 25 100"
+              fill="none"
+              stroke="white"
+              stroke-width="2"
+            ></path>
+            <rect
+              x="105"
+              y="5"
+              width="40"
+              height="40"
+              fill="none"
+              stroke="white"
+              stroke-width="2"
+            ></rect>
+            <text
+              x="125"
+              y="25"
+              fill="white"
+              text-anchor="middle"
+              dominant-baseline="central"
+            >
+              3
+            </text>
+            <path
+              d="M 125 50 C 125 75, 175 75, 175 100"
+              fill="none"
+              stroke="white"
+              stroke-width="2"
+            ></path>
+            <rect
+              x="155"
+              y="5"
+              width="40"
+              height="40"
+              fill="none"
+              stroke="white"
+              stroke-width="2"
+            ></rect>
+            <text
+              x="175"
+              y="25"
+              fill="white"
+              text-anchor="middle"
+              dominant-baseline="central"
+            >
+              5
+            </text>
+            <path
+              d="M 175 50 C 175 75, 275 75, 275 100"
+              fill="none"
+              stroke="white"
+              stroke-width="2"
+            ></path>
+            <rect
+              x="205"
+              y="5"
+              width="40"
+              height="40"
+              fill="none"
+              stroke="white"
+              stroke-width="2"
+            ></rect>
+            <text
+              x="225"
+              y="25"
+              fill="white"
+              text-anchor="middle"
+              dominant-baseline="central"
+            >
+              1
+            </text>
+            <path
+              d="M 225 50 C 225 75, 75 75, 75 100"
+              fill="none"
+              stroke="white"
+              stroke-width="2"
+            ></path>
+            <rect
+              x="255"
+              y="5"
+              width="40"
+              height="40"
+              fill="none"
+              stroke="white"
+              stroke-width="2"
+            ></rect>
+            <text
+              x="275"
+              y="25"
+              fill="white"
+              text-anchor="middle"
+              dominant-baseline="central"
+            >
+              2
+            </text>
+            <path
+              d="M 275 50 C 275 75, 125 75, 125 100"
+              fill="none"
+              stroke="white"
+              stroke-width="2"
+            ></path>
+            <rect
+              x="5"
+              y="105"
+              width="40"
+              height="40"
+              fill="none"
+              stroke="white"
+              stroke-width="2"
+            ></rect>
+            <text
+              x="25"
+              y="125"
+              fill="white"
+              text-anchor="middle"
+              dominant-baseline="central"
+            >
+              α
+            </text>
+            <rect
+              x="55"
+              y="105"
+              width="40"
+              height="40"
+              fill="none"
+              stroke="white"
+              stroke-width="2"
+            ></rect>
+            <text
+              x="75"
+              y="125"
+              fill="white"
+              text-anchor="middle"
+              dominant-baseline="central"
+            >
+              β
+            </text>
+            <rect
+              x="105"
+              y="105"
+              width="40"
+              height="40"
+              fill="none"
+              stroke="white"
+              stroke-width="2"
+            ></rect>
+            <text
+              x="125"
+              y="125"
+              fill="white"
+              text-anchor="middle"
+              dominant-baseline="central"
+            >
+              γ
+            </text>
+            <rect
+              x="155"
+              y="105"
+              width="40"
+              height="40"
+              fill="none"
+              stroke="white"
+              stroke-width="2"
+            ></rect>
+            <text
+              x="175"
+              y="125"
+              fill="white"
+              text-anchor="middle"
+              dominant-baseline="central"
+            >
+              δ
+            </text>
+            <rect
+              x="205"
+              y="105"
+              width="40"
+              height="40"
+              fill="none"
+              stroke="white"
+              stroke-width="2"
+            ></rect>
+            <text
+              x="225"
+              y="125"
+              fill="white"
+              text-anchor="middle"
+              dominant-baseline="central"
+            >
+              ε
+            </text>
+            <rect
+              x="255"
+              y="105"
+              width="40"
+              height="40"
+              fill="none"
+              stroke="white"
+              stroke-width="2"
+            ></rect>
+            <text
+              x="275"
+              y="125"
+              fill="white"
+              text-anchor="middle"
+              dominant-baseline="central"
+            >
+              ζ
+            </text>
+          </svg>
+        </div>
         <p>
           Let's just consider the two cases where the indices are in
           <strong>first-to-last order</strong> or in
@@ -336,42 +593,27 @@
           </li>
         </ol>
         <p>
-          If you already know the answers to all these questions, amazing!
+          If you already know the answers to all these questions, sweet!
           Otherwise, make your guesses and check them when you reach the bottom
           of this post :)
         </p>
         <h2>Setup</h2>
         <p>
-          Let's say you have an array of floating-point numbers in memory. You
-          can add those numbers up in any order you like. Let's consider two
-          possible orderings:
-        </p>
-        <ol>
-          <li>First to last.</li>
-          <li>Random.</li>
-        </ol>
-        <p>
-          You won't necessarily get the same answer because
-          <a href="https://walkingrandomly.com/?p=5380"
-            >floating-point addition is not associative</a
-          >; I kind of like that for this experiment because it means I can more
-          easily trust the compiler not to do optimizations I don't expect.
-        </p>
-        <p>
-          To specify the order, we'll just have another array that holds
-          integers. That way, once we've chosen the precisions for our
-          floating-point and integer data types, we should be using the
-          <em>exact same machine code</em> for forward order, random order, or
-          any other order we want. The performance should be entirely determined
-          by <em>dynamic</em> behavior in the CPU based on the data we're using.
-        </p>
-        <p>
-          By the way, all the code to reproduce the measurements in this blog
-          post can be found in a
+          All the code to reproduce the measurements in this blog post can be
+          found in a
           <a
             href="https://github.com/samestep/random-access/tree/9039b4297d19b10dedfc85edf438db35bcf3f863"
-            >supplementary repository on GitHub</a
+            >supplementary GitHub repository</a
           >.
+        </p>
+        <p>
+          Because the indices are just stored in an array, they should use the
+          <em>exact same machine code</em> for both first-to-last order and
+          random order, we've chosen the precisions for our floating-point and
+          integer data types. That means the performance should be entirely
+          determined by <em>dynamic</em> behavior in the CPU based on the data
+          we're using, along with other dynamic behavior by the operating system
+          (we'll get to that later).
         </p>
         <details>
           <summary>Expand this to see some Rust code.</summary>
@@ -592,8 +834,8 @@
         </details>
         <h2>Results</h2>
         <p>
-          Alrighty, now that we have all these files, let's finally run our code
-          on them!
+          Alrighty, now that we have all these files, let's run our code on
+          them!
         </p>
         <details>
           <summary>Code to calculate sums of our generated data.</summary>
@@ -705,7 +947,7 @@
 }
 </code></pre>
         </details>
-        <p>I ran this on two different machines:</p>
+        <p>I ran these experiments on two different machines:</p>
         <ul>
           <li>
             A 2020 MacBook Pro with M1 chip, 16 GiB of RAM, and a 1 TB SSD.
@@ -716,6 +958,13 @@
             SATA SSD.
           </li>
         </ul>
+        <p>
+          For each data point (given a choice of floating-point type and integer
+          type, and an array size), I ran the summation at least ten times (up
+          to a hundred times for some of the smaller arrays), dropped the first
+          two (while caches were still warming up), and computed the mean of the
+          remaining times.
+        </p>
         <h3>MacBook</h3>
         <div class="selection">
           <div class="f32-u32-macbook">
@@ -2434,35 +2683,87 @@
             </div>
           </div>
         </div>
-        <p>As you can see, ...</p>
+        <p>
+          Note that both the
+          <span class="katex"
+            ><span class="katex-mathml"
+              ><math
+                ><semantics
+                  ><mrow><mi>x</mi></mrow
+                  ><annotation encoding="application/x-tex"
+                    >x</annotation
+                  ></semantics
+                ></math
+              ></span
+            ><span class="katex-html" aria-hidden="true"
+              ><span class="strut" style="height: 0.43056em"></span
+              ><span
+                class="strut bottom"
+                style="height: 0.43056em; vertical-align: 0em"
+              ></span
+              ><span class="base textstyle uncramped"
+                ><span class="mord mathit">x</span></span
+              ></span
+            ></span
+          >-axis and the
+          <span class="katex"
+            ><span class="katex-mathml"
+              ><math
+                ><semantics
+                  ><mrow><mi>y</mi></mrow
+                  ><annotation encoding="application/x-tex"
+                    >y</annotation
+                  ></semantics
+                ></math
+              ></span
+            ><span class="katex-html" aria-hidden="true"
+              ><span class="strut" style="height: 0.43056em"></span
+              ><span
+                class="strut bottom"
+                style="height: 0.625em; vertical-align: -0.19444em"
+              ></span
+              ><span class="base textstyle uncramped"
+                ><span class="mord mathit" style="margin-right: 0.03588em"
+                  >y</span
+                ></span
+              ></span
+            ></span
+          >-axis are on a log scale. As you can see, it levels out at about a
+          nanosecond per element on average, until the array of floating-point
+          numbers becomes too large to fit in the system-level cache (SLC),
+          which is 8 MiB. Then first-to-last order stays the same, but random
+          order goes up to about four nanoseconds. Finally, when the arrays
+          become too large to fit in RAM, both times shoot up; more on that
+          later.
+        </p>
         <h3>Linux desktop</h3>
         <div class="selection">
           <div class="f32-u32-desktop">
             <p>
               Here are the results with
               <strong>single-precision floating-point</strong> and
-              <strong>32-bit integer indices</strong>.:
+              <strong>32-bit integer indices</strong>:
             </p>
           </div>
           <div class="f32-u64-desktop">
             <p>
               Here are the results with
               <strong>single-precision floating-point</strong> and
-              <strong>64-bit integer indices</strong>.:
+              <strong>64-bit integer indices</strong>:
             </p>
           </div>
           <div class="f64-u32-desktop">
             <p>
               Here are the results with
               <strong>double-precision floating-point</strong> and
-              <strong>32-bit integer indices</strong>.:
+              <strong>32-bit integer indices</strong>:
             </p>
           </div>
           <div class="f64-u64-desktop">
             <p>
               Here are the results with
               <strong>double-precision floating-point</strong> and
-              <strong>64-bit integer indices</strong>.:
+              <strong>64-bit integer indices</strong>:
             </p>
           </div>
         </div>
@@ -4141,8 +4442,37 @@
             </div>
           </div>
         </div>
-        <p>As you can see, ...</p>
+        <p>
+          A bit noisier data for those smaller arrays! Looks like first-to-last
+          order is actually only about half a nanosecond per element on this
+          CPU. But even though this L3 cache is 32 MiB, random order starts to
+          become slower when the floating-point array is bigger than 4 MiB; not
+          sure why. The ratio here is starker here, ranging from four to about
+          eight nanoseconds per element after divergence from the first-to-last
+          curve.
+        </p>
+        <p>
+          Just like the MacBook, there's a huge spike when there's to much to
+          fit everything in RAM, but the interesting difference here is that
+          random-order performance starts to degrade sharply even before
+          reaching that point, while first-to-last order stays relatively
+          stable. Even though I have 24 GiB of RAM, floating-point arrays over a
+          gigabyte in size start to reach twenty or thirty nanoseconds per
+          element.
+        </p>
         <h2>Memory mapping</h2>
+        <p>
+          After running the above, I wasn't sure whether the spike in the
+          right-hand part of the graph was just because I was trying to read the
+          <em>entire</em> file into memory before doing any work. Here are some
+          results using
+          <a href="https://en.wikipedia.org/wiki/Memory-mapped_file"
+            >memory-mapped files</a
+          >
+          instead. To my disappointment, though, the results look more or less
+          the same (although at least this time it didn't freeze up my computer
+          on the really big arrays).
+        </p>
         <details>
           <summary>Code to memory-map files.</summary>
           <pre><code class="language-rust"><span class="hljs-keyword">use</span> memmap2::Mmap;
@@ -4160,28 +4490,28 @@
             <p>
               Here are the results with
               <strong>single-precision floating-point</strong> and
-              <strong>32-bit integer indices</strong>.:
+              <strong>32-bit integer indices</strong>:
             </p>
           </div>
           <div class="f32-u64-macbook-mmap">
             <p>
               Here are the results with
               <strong>single-precision floating-point</strong> and
-              <strong>64-bit integer indices</strong>.:
+              <strong>64-bit integer indices</strong>:
             </p>
           </div>
           <div class="f64-u32-macbook-mmap">
             <p>
               Here are the results with
               <strong>double-precision floating-point</strong> and
-              <strong>32-bit integer indices</strong>.:
+              <strong>32-bit integer indices</strong>:
             </p>
           </div>
           <div class="f64-u64-macbook-mmap">
             <p>
               Here are the results with
               <strong>double-precision floating-point</strong> and
-              <strong>64-bit integer indices</strong>.:
+              <strong>64-bit integer indices</strong>:
             </p>
           </div>
         </div>
@@ -5863,35 +6193,41 @@
             </div>
           </div>
         </div>
-        <p>Explanation...</p>
+        <p>
+          Looks pretty much the same as before, but this time we were able to
+          run it on bigger inputs. As you can see, for large enough arrays,
+          shuffling the indices seems to have basically no effect on
+          performance; both approaches end up taking over twenty nanoseconds per
+          element on average. I wonder if this is a macOS-specific phenomenon.
+        </p>
         <h3>Linux desktop</h3>
         <div class="selection">
           <div class="f32-u32-desktop-mmap">
             <p>
               Here are the results with
               <strong>single-precision floating-point</strong> and
-              <strong>32-bit integer indices</strong>.:
+              <strong>32-bit integer indices</strong>:
             </p>
           </div>
           <div class="f32-u64-desktop-mmap">
             <p>
               Here are the results with
               <strong>single-precision floating-point</strong> and
-              <strong>64-bit integer indices</strong>.:
+              <strong>64-bit integer indices</strong>:
             </p>
           </div>
           <div class="f64-u32-desktop-mmap">
             <p>
               Here are the results with
               <strong>double-precision floating-point</strong> and
-              <strong>32-bit integer indices</strong>.:
+              <strong>32-bit integer indices</strong>:
             </p>
           </div>
           <div class="f64-u64-desktop-mmap">
             <p>
               Here are the results with
               <strong>double-precision floating-point</strong> and
-              <strong>64-bit integer indices</strong>.:
+              <strong>64-bit integer indices</strong>:
             </p>
           </div>
         </div>
@@ -7573,8 +7909,21 @@
             </div>
           </div>
         </div>
-        <p>More explanation...</p>
+        <p>
+          Not much new to see here. Still, it is interesting that performance
+          for random order seems to degrade much more gradually than performance
+          for first-to-last order; the latter pretty look almost like a step
+          function after reaching a billion elements.
+        </p>
         <h2>&quot;Direct&quot; summation</h2>
+        <p>
+          Just one last experiment, I swear! I was still curious how much of the
+          performance cliff for large arrays was simply due to memory bandwidth
+          versus SSD bandwidth, and how much was due to how the operating system
+          handles memory-mapped files. So I tried a separate implementation that
+          just reads the file of floating-point numbers a chunk at a time, sums
+          up that chunk, then moves to the next chunk.
+        </p>
         <details>
           <summary>Code to sum more directly from a file.</summary>
           <pre><code class="language-rust"><span class="hljs-keyword">use</span> std::io::BufRead;
@@ -7623,6 +7972,11 @@
 }
 </code></pre>
         </details>
+        <p>
+          Note that this is not an apples-to-apples comparison like the above
+          experiments were, since it uses a completely different implementation
+          to compute the sum. That's why I put it here in its own section.
+        </p>
         <h3>MacBook</h3>
         <div class="selection">
           <div class="f32-macbook-buffer">
@@ -8474,11 +8828,11 @@
           </div>
         </div>
         <p>
-          OK, so even though this isn't an apples-to-apples comparison, it looks
-          like memory-mapping was just not being very smart; even if you doubled
-          these times, you'd still only end up with a few nanoseconds per
-          element on average, which is much faster than the over twenty
-          nanoseconds per element we were seeing above for larger arrays.
+          This pretty much confirms my suspicion: it looks like memory-mapping
+          was just not being very smart. Even if you doubled these times, you'd
+          still only end up with a few nanoseconds per element on average, which
+          is much faster than the over twenty nanoseconds per element we were
+          seeing earlier for larger arrays.
         </p>
         <h3>Linux desktop</h3>
         <div class="selection">
@@ -9330,17 +9684,33 @@
             </div>
           </div>
         </div>
-        <p>Still much slower on my Linux machine though!</p>
+        <p>
+          A very different story on Linux! These numbers actually look pretty
+          comparable to what we were seeing earlier, especially once you double
+          them to account for the fact that here we only need to read one file
+          instead of two. My best guess is that the SSD I have for my Linux
+          machine has lower bandwidth than my MacBook SSD, but the Linux
+          operating system handles memory-mapped files more intelligently than
+          macOS does. Hard to say for sure without trying the same experiment
+          with different operating systems on the same hardware, though.
+        </p>
         <h2>Conclusion</h2>
+        <p>
+          And there you have it! Here are the answers we learned for the
+          questions posed at the start of the post:
+        </p>
         <ol>
           <li>
             Summing numbers is fairly memory-bound, so there's basically no
             difference for arrays smaller than a million elements (the size of a
-            typical L3 cache).
+            typical L3 cache). On my Linux machine, though, there doesn't seem
+            to be a direct correspondence between this cutoff point and the
+            actual L3 cache size.
           </li>
           <li>
             In first-to-last order, the average time per element levels out to
-            about a nanosecond on my MacBook (a bit faster on my Linux desktop).
+            about a nanosecond on my MacBook, or about half a nanosecond on my
+            Linux desktop.
           </li>
           <li>
             For arrays too big for the L3 cache but under about a gigabyte,
@@ -9362,8 +9732,13 @@
             first-to-last order finally gets slower, by about 20x. After this
             point, random order still seems to be slower on Linux, but seems
             about the same speed as first-to-last order on the MacBook.
+            Interestingly, while this effect stays when switching to a more
+            direct approach on Linux, it seems to magically go away on macOS;
+            perhaps due to a difference in how the two OSes handle memory-mapped
+            files?
           </li>
         </ol>
+        <p>Let me know if I got anything wrong! And I hope you enjoyed.</p>
       </div>
     </main>
   </body>
