@@ -91,11 +91,11 @@ const process = (
     plots: pair.map(({ shuffle, points }) => ({
       color: shuffle ? colorShuffled : colorUnshuffled,
       points: [...points].map(([exponent, array]) => {
-        const n = 1 << exponent;
+        const n = 2 ** exponent;
         let total = 0;
         for (const timing of array) total += timing;
         const mean = total / array.length;
-        return { x: 2 ** exponent, y: (mean / n) * 1000000000 };
+        return { x: n, y: (mean / n) * 1000000000 };
       }),
     })),
   }));
@@ -138,7 +138,7 @@ const FourCharts = ({ name, jsonl }: { name: string; jsonl: string }) => {
       <label for={u64}>u64</label>
       <div class="selection">
         {process(jsonl).map(({ float, index, plots }) => {
-          const xtickVals = range(0, 31).map((i) => 2 ** i);
+          const xtickVals = range(1, 32).map((i) => 2 ** i);
           const ytickVals = range(0, 8).map((i) => 2 ** i);
           return (
             <div class={`f${float}-u${index}-${name}`}>
@@ -152,7 +152,7 @@ const FourCharts = ({ name, jsonl }: { name: string; jsonl: string }) => {
                 ylabel="time per element"
                 content={[
                   scales({
-                    x: logScale(1, 2 ** 31),
+                    x: logScale(1, 2 ** 32),
                     y: logScale(0.5, 200),
                     content: [
                       yticks(ytickVals.map((ns) => tick(ns, `${ns}ns`))),
