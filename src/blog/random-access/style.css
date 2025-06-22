@@ -120,3 +120,23 @@ body:has(#f64-macbook-buffer:checked):has(#u64-macbook-buffer:checked)
   .f64-u64-macbook-buffer {
   display: block;
 }
+
+body:has(#f32-desktop-buffer:checked):has(#u32-desktop-buffer:checked)
+  .f32-u32-desktop-buffer {
+  display: block;
+}
+
+body:has(#f32-desktop-buffer:checked):has(#u64-desktop-buffer:checked)
+  .f32-u64-desktop-buffer {
+  display: block;
+}
+
+body:has(#f64-desktop-buffer:checked):has(#u32-desktop-buffer:checked)
+  .f64-u32-desktop-buffer {
+  display: block;
+}
+
+body:has(#f64-desktop-buffer:checked):has(#u64-desktop-buffer:checked)
+  .f64-u64-desktop-buffer {
+  display: block;
+}
