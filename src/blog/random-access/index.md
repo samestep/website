@@ -4,7 +4,9 @@ You may know that, because your computer has different caches (L1, L2, L3...), a
 
 (Disk not shown, of course.)
 
-But **how well** do you understand this idea? For instance, let's say you have an array of floating-point numbers, and an array of all the indices of the first array. You have a program that adds up the numbers from the first array in the order given by the second array.
+But **how well** do you understand this idea? For instance, let's say you have an array of floating-point numbers, and an array of all the indices of the first array. You have a program that adds up the numbers from the first array in the order given by the second array. So, for this example, we'd add `ε + α + δ + ζ + β + γ` in that order:
+
+{{arrays}}
 
 Let's just consider the two cases where the indices are in **first-to-last order** or in **random order**. Before I wrote this post, I couldn't answer any of the following questions:
 
@@ -15,20 +17,13 @@ Let's just consider the two cases where the indices are in **first-to-last order
 5. To construct these shuffled index arrays for the random ordering, is standard Fisher-Yates sufficient?
 6. How much slower is first-to-last order for arrays that don't fit in RAM, when using memory-mapped files?
 
-If you already know the answers to all these questions, amazing! Otherwise, make your guesses and check them when you reach the bottom of this post :)
+If you already know the answers to all these questions, sweet! Otherwise, make your guesses and check them when you reach the bottom of this post :)
 
 ## Setup
 
-Let's say you have an array of floating-point numbers in memory. You can add those numbers up in any order you like. Let's consider two possible orderings:
+All the code to reproduce the measurements in this blog post can be found in a [supplementary GitHub repository](https://github.com/samestep/random-access/tree/9039b4297d19b10dedfc85edf438db35bcf3f863).
 
-1. First to last.
-2. Random.
-
-You won't necessarily get the same answer because [floating-point addition is not associative](https://walkingrandomly.com/?p=5380); I kind of like that for this experiment because it means I can more easily trust the compiler not to do optimizations I don't expect.
-
-To specify the order, we'll just have another array that holds integers. That way, once we've chosen the precisions for our floating-point and integer data types, we should be using the _exact same machine code_ for forward order, random order, or any other order we want. The performance should be entirely determined by _dynamic_ behavior in the CPU based on the data we're using.
-
-By the way, all the code to reproduce the measurements in this blog post can be found in a [supplementary repository on GitHub](https://github.com/samestep/random-access/tree/9039b4297d19b10dedfc85edf438db35bcf3f863).
+Because the indices are just stored in an array, they should use the _exact same machine code_ for both first-to-last order and random order, we've chosen the precisions for our floating-point and integer data types. That means the performance should be entirely determined by _dynamic_ behavior in the CPU based on the data we're using, along with other dynamic behavior by the operating system (we'll get to that later).
 
 <details>
 <summary>Expand this to see some Rust code.</summary>
@@ -239,7 +234,7 @@ fn generate(exponents: RangeInclusive<usize>, options: Options) {
 
 ## Results
 
-Alrighty, now that we have all these files, let's finally run our code on them!
+Alrighty, now that we have all these files, let's run our code on them!
 
 <details>
 <summary>Code to calculate sums of our generated data.</summary>
@@ -355,24 +350,30 @@ fn measure<R: Reader>(exponents: RangeInclusive<usize>, options: Options, repeat
 
 </details>
 
-I ran this on two different machines:
+I ran these experiments on two different machines:
 
 - A 2020 MacBook Pro with M1 chip, 16 GiB of RAM, and a 1 TB SSD.
 - A Linux desktop with an AMD Ryzen 5 3600X, 24 GiB of Corsair Vengeance LPX DDR4 3000MHz DRAM, and a Western Digital 1 TB 3D NAND SATA SSD.
+
+For each data point (given a choice of floating-point type and integer type, and an array size), I ran the summation at least ten times (up to a hundred times for some of the smaller arrays), dropped the first two (while caches were still warming up), and computed the mean of the remaining times.
 
 ### MacBook
 
 {{macbook}}
 
-As you can see, ...
+Note that both the $x$-axis and the $y$-axis are on a log scale. As you can see, it levels out at about a nanosecond per element on average, until the array of floating-point numbers becomes too large to fit in the system-level cache (SLC), which is 8 MiB. Then first-to-last order stays the same, but random order goes up to about four nanoseconds. Finally, when the arrays become too large to fit in RAM, both times shoot up; more on that later.
 
 ### Linux desktop
 
 {{desktop}}
 
-As you can see, ...
+A bit noisier data for those smaller arrays! Looks like first-to-last order is actually only about half a nanosecond per element on this CPU. But even though this L3 cache is 32 MiB, random order starts to become slower when the floating-point array is bigger than 4 MiB; not sure why. The ratio here is starker here, ranging from four to about eight nanoseconds per element after divergence from the first-to-last curve.
+
+Just like the MacBook, there's a huge spike when there's to much to fit everything in RAM, but the interesting difference here is that random-order performance starts to degrade sharply even before reaching that point, while first-to-last order stays relatively stable. Even though I have 24 GiB of RAM, floating-point arrays over a gigabyte in size start to reach twenty or thirty nanoseconds per element.
 
 ## Memory mapping
+
+After running the above, I wasn't sure whether the spike in the right-hand part of the graph was just because I was trying to read the _entire_ file into memory before doing any work. Here are some results using [memory-mapped files](https://en.wikipedia.org/wiki/Memory-mapped_file) instead. To my disappointment, though, the results look more or less the same (although at least this time it didn't freeze up my computer on the really big arrays).
 
 <details>
 <summary>Code to memory-map files.</summary>
@@ -393,15 +394,17 @@ impl Reader for Mmap {
 
 {{macbookMmap}}
 
-Explanation...
+Looks pretty much the same as before, but this time we were able to run it on bigger inputs. As you can see, for large enough arrays, shuffling the indices seems to have basically no effect on performance; both approaches end up taking over twenty nanoseconds per element on average. I wonder if this is a macOS-specific phenomenon.
 
 ### Linux desktop
 
 {{desktopMmap}}
 
-More explanation...
+Not much new to see here. Still, it is interesting that performance for random order seems to degrade much more gradually than performance for first-to-last order; the latter pretty look almost like a step function after reaching a billion elements.
 
 ## "Direct" summation
+
+Just one last experiment, I swear! I was still curious how much of the performance cliff for large arrays was simply due to memory bandwidth versus SSD bandwidth, and how much was due to how the operating system handles memory-mapped files. So I tried a separate implementation that just reads the file of floating-point numbers a chunk at a time, sums up that chunk, then moves to the next chunk.
 
 <details>
 <summary>Code to sum more directly from a file.</summary>
@@ -455,23 +458,29 @@ fn measure_buffered(exponents: RangeInclusive<usize>, options: Options, repeat: 
 
 </details>
 
+Note that this is not an apples-to-apples comparison like the above experiments were, since it uses a completely different implementation to compute the sum. That's why I put it here in its own section.
+
 ### MacBook
 
 {{macbookBuffer}}
 
-OK, so even though this isn't an apples-to-apples comparison, it looks like memory-mapping was just not being very smart; even if you doubled these times, you'd still only end up with a few nanoseconds per element on average, which is much faster than the over twenty nanoseconds per element we were seeing above for larger arrays.
+This pretty much confirms my suspicion: it looks like memory-mapping was just not being very smart. Even if you doubled these times, you'd still only end up with a few nanoseconds per element on average, which is much faster than the over twenty nanoseconds per element we were seeing earlier for larger arrays.
 
 ### Linux desktop
 
 {{desktopBuffer}}
 
-Still much slower on my Linux machine though!
+A very different story on Linux! These numbers actually look pretty comparable to what we were seeing earlier, especially once you double them to account for the fact that here we only need to read one file instead of two. My best guess is that the SSD I have for my Linux machine has lower bandwidth than my MacBook SSD, but the Linux operating system handles memory-mapped files more intelligently than macOS does. Hard to say for sure without trying the same experiment with different operating systems on the same hardware, though.
 
 ## Conclusion
 
-1. Summing numbers is fairly memory-bound, so there's basically no difference for arrays smaller than a million elements (the size of a typical L3 cache).
-2. In first-to-last order, the average time per element levels out to about a nanosecond on my MacBook (a bit faster on my Linux desktop).
+And there you have it! Here are the answers we learned for the questions posed at the start of the post:
+
+1. Summing numbers is fairly memory-bound, so there's basically no difference for arrays smaller than a million elements (the size of a typical L3 cache). On my Linux machine, though, there doesn't seem to be a direct correspondence between this cutoff point and the actual L3 cache size.
+2. In first-to-last order, the average time per element levels out to about a nanosecond on my MacBook, or about half a nanosecond on my Linux desktop.
 3. For arrays too big for the L3 cache but under about a gigabyte, random order is about 4x slower on my MacBook, and about 8-16x slower on my Linux desktop.
 4. On Linux, random order starts getting even slower for arrays over a gigabyte, becoming more than 50x slower than first-to-last order; in contrast, random order on the MacBook seems to just level out as long as everything fits in RAM.
 5. Fisher-Yates is way too slow for data too big to fit in memory! Use a two-pass shuffle instead.
-6. Memory-mapped files are not magic: for data too big to fit in RAM, first-to-last order finally gets slower, by about 20x. After this point, random order still seems to be slower on Linux, but seems about the same speed as first-to-last order on the MacBook.
+6. Memory-mapped files are not magic: for data too big to fit in RAM, first-to-last order finally gets slower, by about 20x. After this point, random order still seems to be slower on Linux, but seems about the same speed as first-to-last order on the MacBook. Interestingly, while this effect stays when switching to a more direct approach on Linux, it seems to magically go away on macOS; perhaps due to a difference in how the two OSes handle memory-mapped files?
+
+Let me know if I got anything wrong! And I hope you enjoyed.

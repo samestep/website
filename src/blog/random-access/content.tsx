@@ -26,7 +26,7 @@ const Caches = () => {
   const height = 400;
   const cores = 6;
   const gap = 4;
-  const stroke = "grey";
+  const stroke = "#666";
   const l2 = 24;
   const scale = l2 / 512;
   const y0 = 20;
@@ -44,8 +44,8 @@ const Caches = () => {
           <stop offset="100%" stop-color="hsl(0 50% 50% / 0%)" />
         </linearGradient>
         <linearGradient id="ramStroke" x1="0" x2="0" y1="0" y2="1">
-          <stop offset="0%" stop-color="#555" />
-          <stop offset="100%" stop-color="#5550" />
+          <stop offset="0%" stop-color={stroke} />
+          <stop offset="100%" stop-color={`${stroke}0`} />
         </linearGradient>
       </defs>
       {range(0, cores).map((i) => {
@@ -126,6 +126,84 @@ const Caches = () => {
       >
         RAM
       </text>
+    </Svg>
+  );
+};
+
+const Arrays = () => {
+  const height = 150;
+  const elements = 6;
+  const indices = [4, 0, 3, 5, 1, 2];
+  const floats = ["α", "β", "γ", "δ", "ε", "ζ"];
+  const gap = 5;
+  const w = width / elements;
+  return (
+    <Svg height={height}>
+      {range(0, elements).map((i) => {
+        const x = i * w;
+        const y = 0;
+        const x0 = indices[i] * w;
+        const y0 = height - w;
+        const x1 = x + w / 2;
+        const y1 = y + w;
+        const x2 = x0 + w / 2;
+        const y2 = y0;
+        const y3 = (y1 + y2) / 2;
+        return (
+          <>
+            <rect
+              x={x + gap}
+              y={y + gap}
+              width={w - 2 * gap}
+              height={w - 2 * gap}
+              fill="none"
+              stroke="white"
+              stroke-width="2"
+            />
+            <text
+              x={x + w / 2}
+              y={y + w / 2}
+              fill="white"
+              text-anchor="middle"
+              dominant-baseline="central"
+            >
+              {indices[i]}
+            </text>
+            <path
+              d={`M ${x1} ${y1} C ${x1} ${y3}, ${x2} ${y3}, ${x2} ${y2}`}
+              fill="none"
+              stroke="white"
+              stroke-width="2"
+            />
+          </>
+        );
+      })}
+      {range(0, elements).map((i) => {
+        const x = i * w;
+        const y = height - w;
+        return (
+          <>
+            <rect
+              x={x + gap}
+              y={y + gap}
+              width={w - 2 * gap}
+              height={w - 2 * gap}
+              fill="none"
+              stroke="white"
+              stroke-width="2"
+            />
+            <text
+              x={x + w / 2}
+              y={y + w / 2}
+              fill="white"
+              text-anchor="middle"
+              dominant-baseline="central"
+            >
+              {floats[i]}
+            </text>
+          </>
+        );
+      })}
     </Svg>
   );
 };
@@ -288,7 +366,7 @@ const FourCharts = ({
                   {{ 32: "single", 64: "double" }[float]}
                   -precision floating-point
                 </strong>{" "}
-                and <strong>{index}-bit integer indices</strong>.:
+                and <strong>{index}-bit integer indices</strong>:
               </p>
             )}
           </div>
@@ -370,6 +448,7 @@ const TwoCharts = ({ name, jsonl }: { name: string; jsonl: string }) => {
 export const content: Content = async () => {
   return {
     caches: <Caches />,
+    arrays: <Arrays />,
     macbook: <FourCharts name="macbook" jsonl={macbook} verbose={true} />,
     desktop: <FourCharts name="desktop" jsonl={desktop} />,
     macbookMmap: <FourCharts name="macbook-mmap" jsonl={macbookMmap} />,
