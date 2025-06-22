@@ -591,6 +591,7 @@
             How much slower is first-to-last order for arrays that don't fit in
             RAM, when using memory-mapped files?
           </li>
+          <li>Are memory-mapped files as fast as you can get?</li>
         </ol>
         <p>
           If you already know the answers to all these questions, sweet!
@@ -9732,7 +9733,9 @@
             first-to-last order finally gets slower, by about 20x. After this
             point, random order still seems to be slower on Linux, but seems
             about the same speed as first-to-last order on the MacBook.
-            Interestingly, while this effect stays when switching to a more
+          </li>
+          <li>
+            Interestingly, while that effect stays when switching to a more
             direct approach on Linux, it seems to magically go away on macOS;
             perhaps due to a difference in how the two OSes handle memory-mapped
             files?
