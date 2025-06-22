@@ -1,13 +1,17 @@
-I've been enjoying learning about data-oriented design (DoD) lately. It's exciting to dream of a future where all our compilers are faster!
+You may know that, because your computer has different caches (L1, L2, L3...), and memory operations operate on cache lines of about 64 bytes each, you should write programs that exhibit [locality](https://en.wikipedia.org/wiki/Locality_of_reference) to get maximum performance.
 
-- [Sorbet](https://blog.nelhage.com/post/why-sorbet-is-fast/)
-- [Carbon](https://youtu.be/ZI198eFghJk)
-- [Zig](https://youtu.be/IroPQ150F6c)
-- Jai (I don't have a good video link for this one)
+But **how well** do you understand this idea? For instance, let's say you have an array of floating-point numbers, and an array of all the indices of the first array. You have a program that adds up the numbers from the first array in the order given by the second array.
 
-When I mentioned some of these ideas with a friend, he asked _how much_ of a difference it actually makes to access data in cache-friendly vs cache-unfriendly ways. He's working in the more theoretical context of [streaming algorithms](https://en.wikipedia.org/wiki/Streaming_algorithm), so really he just wanted to know how justified he is in switching between "arbitrary order" and "random order" as necessary.
+Let's just consider the two cases where the indices are in **first-to-last order** or in **random order**. Before I wrote this post, I couldn't answer any of the following questions:
 
-But I realized that, while I have some high-level intuitions, and some of those videos I've been watching give performance numbers for whole pieces of software, I don't actually know what the numbers look like for simple programs. So let's measure!
+1. How big of an array do you need before you see a difference in performance between the two orderings?
+2. How much time does the first-to-last ordering take per element, on average?
+3. How much slower is random order than first-to-last order for arrays that fit in RAM?
+4. How much slower is random order than first-to-last order for arrays that don't fit in RAM?
+5. To construct these shuffled index arrays for the random ordering, is standard Fisher-Yates sufficient?
+6. How much slower is first-to-last order for arrays that don't fit in RAM, when using memory-mapped files?
+
+If you already know the answers to all these questions, amazing! Otherwise, make your guesses and check them when you reach the bottom of this post :)
 
 ## Setup
 
@@ -59,9 +63,9 @@ fn test_sum_f64_usize_not_associative() {
 
 </details>
 
-Now all we need to do is generate some random data. For the floating-point numbers we can just use a [normal distribution](https://en.wikipedia.org/wiki/Normal_distribution), and for the integer indices we can just take the list of integers up to the length of our array, and [shuffle](https://en.wikipedia.org/wiki/Fisher%E2%80%93Yates_shuffle) it to get a random order.
+Now we need to generate some random data. For the floating-point numbers we can just use a [normal distribution](https://en.wikipedia.org/wiki/Normal_distribution), and for the integer indices we can just take the list of integers up to the length of our array, and [shuffle](https://en.wikipedia.org/wiki/Fisher%E2%80%93Yates_shuffle) it to get a random order.
 
-Or rather, that's what I thought at first. Small spoiler: further down we're going to do some experiments with arrays too big to fit in memory, and for those, Fisher–Yates turned out to be way too slow. So instead I implemented a [two-pass shuffle](https://blog.janestreet.com/how-to-shuffle-a-big-dataset/) which first partitions the array into chunks that are about a gigabyte each.
+Or rather, that's what I thought at first. Small spoiler: further down we're going to do some experiments with arrays too big to fit in memory, and for those, Fisher-Yates turned out to be way too slow. So instead I implemented a [two-pass shuffle](https://blog.janestreet.com/how-to-shuffle-a-big-dataset/) which first partitions the array into chunks that are about a gigabyte each.
 
 <details>
 <summary>Code to generate our random data.</summary>
@@ -144,7 +148,7 @@ fn permutation<I: Int, P: Progress>(rng: &mut impl Rng, mut writer: impl Write, 
 
 </details>
 
-Now all we need to do is use this to make a bunch of files with data of different sizes. We'll just do all the powers of two up whatever fits comfortably on our SSD.
+Next we just need to use this to make a bunch of files with data of different sizes. We'll just do all the powers of two up whatever fits comfortably on our SSD.
 
 <details>
 <summary>Code for bulk data generation into files.</summary>
@@ -387,8 +391,17 @@ impl Reader for Mmap {
 
 Explanation...
 
-### Desktop
+### Linux desktop
 
 {{desktopMmap}}
 
 More explanation...
+
+## Conclusion
+
+1. Summing numbers is fairly memory-bound, so there's basically no difference for arrays smaller than a million elements (the size of a typical L3 cache).
+2. In first-to-last order, the average time per element levels out to about a nanosecond on my MacBook (a bit faster on my Linux desktop).
+3. For arrays too big for the L3 cache but under about a gigabyte, random order is about 4x slower on my MacBook, and about 8-16x slower on my Linux desktop.
+4. On Linux, random order starts getting even slower for arrays over a gigabyte, becoming more than 50x slower than first-to-last order; in contrast, random order on the MacBook seems to just level out as long as everything fits in RAM.
+5. Fisher-Yates is way too slow for data too big to fit in memory! Use a two-pass shuffle instead.
+6. Memory-mapped files are not magic: for data too big to fit in RAM, first-to-last order finally gets slower, by about 20x. After this point, random order still seems to be slower on Linux, but seems about the same speed as first-to-last order on the MacBook.

@@ -159,7 +159,7 @@ const FourCharts = ({ name, jsonl }: { name: string; jsonl: string }) => {
                 content={[
                   scales({
                     x: logScale(1, 2 ** 32),
-                    y: logScale(0.5, 200),
+                    y: logScale(0.5, 2 ** 7.5),
                     content: [
                       yticks(ytickVals.map((ns) => tick(ns, `${ns}ns`))),
                       grid({ x: xtickVals, y: ytickVals }),
