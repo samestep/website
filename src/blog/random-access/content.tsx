@@ -1,4 +1,4 @@
-import { Content } from "../../../blog";
+import { Content, Svg, width } from "../../../blog";
 import {
   AxesLabeled,
   linePlot,
@@ -21,6 +21,114 @@ import macbook from "./macbook.jsonl" with { type: "text" };
 const colorGrid = "#444";
 const colorUnshuffled = "hsl(222 100% 75%)";
 const colorShuffled = "hsl(42 100% 75%)";
+
+const Caches = () => {
+  const height = 400;
+  const cores = 6;
+  const gap = 4;
+  const stroke = "grey";
+  const l2 = 24;
+  const scale = l2 / 512;
+  const y0 = 20;
+  const l3 = (32 * 1024 * scale) / 6;
+  const ram = height - (y0 + l2 + l3);
+  const y0ram = y0 + l2 + l3 + gap;
+  const y1ram = y0 + l2 + l3 + ram - gap;
+  const x0 = gap;
+  const x1 = width - gap;
+  return (
+    <Svg height={height}>
+      <defs>
+        <linearGradient id="ramFill" x1="0" x2="0" y1="0" y2="1">
+          <stop offset="0%" stop-color="hsl(0 50% 50%)" />
+          <stop offset="100%" stop-color="hsl(0 50% 50% / 0%)" />
+        </linearGradient>
+        <linearGradient id="ramStroke" x1="0" x2="0" y1="0" y2="1">
+          <stop offset="0%" stop-color="#555" />
+          <stop offset="100%" stop-color="#5550" />
+        </linearGradient>
+      </defs>
+      {range(0, cores).map((i) => {
+        const w = width / cores;
+        const h = l2;
+        const x = i * w;
+        const y = y0;
+        return (
+          <>
+            <text
+              x={x + w / 2}
+              y={y - 2 * gap}
+              fill="white"
+              text-anchor="middle"
+              dominant-baseline="text-bottom"
+            >
+              L1
+            </text>
+            <line
+              x1={x + gap}
+              y1={y - gap}
+              x2={x + w - gap}
+              y2={y - gap}
+              stroke={stroke}
+              stroke-width={scale * 64}
+            />
+            <rect
+              x={x + gap}
+              y={y + gap}
+              width={w - 2 * gap}
+              height={h - 2 * gap}
+              fill="hsl(111 50% 50%)"
+              stroke={stroke}
+              stroke-width="2"
+            />
+            <text
+              x={x + w / 2}
+              y={y + h / 2}
+              fill="white"
+              text-anchor="middle"
+              dominant-baseline="central"
+            >
+              L2
+            </text>
+          </>
+        );
+      })}
+      <rect
+        x={gap}
+        y={y0 + l2 + gap}
+        width={width - 2 * gap}
+        height={l3 - 2 * gap}
+        fill="hsl(222 50% 50%)"
+        stroke={stroke}
+        stroke-width="2"
+      />
+      <text
+        x={width / 2}
+        y={y0 + l2 + l3 / 2}
+        fill="white"
+        text-anchor="middle"
+        dominant-baseline="central"
+      >
+        L3
+      </text>
+      <polyline
+        points={`${x1},${y1ram} ${x1},${y0ram} ${x0},${y0ram} ${x0},${y1ram}`}
+        fill="url(#ramFill)"
+        stroke="url(#ramStroke)"
+        stroke-width="2"
+      />
+      <text
+        x={width / 2}
+        y={y0 + l2 + l3 + ram / 2}
+        fill="white"
+        text-anchor="middle"
+        dominant-baseline="central"
+      >
+        RAM
+      </text>
+    </Svg>
+  );
+};
 
 const grid =
   (ticks: { x: number[]; y: number[] }): ScalesChild =>
@@ -261,6 +369,7 @@ const TwoCharts = ({ name, jsonl }: { name: string; jsonl: string }) => {
 
 export const content: Content = async () => {
   return {
+    caches: <Caches />,
     macbook: <FourCharts name="macbook" jsonl={macbook} verbose={true} />,
     desktop: <FourCharts name="desktop" jsonl={desktop} />,
     macbookMmap: <FourCharts name="macbook-mmap" jsonl={macbookMmap} />,

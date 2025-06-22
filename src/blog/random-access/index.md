@@ -1,5 +1,9 @@
 You may know that, because your computer has different caches (L1, L2, L3...), and memory operations operate on cache lines of about 64 bytes each, you should write programs that exhibit [locality](https://en.wikipedia.org/wiki/Locality_of_reference) to get maximum performance.
 
+{{caches}}
+
+(Disk not shown, of course.)
+
 But **how well** do you understand this idea? For instance, let's say you have an array of floating-point numbers, and an array of all the indices of the first array. You have a program that adds up the numbers from the first array in the order given by the second array.
 
 Let's just consider the two cases where the indices are in **first-to-last order** or in **random order**. Before I wrote this post, I couldn't answer any of the following questions:
