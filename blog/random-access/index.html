@@ -111,7 +111,7 @@
           By the way, all the code to reproduce the measurements in this blog
           post can be found in a
           <a
-            href="https://github.com/samestep/random-access/tree/224afe878088acc2b48e63595091b1c0758289c9"
+            href="https://github.com/samestep/random-access/tree/9039b4297d19b10dedfc85edf438db35bcf3f863"
             >supplementary repository on GitHub</a
           >.
         </p>
@@ -521,12 +521,12 @@
                 type="radio"
                 id="u32-macbook"
                 name="indices-macbook"
-                checked
               /><label for="u32-macbook">u32</label
               ><input
                 type="radio"
                 id="u64-macbook"
                 name="indices-macbook"
+                checked
               /><label for="u64-macbook">u64</label>
             </div>
           </div>
@@ -1905,12 +1905,12 @@
                 type="radio"
                 id="u32-desktop"
                 name="indices-desktop"
-                checked
               /><label for="u32-desktop">u32</label
               ><input
                 type="radio"
                 id="u64-desktop"
                 name="indices-desktop"
+                checked
               /><label for="u64-desktop">u64</label>
             </div>
           </div>
@@ -3301,12 +3301,12 @@
                 type="radio"
                 id="u32-macbook-mmap"
                 name="indices-macbook-mmap"
-                checked
               /><label for="u32-macbook-mmap">u32</label
               ><input
                 type="radio"
                 id="u64-macbook-mmap"
                 name="indices-macbook-mmap"
+                checked
               /><label for="u64-macbook-mmap">u64</label>
             </div>
           </div>
@@ -4685,12 +4685,12 @@
                 type="radio"
                 id="u32-desktop-mmap"
                 name="indices-desktop-mmap"
-                checked
               /><label for="u32-desktop-mmap">u32</label
               ><input
                 type="radio"
                 id="u64-desktop-mmap"
                 name="indices-desktop-mmap"
+                checked
               /><label for="u64-desktop-mmap">u64</label>
             </div>
           </div>
@@ -6006,6 +6006,1445 @@
           </div>
         </div>
         <p>More explanation...</p>
+        <h2>&quot;Direct&quot; summation</h2>
+        <details>
+          <summary>Code to sum more directly from a file.</summary>
+          <pre><code class="language-rust"><span class="hljs-keyword">use</span> std::io::BufRead;
+
+<span class="hljs-keyword">fn</span> <span class="hljs-title function_">sum_buffered</span>&lt;T: Number&gt;(dir_floats: &amp;<span class="hljs-type">str</span>, exponent: <span class="hljs-type">usize</span>, repeat: <span class="hljs-type">usize</span>) {
+    <span class="hljs-keyword">let</span> <span class="hljs-variable">name</span> = <span class="hljs-built_in">format!</span>(<span class="hljs-string">&quot;{exponent}.dat&quot;</span>);
+    <span class="hljs-keyword">for</span> <span class="hljs-variable">iteration</span> <span class="hljs-keyword">in</span> <span class="hljs-number">0</span>..repeat {
+        <span class="hljs-keyword">let</span> <span class="hljs-keyword">mut </span><span class="hljs-variable">reader</span> =
+            io::BufReader::<span class="hljs-title function_ invoke__">new</span>(fs::File::<span class="hljs-title function_ invoke__">open</span>(Path::<span class="hljs-title function_ invoke__">new</span>(dir_floats).<span class="hljs-title function_ invoke__">join</span>(&amp;name)).<span class="hljs-title function_ invoke__">unwrap</span>());
+        <span class="hljs-keyword">let</span> <span class="hljs-variable">start</span> = Instant::<span class="hljs-title function_ invoke__">now</span>();
+        <span class="hljs-keyword">let</span> <span class="hljs-keyword">mut </span><span class="hljs-variable">total</span> = T::<span class="hljs-title function_ invoke__">zero</span>();
+        <span class="hljs-keyword">loop</span> {
+            <span class="hljs-keyword">let</span> <span class="hljs-variable">buffer</span> = reader.<span class="hljs-title function_ invoke__">fill_buf</span>().<span class="hljs-title function_ invoke__">unwrap</span>();
+            <span class="hljs-keyword">if</span> buffer.<span class="hljs-title function_ invoke__">is_empty</span>() {
+                <span class="hljs-keyword">break</span>;
+            }
+            <span class="hljs-keyword">let</span> <span class="hljs-variable">floats</span> = <span class="hljs-keyword">unsafe</span> { reinterpret::&lt;T&gt;(buffer) };
+            <span class="hljs-keyword">for</span> &amp;float <span class="hljs-keyword">in</span> floats {
+                total += float;
+            }
+            <span class="hljs-keyword">let</span> <span class="hljs-variable">bytes</span> = buffer.<span class="hljs-title function_ invoke__">len</span>();
+            reader.<span class="hljs-title function_ invoke__">consume</span>(bytes);
+        }
+        <span class="hljs-keyword">let</span> <span class="hljs-variable">duration</span> = start.<span class="hljs-title function_ invoke__">elapsed</span>();
+        <span class="hljs-keyword">let</span> <span class="hljs-variable">measurement</span> = Measurement {
+            floats: dir_floats,
+            indices: <span class="hljs-string">&quot;unshuffled64&quot;</span>,
+            exponent,
+            iteration,
+            output: total.<span class="hljs-title function_ invoke__">into</span>(),
+            seconds: duration.<span class="hljs-title function_ invoke__">as_secs_f64</span>(),
+        };
+        <span class="hljs-built_in">println!</span>(<span class="hljs-string">&quot;{}&quot;</span>, serde_json::<span class="hljs-title function_ invoke__">to_string</span>(&amp;measurement).<span class="hljs-title function_ invoke__">unwrap</span>());
+    }
+}
+
+<span class="hljs-keyword">fn</span> <span class="hljs-title function_">measure_buffered</span>(exponents: RangeInclusive&lt;<span class="hljs-type">usize</span>&gt;, options: Options, repeat: <span class="hljs-type">usize</span>) {
+    <span class="hljs-keyword">for</span> <span class="hljs-variable">exponent</span> <span class="hljs-keyword">in</span> exponents {
+        <span class="hljs-keyword">if</span> options.<span class="hljs-type">f32</span> {
+            sum_buffered::&lt;<span class="hljs-type">f32</span>&gt;(FLOAT32, exponent, repeat);
+        }
+        <span class="hljs-keyword">if</span> options.<span class="hljs-type">f64</span> {
+            sum_buffered::&lt;<span class="hljs-type">f64</span>&gt;(FLOAT64, exponent, repeat);
+        }
+    }
+}
+</code></pre>
+        </details>
+        <h3>MacBook</h3>
+        <div>
+          <div class="selection">
+            <div class="f32-u32-macbook-buffer">
+              <p>
+                Here are the
+                <span style="color: hsl(222 100% 75%)">unshuffled</span> and
+                <span style="color: hsl(42 100% 75%)">shuffled</span> results
+                with <strong>single-precision floating-point</strong> and
+                <strong>32-bit integer indices</strong> (use the toggles to
+                select other configurations):
+              </p>
+            </div>
+            <div class="f32-u64-macbook-buffer">
+              <p>
+                Here are the
+                <span style="color: hsl(222 100% 75%)">unshuffled</span> and
+                <span style="color: hsl(42 100% 75%)">shuffled</span> results
+                with <strong>single-precision floating-point</strong> and
+                <strong>64-bit integer indices</strong> (use the toggles to
+                select other configurations):
+              </p>
+            </div>
+            <div class="f64-u32-macbook-buffer">
+              <p>
+                Here are the
+                <span style="color: hsl(222 100% 75%)">unshuffled</span> and
+                <span style="color: hsl(42 100% 75%)">shuffled</span> results
+                with <strong>double-precision floating-point</strong> and
+                <strong>32-bit integer indices</strong> (use the toggles to
+                select other configurations):
+              </p>
+            </div>
+            <div class="f64-u64-macbook-buffer">
+              <p>
+                Here are the
+                <span style="color: hsl(222 100% 75%)">unshuffled</span> and
+                <span style="color: hsl(42 100% 75%)">shuffled</span> results
+                with <strong>double-precision floating-point</strong> and
+                <strong>64-bit integer indices</strong> (use the toggles to
+                select other configurations):
+              </p>
+            </div>
+          </div>
+          <div class="selectors">
+            <div class="selector">
+              <input
+                type="radio"
+                id="f32-macbook-buffer"
+                name="floats-macbook-buffer"
+                checked
+              /><label for="f32-macbook-buffer">f32</label
+              ><input
+                type="radio"
+                id="f64-macbook-buffer"
+                name="floats-macbook-buffer"
+              /><label for="f64-macbook-buffer">f64</label>
+            </div>
+            <div class="selector">
+              <input
+                type="radio"
+                id="u32-macbook-buffer"
+                name="indices-macbook-buffer"
+              /><label for="u32-macbook-buffer">u32</label
+              ><input
+                type="radio"
+                id="u64-macbook-buffer"
+                name="indices-macbook-buffer"
+                checked
+              /><label for="u64-macbook-buffer">u64</label>
+            </div>
+          </div>
+          <div class="selection">
+            <div class="f32-u32-macbook-buffer">
+              <div class="svg">
+                <svg viewBox="0 0 300 250" height="250">
+                  <text
+                    x="0"
+                    y="110"
+                    fill="white"
+                    text-anchor="middle"
+                    dominant-baseline="hanging"
+                    transform="rotate(-90 0 110)"
+                  >
+                    time per element
+                  </text>
+                  <text
+                    x="50"
+                    y="186.47058823529412"
+                    fill="white"
+                    text-anchor="end"
+                    dominant-baseline="central"
+                  >
+                    1ns
+                  </text>
+                  <text
+                    x="50"
+                    y="162.94117647058823"
+                    fill="white"
+                    text-anchor="end"
+                    dominant-baseline="central"
+                  >
+                    2ns
+                  </text>
+                  <text
+                    x="50"
+                    y="139.41176470588238"
+                    fill="white"
+                    text-anchor="end"
+                    dominant-baseline="central"
+                  >
+                    4ns
+                  </text>
+                  <text
+                    x="50"
+                    y="115.88235294117648"
+                    fill="white"
+                    text-anchor="end"
+                    dominant-baseline="central"
+                  >
+                    8ns
+                  </text>
+                  <text
+                    x="50"
+                    y="92.35294117647058"
+                    fill="white"
+                    text-anchor="end"
+                    dominant-baseline="central"
+                  >
+                    16ns
+                  </text>
+                  <text
+                    x="50"
+                    y="68.82352941176472"
+                    fill="white"
+                    text-anchor="end"
+                    dominant-baseline="central"
+                  >
+                    32ns
+                  </text>
+                  <text
+                    x="50"
+                    y="45.29411764705884"
+                    fill="white"
+                    text-anchor="end"
+                    dominant-baseline="central"
+                  >
+                    64ns
+                  </text>
+                  <text
+                    x="50"
+                    y="21.764705882352956"
+                    fill="white"
+                    text-anchor="end"
+                    dominant-baseline="central"
+                  >
+                    128ns
+                  </text>
+                  <line
+                    x1="62.5"
+                    y1="10"
+                    x2="62.5"
+                    y2="210"
+                    stroke="#444"
+                  ></line>
+                  <line x1="70" y1="10" x2="70" y2="210" stroke="#444"></line>
+                  <line
+                    x1="77.5"
+                    y1="10"
+                    x2="77.5"
+                    y2="210"
+                    stroke="#444"
+                  ></line>
+                  <line x1="85" y1="10" x2="85" y2="210" stroke="#444"></line>
+                  <line
+                    x1="92.5"
+                    y1="10"
+                    x2="92.5"
+                    y2="210"
+                    stroke="#444"
+                  ></line>
+                  <line x1="100" y1="10" x2="100" y2="210" stroke="#444"></line>
+                  <line
+                    x1="107.5"
+                    y1="10"
+                    x2="107.5"
+                    y2="210"
+                    stroke="#444"
+                  ></line>
+                  <line x1="115" y1="10" x2="115" y2="210" stroke="#444"></line>
+                  <line
+                    x1="122.5"
+                    y1="10"
+                    x2="122.5"
+                    y2="210"
+                    stroke="#444"
+                  ></line>
+                  <line x1="130" y1="10" x2="130" y2="210" stroke="#444"></line>
+                  <line
+                    x1="137.5"
+                    y1="10"
+                    x2="137.5"
+                    y2="210"
+                    stroke="#444"
+                  ></line>
+                  <line x1="145" y1="10" x2="145" y2="210" stroke="#444"></line>
+                  <line
+                    x1="152.5"
+                    y1="10"
+                    x2="152.5"
+                    y2="210"
+                    stroke="#444"
+                  ></line>
+                  <line x1="160" y1="10" x2="160" y2="210" stroke="#444"></line>
+                  <line
+                    x1="167.5"
+                    y1="10"
+                    x2="167.5"
+                    y2="210"
+                    stroke="#444"
+                  ></line>
+                  <line x1="175" y1="10" x2="175" y2="210" stroke="#444"></line>
+                  <line
+                    x1="182.5"
+                    y1="10"
+                    x2="182.5"
+                    y2="210"
+                    stroke="#444"
+                  ></line>
+                  <line x1="190" y1="10" x2="190" y2="210" stroke="#444"></line>
+                  <line
+                    x1="197.5"
+                    y1="10"
+                    x2="197.5"
+                    y2="210"
+                    stroke="#444"
+                  ></line>
+                  <line x1="205" y1="10" x2="205" y2="210" stroke="#444"></line>
+                  <line
+                    x1="212.5"
+                    y1="10"
+                    x2="212.5"
+                    y2="210"
+                    stroke="#444"
+                  ></line>
+                  <line x1="220" y1="10" x2="220" y2="210" stroke="#444"></line>
+                  <line
+                    x1="227.5"
+                    y1="10"
+                    x2="227.5"
+                    y2="210"
+                    stroke="#444"
+                  ></line>
+                  <line x1="235" y1="10" x2="235" y2="210" stroke="#444"></line>
+                  <line
+                    x1="242.5"
+                    y1="10"
+                    x2="242.5"
+                    y2="210"
+                    stroke="#444"
+                  ></line>
+                  <line x1="250" y1="10" x2="250" y2="210" stroke="#444"></line>
+                  <line
+                    x1="257.5"
+                    y1="10"
+                    x2="257.5"
+                    y2="210"
+                    stroke="#444"
+                  ></line>
+                  <line x1="265" y1="10" x2="265" y2="210" stroke="#444"></line>
+                  <line
+                    x1="272.5"
+                    y1="10"
+                    x2="272.5"
+                    y2="210"
+                    stroke="#444"
+                  ></line>
+                  <line x1="280" y1="10" x2="280" y2="210" stroke="#444"></line>
+                  <line
+                    x1="287.5"
+                    y1="10"
+                    x2="287.5"
+                    y2="210"
+                    stroke="#444"
+                  ></line>
+                  <line
+                    x1="55"
+                    y1="186.47058823529412"
+                    x2="295"
+                    y2="186.47058823529412"
+                    stroke="#444"
+                  ></line>
+                  <line
+                    x1="55"
+                    y1="162.94117647058823"
+                    x2="295"
+                    y2="162.94117647058823"
+                    stroke="#444"
+                  ></line>
+                  <line
+                    x1="55"
+                    y1="139.41176470588238"
+                    x2="295"
+                    y2="139.41176470588238"
+                    stroke="#444"
+                  ></line>
+                  <line
+                    x1="55"
+                    y1="115.88235294117648"
+                    x2="295"
+                    y2="115.88235294117648"
+                    stroke="#444"
+                  ></line>
+                  <line
+                    x1="55"
+                    y1="92.35294117647058"
+                    x2="295"
+                    y2="92.35294117647058"
+                    stroke="#444"
+                  ></line>
+                  <line
+                    x1="55"
+                    y1="68.82352941176472"
+                    x2="295"
+                    y2="68.82352941176472"
+                    stroke="#444"
+                  ></line>
+                  <line
+                    x1="55"
+                    y1="45.29411764705884"
+                    x2="295"
+                    y2="45.29411764705884"
+                    stroke="#444"
+                  ></line>
+                  <line
+                    x1="55"
+                    y1="21.764705882352956"
+                    x2="295"
+                    y2="21.764705882352956"
+                    stroke="#444"
+                  ></line>
+                  <polyline
+                    points
+                    fill="none"
+                    stroke="hsl(42 100% 75%)"
+                    stroke-width="2"
+                    stroke-linejoin="round"
+                  ></polyline>
+                  <polyline
+                    points
+                    fill="none"
+                    stroke="hsl(222 100% 75%)"
+                    stroke-width="2"
+                    stroke-linejoin="round"
+                  ></polyline>
+                  <text
+                    x="129.74338213496566"
+                    y="215"
+                    fill="white"
+                    text-anchor="middle"
+                    dominant-baseline="hanging"
+                  >
+                    1K
+                  </text>
+                  <text
+                    x="204.4867642699313"
+                    y="215"
+                    fill="white"
+                    text-anchor="middle"
+                    dominant-baseline="hanging"
+                  >
+                    1M
+                  </text>
+                  <text
+                    x="279.23014640489697"
+                    y="215"
+                    fill="white"
+                    text-anchor="middle"
+                    dominant-baseline="hanging"
+                  >
+                    1B
+                  </text>
+                  <text
+                    x="175"
+                    y="245"
+                    fill="white"
+                    text-anchor="middle"
+                    dominant-baseline="text-bottom"
+                  >
+                    number of elements
+                  </text>
+                  <polyline
+                    points="55,10 55,210 295,210"
+                    fill="none"
+                    stroke="white"
+                    stroke-width="2"
+                  ></polyline>
+                </svg>
+              </div>
+            </div>
+            <div class="f32-u64-macbook-buffer">
+              <div class="svg">
+                <svg viewBox="0 0 300 250" height="250">
+                  <text
+                    x="0"
+                    y="110"
+                    fill="white"
+                    text-anchor="middle"
+                    dominant-baseline="hanging"
+                    transform="rotate(-90 0 110)"
+                  >
+                    time per element
+                  </text>
+                  <text
+                    x="50"
+                    y="186.47058823529412"
+                    fill="white"
+                    text-anchor="end"
+                    dominant-baseline="central"
+                  >
+                    1ns
+                  </text>
+                  <text
+                    x="50"
+                    y="162.94117647058823"
+                    fill="white"
+                    text-anchor="end"
+                    dominant-baseline="central"
+                  >
+                    2ns
+                  </text>
+                  <text
+                    x="50"
+                    y="139.41176470588238"
+                    fill="white"
+                    text-anchor="end"
+                    dominant-baseline="central"
+                  >
+                    4ns
+                  </text>
+                  <text
+                    x="50"
+                    y="115.88235294117648"
+                    fill="white"
+                    text-anchor="end"
+                    dominant-baseline="central"
+                  >
+                    8ns
+                  </text>
+                  <text
+                    x="50"
+                    y="92.35294117647058"
+                    fill="white"
+                    text-anchor="end"
+                    dominant-baseline="central"
+                  >
+                    16ns
+                  </text>
+                  <text
+                    x="50"
+                    y="68.82352941176472"
+                    fill="white"
+                    text-anchor="end"
+                    dominant-baseline="central"
+                  >
+                    32ns
+                  </text>
+                  <text
+                    x="50"
+                    y="45.29411764705884"
+                    fill="white"
+                    text-anchor="end"
+                    dominant-baseline="central"
+                  >
+                    64ns
+                  </text>
+                  <text
+                    x="50"
+                    y="21.764705882352956"
+                    fill="white"
+                    text-anchor="end"
+                    dominant-baseline="central"
+                  >
+                    128ns
+                  </text>
+                  <line
+                    x1="62.5"
+                    y1="10"
+                    x2="62.5"
+                    y2="210"
+                    stroke="#444"
+                  ></line>
+                  <line x1="70" y1="10" x2="70" y2="210" stroke="#444"></line>
+                  <line
+                    x1="77.5"
+                    y1="10"
+                    x2="77.5"
+                    y2="210"
+                    stroke="#444"
+                  ></line>
+                  <line x1="85" y1="10" x2="85" y2="210" stroke="#444"></line>
+                  <line
+                    x1="92.5"
+                    y1="10"
+                    x2="92.5"
+                    y2="210"
+                    stroke="#444"
+                  ></line>
+                  <line x1="100" y1="10" x2="100" y2="210" stroke="#444"></line>
+                  <line
+                    x1="107.5"
+                    y1="10"
+                    x2="107.5"
+                    y2="210"
+                    stroke="#444"
+                  ></line>
+                  <line x1="115" y1="10" x2="115" y2="210" stroke="#444"></line>
+                  <line
+                    x1="122.5"
+                    y1="10"
+                    x2="122.5"
+                    y2="210"
+                    stroke="#444"
+                  ></line>
+                  <line x1="130" y1="10" x2="130" y2="210" stroke="#444"></line>
+                  <line
+                    x1="137.5"
+                    y1="10"
+                    x2="137.5"
+                    y2="210"
+                    stroke="#444"
+                  ></line>
+                  <line x1="145" y1="10" x2="145" y2="210" stroke="#444"></line>
+                  <line
+                    x1="152.5"
+                    y1="10"
+                    x2="152.5"
+                    y2="210"
+                    stroke="#444"
+                  ></line>
+                  <line x1="160" y1="10" x2="160" y2="210" stroke="#444"></line>
+                  <line
+                    x1="167.5"
+                    y1="10"
+                    x2="167.5"
+                    y2="210"
+                    stroke="#444"
+                  ></line>
+                  <line x1="175" y1="10" x2="175" y2="210" stroke="#444"></line>
+                  <line
+                    x1="182.5"
+                    y1="10"
+                    x2="182.5"
+                    y2="210"
+                    stroke="#444"
+                  ></line>
+                  <line x1="190" y1="10" x2="190" y2="210" stroke="#444"></line>
+                  <line
+                    x1="197.5"
+                    y1="10"
+                    x2="197.5"
+                    y2="210"
+                    stroke="#444"
+                  ></line>
+                  <line x1="205" y1="10" x2="205" y2="210" stroke="#444"></line>
+                  <line
+                    x1="212.5"
+                    y1="10"
+                    x2="212.5"
+                    y2="210"
+                    stroke="#444"
+                  ></line>
+                  <line x1="220" y1="10" x2="220" y2="210" stroke="#444"></line>
+                  <line
+                    x1="227.5"
+                    y1="10"
+                    x2="227.5"
+                    y2="210"
+                    stroke="#444"
+                  ></line>
+                  <line x1="235" y1="10" x2="235" y2="210" stroke="#444"></line>
+                  <line
+                    x1="242.5"
+                    y1="10"
+                    x2="242.5"
+                    y2="210"
+                    stroke="#444"
+                  ></line>
+                  <line x1="250" y1="10" x2="250" y2="210" stroke="#444"></line>
+                  <line
+                    x1="257.5"
+                    y1="10"
+                    x2="257.5"
+                    y2="210"
+                    stroke="#444"
+                  ></line>
+                  <line x1="265" y1="10" x2="265" y2="210" stroke="#444"></line>
+                  <line
+                    x1="272.5"
+                    y1="10"
+                    x2="272.5"
+                    y2="210"
+                    stroke="#444"
+                  ></line>
+                  <line x1="280" y1="10" x2="280" y2="210" stroke="#444"></line>
+                  <line
+                    x1="287.5"
+                    y1="10"
+                    x2="287.5"
+                    y2="210"
+                    stroke="#444"
+                  ></line>
+                  <line
+                    x1="55"
+                    y1="186.47058823529412"
+                    x2="295"
+                    y2="186.47058823529412"
+                    stroke="#444"
+                  ></line>
+                  <line
+                    x1="55"
+                    y1="162.94117647058823"
+                    x2="295"
+                    y2="162.94117647058823"
+                    stroke="#444"
+                  ></line>
+                  <line
+                    x1="55"
+                    y1="139.41176470588238"
+                    x2="295"
+                    y2="139.41176470588238"
+                    stroke="#444"
+                  ></line>
+                  <line
+                    x1="55"
+                    y1="115.88235294117648"
+                    x2="295"
+                    y2="115.88235294117648"
+                    stroke="#444"
+                  ></line>
+                  <line
+                    x1="55"
+                    y1="92.35294117647058"
+                    x2="295"
+                    y2="92.35294117647058"
+                    stroke="#444"
+                  ></line>
+                  <line
+                    x1="55"
+                    y1="68.82352941176472"
+                    x2="295"
+                    y2="68.82352941176472"
+                    stroke="#444"
+                  ></line>
+                  <line
+                    x1="55"
+                    y1="45.29411764705884"
+                    x2="295"
+                    y2="45.29411764705884"
+                    stroke="#444"
+                  ></line>
+                  <line
+                    x1="55"
+                    y1="21.764705882352956"
+                    x2="295"
+                    y2="21.764705882352956"
+                    stroke="#444"
+                  ></line>
+                  <polyline
+                    points
+                    fill="none"
+                    stroke="hsl(42 100% 75%)"
+                    stroke-width="2"
+                    stroke-linejoin="round"
+                  ></polyline>
+                  <polyline
+                    points="55,-51.420943326720305 62.5,-27.69386037965711 70,-3.650939034714497 77.5,19.466286801981795 85,23.91747041679065 92.5,66.43576560926536 100,77.50433725997993 107.5,107.9444655191201 115,117.30454759271637 122.5,144.90719064378044 130,139.10943585636494 137.5,167.516650250383 145,169.06975923275778 152.5,169.15742041415666 160,158.08857187183145 167.5,164.83472005520946 175,171.08014170071547 182.5,176.89271581069931 190,177.899659981818 197.5,178.42430883277606 205,178.23586692439426 212.5,177.05864979960532 220,174.60628269288713 227.5,174.1325021403805 235,174.0845596019526 242.5,174.07919690150834 250,174.18750389711818 257.5,174.27748586229694 265,174.270181051632 272.5,174.13507388045844 280,174.37567980264757 287.5,164.49213339380663 295,164.46064123406987"
+                    fill="none"
+                    stroke="hsl(222 100% 75%)"
+                    stroke-width="2"
+                    stroke-linejoin="round"
+                  ></polyline>
+                  <text
+                    x="129.74338213496566"
+                    y="215"
+                    fill="white"
+                    text-anchor="middle"
+                    dominant-baseline="hanging"
+                  >
+                    1K
+                  </text>
+                  <text
+                    x="204.4867642699313"
+                    y="215"
+                    fill="white"
+                    text-anchor="middle"
+                    dominant-baseline="hanging"
+                  >
+                    1M
+                  </text>
+                  <text
+                    x="279.23014640489697"
+                    y="215"
+                    fill="white"
+                    text-anchor="middle"
+                    dominant-baseline="hanging"
+                  >
+                    1B
+                  </text>
+                  <text
+                    x="175"
+                    y="245"
+                    fill="white"
+                    text-anchor="middle"
+                    dominant-baseline="text-bottom"
+                  >
+                    number of elements
+                  </text>
+                  <polyline
+                    points="55,10 55,210 295,210"
+                    fill="none"
+                    stroke="white"
+                    stroke-width="2"
+                  ></polyline>
+                </svg>
+              </div>
+            </div>
+            <div class="f64-u32-macbook-buffer">
+              <div class="svg">
+                <svg viewBox="0 0 300 250" height="250">
+                  <text
+                    x="0"
+                    y="110"
+                    fill="white"
+                    text-anchor="middle"
+                    dominant-baseline="hanging"
+                    transform="rotate(-90 0 110)"
+                  >
+                    time per element
+                  </text>
+                  <text
+                    x="50"
+                    y="186.47058823529412"
+                    fill="white"
+                    text-anchor="end"
+                    dominant-baseline="central"
+                  >
+                    1ns
+                  </text>
+                  <text
+                    x="50"
+                    y="162.94117647058823"
+                    fill="white"
+                    text-anchor="end"
+                    dominant-baseline="central"
+                  >
+                    2ns
+                  </text>
+                  <text
+                    x="50"
+                    y="139.41176470588238"
+                    fill="white"
+                    text-anchor="end"
+                    dominant-baseline="central"
+                  >
+                    4ns
+                  </text>
+                  <text
+                    x="50"
+                    y="115.88235294117648"
+                    fill="white"
+                    text-anchor="end"
+                    dominant-baseline="central"
+                  >
+                    8ns
+                  </text>
+                  <text
+                    x="50"
+                    y="92.35294117647058"
+                    fill="white"
+                    text-anchor="end"
+                    dominant-baseline="central"
+                  >
+                    16ns
+                  </text>
+                  <text
+                    x="50"
+                    y="68.82352941176472"
+                    fill="white"
+                    text-anchor="end"
+                    dominant-baseline="central"
+                  >
+                    32ns
+                  </text>
+                  <text
+                    x="50"
+                    y="45.29411764705884"
+                    fill="white"
+                    text-anchor="end"
+                    dominant-baseline="central"
+                  >
+                    64ns
+                  </text>
+                  <text
+                    x="50"
+                    y="21.764705882352956"
+                    fill="white"
+                    text-anchor="end"
+                    dominant-baseline="central"
+                  >
+                    128ns
+                  </text>
+                  <line
+                    x1="62.5"
+                    y1="10"
+                    x2="62.5"
+                    y2="210"
+                    stroke="#444"
+                  ></line>
+                  <line x1="70" y1="10" x2="70" y2="210" stroke="#444"></line>
+                  <line
+                    x1="77.5"
+                    y1="10"
+                    x2="77.5"
+                    y2="210"
+                    stroke="#444"
+                  ></line>
+                  <line x1="85" y1="10" x2="85" y2="210" stroke="#444"></line>
+                  <line
+                    x1="92.5"
+                    y1="10"
+                    x2="92.5"
+                    y2="210"
+                    stroke="#444"
+                  ></line>
+                  <line x1="100" y1="10" x2="100" y2="210" stroke="#444"></line>
+                  <line
+                    x1="107.5"
+                    y1="10"
+                    x2="107.5"
+                    y2="210"
+                    stroke="#444"
+                  ></line>
+                  <line x1="115" y1="10" x2="115" y2="210" stroke="#444"></line>
+                  <line
+                    x1="122.5"
+                    y1="10"
+                    x2="122.5"
+                    y2="210"
+                    stroke="#444"
+                  ></line>
+                  <line x1="130" y1="10" x2="130" y2="210" stroke="#444"></line>
+                  <line
+                    x1="137.5"
+                    y1="10"
+                    x2="137.5"
+                    y2="210"
+                    stroke="#444"
+                  ></line>
+                  <line x1="145" y1="10" x2="145" y2="210" stroke="#444"></line>
+                  <line
+                    x1="152.5"
+                    y1="10"
+                    x2="152.5"
+                    y2="210"
+                    stroke="#444"
+                  ></line>
+                  <line x1="160" y1="10" x2="160" y2="210" stroke="#444"></line>
+                  <line
+                    x1="167.5"
+                    y1="10"
+                    x2="167.5"
+                    y2="210"
+                    stroke="#444"
+                  ></line>
+                  <line x1="175" y1="10" x2="175" y2="210" stroke="#444"></line>
+                  <line
+                    x1="182.5"
+                    y1="10"
+                    x2="182.5"
+                    y2="210"
+                    stroke="#444"
+                  ></line>
+                  <line x1="190" y1="10" x2="190" y2="210" stroke="#444"></line>
+                  <line
+                    x1="197.5"
+                    y1="10"
+                    x2="197.5"
+                    y2="210"
+                    stroke="#444"
+                  ></line>
+                  <line x1="205" y1="10" x2="205" y2="210" stroke="#444"></line>
+                  <line
+                    x1="212.5"
+                    y1="10"
+                    x2="212.5"
+                    y2="210"
+                    stroke="#444"
+                  ></line>
+                  <line x1="220" y1="10" x2="220" y2="210" stroke="#444"></line>
+                  <line
+                    x1="227.5"
+                    y1="10"
+                    x2="227.5"
+                    y2="210"
+                    stroke="#444"
+                  ></line>
+                  <line x1="235" y1="10" x2="235" y2="210" stroke="#444"></line>
+                  <line
+                    x1="242.5"
+                    y1="10"
+                    x2="242.5"
+                    y2="210"
+                    stroke="#444"
+                  ></line>
+                  <line x1="250" y1="10" x2="250" y2="210" stroke="#444"></line>
+                  <line
+                    x1="257.5"
+                    y1="10"
+                    x2="257.5"
+                    y2="210"
+                    stroke="#444"
+                  ></line>
+                  <line x1="265" y1="10" x2="265" y2="210" stroke="#444"></line>
+                  <line
+                    x1="272.5"
+                    y1="10"
+                    x2="272.5"
+                    y2="210"
+                    stroke="#444"
+                  ></line>
+                  <line x1="280" y1="10" x2="280" y2="210" stroke="#444"></line>
+                  <line
+                    x1="287.5"
+                    y1="10"
+                    x2="287.5"
+                    y2="210"
+                    stroke="#444"
+                  ></line>
+                  <line
+                    x1="55"
+                    y1="186.47058823529412"
+                    x2="295"
+                    y2="186.47058823529412"
+                    stroke="#444"
+                  ></line>
+                  <line
+                    x1="55"
+                    y1="162.94117647058823"
+                    x2="295"
+                    y2="162.94117647058823"
+                    stroke="#444"
+                  ></line>
+                  <line
+                    x1="55"
+                    y1="139.41176470588238"
+                    x2="295"
+                    y2="139.41176470588238"
+                    stroke="#444"
+                  ></line>
+                  <line
+                    x1="55"
+                    y1="115.88235294117648"
+                    x2="295"
+                    y2="115.88235294117648"
+                    stroke="#444"
+                  ></line>
+                  <line
+                    x1="55"
+                    y1="92.35294117647058"
+                    x2="295"
+                    y2="92.35294117647058"
+                    stroke="#444"
+                  ></line>
+                  <line
+                    x1="55"
+                    y1="68.82352941176472"
+                    x2="295"
+                    y2="68.82352941176472"
+                    stroke="#444"
+                  ></line>
+                  <line
+                    x1="55"
+                    y1="45.29411764705884"
+                    x2="295"
+                    y2="45.29411764705884"
+                    stroke="#444"
+                  ></line>
+                  <line
+                    x1="55"
+                    y1="21.764705882352956"
+                    x2="295"
+                    y2="21.764705882352956"
+                    stroke="#444"
+                  ></line>
+                  <polyline
+                    points
+                    fill="none"
+                    stroke="hsl(42 100% 75%)"
+                    stroke-width="2"
+                    stroke-linejoin="round"
+                  ></polyline>
+                  <polyline
+                    points
+                    fill="none"
+                    stroke="hsl(222 100% 75%)"
+                    stroke-width="2"
+                    stroke-linejoin="round"
+                  ></polyline>
+                  <text
+                    x="129.74338213496566"
+                    y="215"
+                    fill="white"
+                    text-anchor="middle"
+                    dominant-baseline="hanging"
+                  >
+                    1K
+                  </text>
+                  <text
+                    x="204.4867642699313"
+                    y="215"
+                    fill="white"
+                    text-anchor="middle"
+                    dominant-baseline="hanging"
+                  >
+                    1M
+                  </text>
+                  <text
+                    x="279.23014640489697"
+                    y="215"
+                    fill="white"
+                    text-anchor="middle"
+                    dominant-baseline="hanging"
+                  >
+                    1B
+                  </text>
+                  <text
+                    x="175"
+                    y="245"
+                    fill="white"
+                    text-anchor="middle"
+                    dominant-baseline="text-bottom"
+                  >
+                    number of elements
+                  </text>
+                  <polyline
+                    points="55,10 55,210 295,210"
+                    fill="none"
+                    stroke="white"
+                    stroke-width="2"
+                  ></polyline>
+                </svg>
+              </div>
+            </div>
+            <div class="f64-u64-macbook-buffer">
+              <div class="svg">
+                <svg viewBox="0 0 300 250" height="250">
+                  <text
+                    x="0"
+                    y="110"
+                    fill="white"
+                    text-anchor="middle"
+                    dominant-baseline="hanging"
+                    transform="rotate(-90 0 110)"
+                  >
+                    time per element
+                  </text>
+                  <text
+                    x="50"
+                    y="186.47058823529412"
+                    fill="white"
+                    text-anchor="end"
+                    dominant-baseline="central"
+                  >
+                    1ns
+                  </text>
+                  <text
+                    x="50"
+                    y="162.94117647058823"
+                    fill="white"
+                    text-anchor="end"
+                    dominant-baseline="central"
+                  >
+                    2ns
+                  </text>
+                  <text
+                    x="50"
+                    y="139.41176470588238"
+                    fill="white"
+                    text-anchor="end"
+                    dominant-baseline="central"
+                  >
+                    4ns
+                  </text>
+                  <text
+                    x="50"
+                    y="115.88235294117648"
+                    fill="white"
+                    text-anchor="end"
+                    dominant-baseline="central"
+                  >
+                    8ns
+                  </text>
+                  <text
+                    x="50"
+                    y="92.35294117647058"
+                    fill="white"
+                    text-anchor="end"
+                    dominant-baseline="central"
+                  >
+                    16ns
+                  </text>
+                  <text
+                    x="50"
+                    y="68.82352941176472"
+                    fill="white"
+                    text-anchor="end"
+                    dominant-baseline="central"
+                  >
+                    32ns
+                  </text>
+                  <text
+                    x="50"
+                    y="45.29411764705884"
+                    fill="white"
+                    text-anchor="end"
+                    dominant-baseline="central"
+                  >
+                    64ns
+                  </text>
+                  <text
+                    x="50"
+                    y="21.764705882352956"
+                    fill="white"
+                    text-anchor="end"
+                    dominant-baseline="central"
+                  >
+                    128ns
+                  </text>
+                  <line
+                    x1="62.5"
+                    y1="10"
+                    x2="62.5"
+                    y2="210"
+                    stroke="#444"
+                  ></line>
+                  <line x1="70" y1="10" x2="70" y2="210" stroke="#444"></line>
+                  <line
+                    x1="77.5"
+                    y1="10"
+                    x2="77.5"
+                    y2="210"
+                    stroke="#444"
+                  ></line>
+                  <line x1="85" y1="10" x2="85" y2="210" stroke="#444"></line>
+                  <line
+                    x1="92.5"
+                    y1="10"
+                    x2="92.5"
+                    y2="210"
+                    stroke="#444"
+                  ></line>
+                  <line x1="100" y1="10" x2="100" y2="210" stroke="#444"></line>
+                  <line
+                    x1="107.5"
+                    y1="10"
+                    x2="107.5"
+                    y2="210"
+                    stroke="#444"
+                  ></line>
+                  <line x1="115" y1="10" x2="115" y2="210" stroke="#444"></line>
+                  <line
+                    x1="122.5"
+                    y1="10"
+                    x2="122.5"
+                    y2="210"
+                    stroke="#444"
+                  ></line>
+                  <line x1="130" y1="10" x2="130" y2="210" stroke="#444"></line>
+                  <line
+                    x1="137.5"
+                    y1="10"
+                    x2="137.5"
+                    y2="210"
+                    stroke="#444"
+                  ></line>
+                  <line x1="145" y1="10" x2="145" y2="210" stroke="#444"></line>
+                  <line
+                    x1="152.5"
+                    y1="10"
+                    x2="152.5"
+                    y2="210"
+                    stroke="#444"
+                  ></line>
+                  <line x1="160" y1="10" x2="160" y2="210" stroke="#444"></line>
+                  <line
+                    x1="167.5"
+                    y1="10"
+                    x2="167.5"
+                    y2="210"
+                    stroke="#444"
+                  ></line>
+                  <line x1="175" y1="10" x2="175" y2="210" stroke="#444"></line>
+                  <line
+                    x1="182.5"
+                    y1="10"
+                    x2="182.5"
+                    y2="210"
+                    stroke="#444"
+                  ></line>
+                  <line x1="190" y1="10" x2="190" y2="210" stroke="#444"></line>
+                  <line
+                    x1="197.5"
+                    y1="10"
+                    x2="197.5"
+                    y2="210"
+                    stroke="#444"
+                  ></line>
+                  <line x1="205" y1="10" x2="205" y2="210" stroke="#444"></line>
+                  <line
+                    x1="212.5"
+                    y1="10"
+                    x2="212.5"
+                    y2="210"
+                    stroke="#444"
+                  ></line>
+                  <line x1="220" y1="10" x2="220" y2="210" stroke="#444"></line>
+                  <line
+                    x1="227.5"
+                    y1="10"
+                    x2="227.5"
+                    y2="210"
+                    stroke="#444"
+                  ></line>
+                  <line x1="235" y1="10" x2="235" y2="210" stroke="#444"></line>
+                  <line
+                    x1="242.5"
+                    y1="10"
+                    x2="242.5"
+                    y2="210"
+                    stroke="#444"
+                  ></line>
+                  <line x1="250" y1="10" x2="250" y2="210" stroke="#444"></line>
+                  <line
+                    x1="257.5"
+                    y1="10"
+                    x2="257.5"
+                    y2="210"
+                    stroke="#444"
+                  ></line>
+                  <line x1="265" y1="10" x2="265" y2="210" stroke="#444"></line>
+                  <line
+                    x1="272.5"
+                    y1="10"
+                    x2="272.5"
+                    y2="210"
+                    stroke="#444"
+                  ></line>
+                  <line x1="280" y1="10" x2="280" y2="210" stroke="#444"></line>
+                  <line
+                    x1="287.5"
+                    y1="10"
+                    x2="287.5"
+                    y2="210"
+                    stroke="#444"
+                  ></line>
+                  <line
+                    x1="55"
+                    y1="186.47058823529412"
+                    x2="295"
+                    y2="186.47058823529412"
+                    stroke="#444"
+                  ></line>
+                  <line
+                    x1="55"
+                    y1="162.94117647058823"
+                    x2="295"
+                    y2="162.94117647058823"
+                    stroke="#444"
+                  ></line>
+                  <line
+                    x1="55"
+                    y1="139.41176470588238"
+                    x2="295"
+                    y2="139.41176470588238"
+                    stroke="#444"
+                  ></line>
+                  <line
+                    x1="55"
+                    y1="115.88235294117648"
+                    x2="295"
+                    y2="115.88235294117648"
+                    stroke="#444"
+                  ></line>
+                  <line
+                    x1="55"
+                    y1="92.35294117647058"
+                    x2="295"
+                    y2="92.35294117647058"
+                    stroke="#444"
+                  ></line>
+                  <line
+                    x1="55"
+                    y1="68.82352941176472"
+                    x2="295"
+                    y2="68.82352941176472"
+                    stroke="#444"
+                  ></line>
+                  <line
+                    x1="55"
+                    y1="45.29411764705884"
+                    x2="295"
+                    y2="45.29411764705884"
+                    stroke="#444"
+                  ></line>
+                  <line
+                    x1="55"
+                    y1="21.764705882352956"
+                    x2="295"
+                    y2="21.764705882352956"
+                    stroke="#444"
+                  ></line>
+                  <polyline
+                    points
+                    fill="none"
+                    stroke="hsl(42 100% 75%)"
+                    stroke-width="2"
+                    stroke-linejoin="round"
+                  ></polyline>
+                  <polyline
+                    points="55,-83.09019904136278 62.5,-27.018051798653715 70,-3.314575333295096 77.5,20.227119109250992 85,42.9442098206045 92.5,66.96322481981153 100,85.30780450682511 107.5,108.21164210402664 115,126.85955778937863 122.5,144.5509285842076 130,157.87665859743663 137.5,160.13804657957712 145,148.2143955181887 152.5,160.37611170430375 160,158.31073377102646 167.5,159.81703684840014 175,167.24238928166255 182.5,170.06992103654025 190,170.65157230484718 197.5,170.68292005249089 205,169.07180902667358 212.5,165.12971535658554 220,163.8053819609051 227.5,164.1305097350422 235,164.12832934928701 242.5,164.1863534225633 250,164.27232301287685 257.5,164.39330423949343 265,164.13424094194323 272.5,164.378496751199 280,147.73986269837005 287.5,147.20188027609447 295,147.08692054708814"
+                    fill="none"
+                    stroke="hsl(222 100% 75%)"
+                    stroke-width="2"
+                    stroke-linejoin="round"
+                  ></polyline>
+                  <text
+                    x="129.74338213496566"
+                    y="215"
+                    fill="white"
+                    text-anchor="middle"
+                    dominant-baseline="hanging"
+                  >
+                    1K
+                  </text>
+                  <text
+                    x="204.4867642699313"
+                    y="215"
+                    fill="white"
+                    text-anchor="middle"
+                    dominant-baseline="hanging"
+                  >
+                    1M
+                  </text>
+                  <text
+                    x="279.23014640489697"
+                    y="215"
+                    fill="white"
+                    text-anchor="middle"
+                    dominant-baseline="hanging"
+                  >
+                    1B
+                  </text>
+                  <text
+                    x="175"
+                    y="245"
+                    fill="white"
+                    text-anchor="middle"
+                    dominant-baseline="text-bottom"
+                  >
+                    number of elements
+                  </text>
+                  <polyline
+                    points="55,10 55,210 295,210"
+                    fill="none"
+                    stroke="white"
+                    stroke-width="2"
+                  ></polyline>
+                </svg>
+              </div>
+            </div>
+          </div>
+        </div>
+        <p>
+          OK, so even though this isn't an apples-to-apples comparison, it looks
+          like memory-mapping was just not being very smart; even if you doubled
+          these times, you'd still only end up with a few nanoseconds per
+          element on average, which is much faster than the over twenty
+          nanoseconds per element we were seeing above for larger arrays.
+        </p>
         <h2>Conclusion</h2>
         <ol>
           <li>
