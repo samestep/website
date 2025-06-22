@@ -52,9 +52,13 @@ interface Group {
   points: Map<number, number[]>;
 }
 
-const process = (
-  jsonl: string,
-): { float: 32 | 64; index: 32 | 64; plots: Plot[] }[] => {
+interface Processed {
+  float: 32 | 64;
+  index: 32 | 64;
+  plots: Plot[];
+}
+
+const process = (jsonl: string): Processed[] => {
   const groups: Group[] = [
     { float: 32, index: 32, shuffle: false, points: new Map() },
     { float: 32, index: 32, shuffle: true, points: new Map() },
@@ -103,30 +107,82 @@ const process = (
   }));
 };
 
-const FourCharts = ({ name, jsonl }: { name: string; jsonl: string }) => {
+const Chart = ({ plots }: { plots: Plot[] }) => {
+  const xtickVals = range(1, 32).map((i) => 2 ** i);
+  const ytickVals = range(0, 8).map((i) => 2 ** i);
+  return (
+    <AxesLabeled
+      height={250}
+      top={10}
+      left={35}
+      right={5}
+      bottom={20}
+      xlabel="number of elements"
+      ylabel="time per element"
+      content={[
+        scales({
+          x: logScale(1, 2 ** 32),
+          y: logScale(0.5, 2 ** 7.5),
+          content: [
+            yticks(ytickVals.map((ns) => tick(ns, `${ns}ns`))),
+            grid({ x: xtickVals, y: ytickVals }),
+            ...plots.map(linePlot),
+            xticks([
+              tick(10 ** 3, "1K"),
+              tick(10 ** 6, "1M"),
+              tick(10 ** 9, "1B"),
+            ]),
+          ],
+        }),
+      ]}
+    />
+  );
+};
+
+const FourCharts = ({
+  name,
+  jsonl,
+  verbose,
+}: {
+  name: string;
+  jsonl: string;
+  verbose?: boolean;
+}) => {
   const floats = `floats-${name}`;
   const indices = `indices-${name}`;
   const f32 = `f32-${name}`;
   const f64 = `f64-${name}`;
   const u32 = `u32-${name}`;
   const u64 = `u64-${name}`;
+  const processed = process(jsonl);
   return (
-    <div>
+    <>
       <div class="selection">
-        {process(jsonl).map(({ float, index }) => (
+        {processed.map(({ float, index }) => (
           <div class={`f${float}-u${index}-${name}`}>
-            <p>
-              Here are the{" "}
-              <span style={{ color: colorUnshuffled }}>unshuffled</span> and{" "}
-              <span style={{ color: colorShuffled }}>shuffled</span> results
-              with{" "}
-              <strong>
-                {{ 32: "single", 64: "double" }[float]}
-                -precision floating-point
-              </strong>{" "}
-              and <strong>{index}-bit integer indices</strong> (use the toggles
-              to select other configurations):
-            </p>
+            {verbose ? (
+              <p>
+                Here are the{" "}
+                <span style={{ color: colorUnshuffled }}>unshuffled</span> and{" "}
+                <span style={{ color: colorShuffled }}>shuffled</span> results
+                with{" "}
+                <strong>
+                  {{ 32: "single", 64: "double" }[float]}
+                  -precision floating-point
+                </strong>{" "}
+                and <strong>{index}-bit integer indices</strong> (use the
+                toggles to select other configurations):
+              </p>
+            ) : (
+              <p>
+                Here are the results with{" "}
+                <strong>
+                  {{ 32: "single", 64: "double" }[float]}
+                  -precision floating-point
+                </strong>{" "}
+                and <strong>{index}-bit integer indices</strong>.:
+              </p>
+            )}
           </div>
         ))}
       </div>
@@ -145,51 +201,71 @@ const FourCharts = ({ name, jsonl }: { name: string; jsonl: string }) => {
         </div>
       </div>
       <div class="selection">
-        {process(jsonl).map(({ float, index, plots }) => {
-          const xtickVals = range(1, 32).map((i) => 2 ** i);
-          const ytickVals = range(0, 8).map((i) => 2 ** i);
-          return (
-            <div class={`f${float}-u${index}-${name}`}>
-              <AxesLabeled
-                height={250}
-                top={10}
-                left={35}
-                right={5}
-                bottom={20}
-                xlabel="number of elements"
-                ylabel="time per element"
-                content={[
-                  scales({
-                    x: logScale(1, 2 ** 32),
-                    y: logScale(0.5, 2 ** 7.5),
-                    content: [
-                      yticks(ytickVals.map((ns) => tick(ns, `${ns}ns`))),
-                      grid({ x: xtickVals, y: ytickVals }),
-                      ...plots.map(linePlot),
-                      xticks([
-                        tick(10 ** 3, "1K"),
-                        tick(10 ** 6, "1M"),
-                        tick(10 ** 9, "1B"),
-                      ]),
-                    ],
-                  }),
-                ]}
-              />
-            </div>
-          );
-        })}
+        {processed.map(({ float, index, plots }) => (
+          <div class={`f${float}-u${index}-${name}`}>
+            <Chart plots={plots} />
+          </div>
+        ))}
       </div>
-    </div>
+    </>
+  );
+};
+
+const TwoCharts = ({ name, jsonl }: { name: string; jsonl: string }) => {
+  const floats = `floats-${name}`;
+  const f32 = `f32-${name}`;
+  const f64 = `f64-${name}`;
+  const processed = process(jsonl);
+  return (
+    <>
+      <div class="selection">
+        {processed.map(({ float, index }) =>
+          index === 32 ? (
+            <></>
+          ) : (
+            <div class={`f${float}-${name}`}>
+              <p>
+                Here are the{" "}
+                <strong>
+                  {{ 32: "single", 64: "double" }[float]}
+                  -precision
+                </strong>{" "}
+                results.
+              </p>
+            </div>
+          ),
+        )}
+      </div>
+      <div class="selectors">
+        <div class="selector">
+          <input type="radio" id={f32} name={floats} checked />
+          <label for={f32}>f32</label>
+          <input type="radio" id={f64} name={floats} />
+          <label for={f64}>f64</label>
+        </div>
+      </div>
+      <div class="selection">
+        {processed.map(({ float, index, plots }) =>
+          index === 32 ? (
+            <></>
+          ) : (
+            <div class={`f${float}-${name}`}>
+              <Chart plots={plots} />
+            </div>
+          ),
+        )}
+      </div>
+    </>
   );
 };
 
 export const content: Content = async () => {
   return {
-    macbook: <FourCharts name="macbook" jsonl={macbook} />,
+    macbook: <FourCharts name="macbook" jsonl={macbook} verbose={true} />,
     desktop: <FourCharts name="desktop" jsonl={desktop} />,
     macbookMmap: <FourCharts name="macbook-mmap" jsonl={macbookMmap} />,
     desktopMmap: <FourCharts name="desktop-mmap" jsonl={desktopMmap} />,
-    macbookBuffer: <FourCharts name="macbook-buffer" jsonl={macbookBuffer} />,
-    desktopBuffer: <FourCharts name="desktop-buffer" jsonl={desktopBuffer} />,
+    macbookBuffer: <TwoCharts name="macbook-buffer" jsonl={macbookBuffer} />,
+    desktopBuffer: <TwoCharts name="desktop-buffer" jsonl={desktopBuffer} />,
   };
 };

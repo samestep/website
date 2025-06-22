@@ -457,7 +457,7 @@ fn measure_buffered(exponents: RangeInclusive<usize>, options: Options, repeat: 
 
 OK, so even though this isn't an apples-to-apples comparison, it looks like memory-mapping was just not being very smart; even if you doubled these times, you'd still only end up with a few nanoseconds per element on average, which is much faster than the over twenty nanoseconds per element we were seeing above for larger arrays.
 
-### Desktop
+### Linux desktop
 
 {{desktopBuffer}}
 
