@@ -108,7 +108,7 @@ const process = (jsonl: string): Processed[] => {
 };
 
 const Chart = ({ plots }: { plots: Plot[] }) => {
-  const xtickVals = range(1, 32).map((i) => 2 ** i);
+  const xtickVals = range(1, 33).map((i) => 2 ** i);
   const ytickVals = range(0, 8).map((i) => 2 ** i);
   return (
     <AxesLabeled
@@ -121,7 +121,7 @@ const Chart = ({ plots }: { plots: Plot[] }) => {
       ylabel="time per element"
       content={[
         scales({
-          x: logScale(1, 2 ** 32),
+          x: logScale(1, 2 ** 33),
           y: logScale(0.5, 2 ** 7.5),
           content: [
             yticks(ytickVals.map((ns) => tick(ns, `${ns}ns`))),
