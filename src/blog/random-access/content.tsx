@@ -13,6 +13,7 @@ import {
 import { range, splitlines } from "../../../util";
 import desktopMmap from "./desktop-mmap.jsonl" with { type: "text" };
 import desktop from "./desktop.jsonl" with { type: "text" };
+import macbookBuffer from "./macbook-buffer.jsonl" with { type: "text" };
 import macbookMmap from "./macbook-mmap.jsonl" with { type: "text" };
 import macbook from "./macbook.jsonl" with { type: "text" };
 
@@ -136,9 +137,9 @@ const FourCharts = ({ name, jsonl }: { name: string; jsonl: string }) => {
           <label for={f64}>f64</label>
         </div>
         <div class="selector">
-          <input type="radio" id={u32} name={indices} checked />
+          <input type="radio" id={u32} name={indices} />
           <label for={u32}>u32</label>
-          <input type="radio" id={u64} name={indices} />
+          <input type="radio" id={u64} name={indices} checked />
           <label for={u64}>u64</label>
         </div>
       </div>
@@ -187,5 +188,6 @@ export const content: Content = async () => {
     desktop: <FourCharts name="desktop" jsonl={desktop} />,
     macbookMmap: <FourCharts name="macbook-mmap" jsonl={macbookMmap} />,
     desktopMmap: <FourCharts name="desktop-mmap" jsonl={desktopMmap} />,
+    macbookBuffer: <FourCharts name="macbook-buffer" jsonl={macbookBuffer} />,
   };
 };

@@ -24,7 +24,7 @@ You won't necessarily get the same answer because [floating-point addition is no
 
 To specify the order, we'll just have another array that holds integers. That way, once we've chosen the precisions for our floating-point and integer data types, we should be using the _exact same machine code_ for forward order, random order, or any other order we want. The performance should be entirely determined by _dynamic_ behavior in the CPU based on the data we're using.
 
-By the way, all the code to reproduce the measurements in this blog post can be found in a [supplementary repository on GitHub](https://github.com/samestep/random-access/tree/224afe878088acc2b48e63595091b1c0758289c9).
+By the way, all the code to reproduce the measurements in this blog post can be found in a [supplementary repository on GitHub](https://github.com/samestep/random-access/tree/9039b4297d19b10dedfc85edf438db35bcf3f863).
 
 <details>
 <summary>Expand this to see some Rust code.</summary>
@@ -396,6 +396,66 @@ Explanation...
 {{desktopMmap}}
 
 More explanation...
+
+## "Direct" summation
+
+<details>
+<summary>Code to sum more directly from a file.</summary>
+
+```rust
+use std::io::BufRead;
+
+fn sum_buffered<T: Number>(dir_floats: &str, exponent: usize, repeat: usize) {
+    let name = format!("{exponent}.dat");
+    for iteration in 0..repeat {
+        let mut reader =
+            io::BufReader::new(fs::File::open(Path::new(dir_floats).join(&name)).unwrap());
+        let start = Instant::now();
+        let mut total = T::zero();
+        loop {
+            let buffer = reader.fill_buf().unwrap();
+            if buffer.is_empty() {
+                break;
+            }
+            let floats = unsafe { reinterpret::<T>(buffer) };
+            for &float in floats {
+                total += float;
+            }
+            let bytes = buffer.len();
+            reader.consume(bytes);
+        }
+        let duration = start.elapsed();
+        let measurement = Measurement {
+            floats: dir_floats,
+            indices: "unshuffled64",
+            exponent,
+            iteration,
+            output: total.into(),
+            seconds: duration.as_secs_f64(),
+        };
+        println!("{}", serde_json::to_string(&measurement).unwrap());
+    }
+}
+
+fn measure_buffered(exponents: RangeInclusive<usize>, options: Options, repeat: usize) {
+    for exponent in exponents {
+        if options.f32 {
+            sum_buffered::<f32>(FLOAT32, exponent, repeat);
+        }
+        if options.f64 {
+            sum_buffered::<f64>(FLOAT64, exponent, repeat);
+        }
+    }
+}
+```
+
+</details>
+
+### MacBook
+
+{{macbookBuffer}}
+
+OK, so even though this isn't an apples-to-apples comparison, it looks like memory-mapping was just not being very smart; even if you doubled these times, you'd still only end up with a few nanoseconds per element on average, which is much faster than the over twenty nanoseconds per element we were seeing above for larger arrays.
 
 ## Conclusion
 
