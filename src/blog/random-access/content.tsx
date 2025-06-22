@@ -128,14 +128,20 @@ const FourCharts = ({ name, jsonl }: { name: string; jsonl: string }) => {
           </div>
         ))}
       </div>
-      <input type="radio" id={f32} name={floats} checked />
-      <label for={f32}>f32</label>
-      <input type="radio" id={f64} name={floats} />
-      <label for={f64}>f64</label>
-      <input type="radio" id={u32} name={indices} checked />
-      <label for={u32}>u32</label>
-      <input type="radio" id={u64} name={indices} />
-      <label for={u64}>u64</label>
+      <div class="selectors">
+        <div class="selector">
+          <input type="radio" id={f32} name={floats} checked />
+          <label for={f32}>f32</label>
+          <input type="radio" id={f64} name={floats} />
+          <label for={f64}>f64</label>
+        </div>
+        <div class="selector">
+          <input type="radio" id={u32} name={indices} checked />
+          <label for={u32}>u32</label>
+          <input type="radio" id={u64} name={indices} />
+          <label for={u64}>u64</label>
+        </div>
+      </div>
       <div class="selection">
         {process(jsonl).map(({ float, index, plots }) => {
           const xtickVals = range(1, 32).map((i) => 2 ** i);
