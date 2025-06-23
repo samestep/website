@@ -27,6 +27,7 @@ const Caches = () => {
   const cores = 6;
   const gap = 4;
   const stroke = "#666";
+  const w = width / cores;
   const l2 = 24;
   const scale = l2 / 512;
   const y0 = 20;
@@ -49,8 +50,6 @@ const Caches = () => {
         </linearGradient>
       </defs>
       {range(0, cores).map((i) => {
-        const w = width / cores;
-        const h = l2;
         const x = i * w;
         const y = y0;
         return (
@@ -72,6 +71,15 @@ const Caches = () => {
               stroke={stroke}
               stroke-width={scale * 64}
             />
+          </>
+        );
+      })}
+      {range(0, cores).map((i) => {
+        const h = l2;
+        const x = i * w;
+        const y = y0;
+        return (
+          <>
             <rect
               x={x + gap}
               y={y + gap}
