@@ -22,7 +22,7 @@ If you already know the answers to all these questions, sweet! Otherwise, make y
 
 ## Setup
 
-All the code to reproduce the measurements in this blog post can be found in a [supplementary GitHub repository](https://github.com/samestep/random-access/tree/9039b4297d19b10dedfc85edf438db35bcf3f863).
+All the code to reproduce the measurements in this blog post can be found in a [supplementary GitHub repository](https://github.com/samestep/random-access/tree/5db7cd58bd07f511a92de62adb65178dac3e659b).
 
 Because the indices are just stored in an array, they should use the _exact same machine code_ for both first-to-last order and random order, we've chosen the precisions for our floating-point and integer data types. That means the performance should be entirely determined by _dynamic_ behavior in the CPU based on the data we're using, along with other dynamic behavior by the operating system (we'll get to that later).
 
