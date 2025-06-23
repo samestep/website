@@ -63,7 +63,7 @@ fn test_sum_f64_usize_not_associative() {
 
 </details>
 
-Now we need to generate some random data. For the floating-point numbers we can just use a [normal distribution](https://en.wikipedia.org/wiki/Normal_distribution), and for the integer indices we can just take the list of integers up to the length of our array, and [shuffle](https://en.wikipedia.org/wiki/Fisher%E2%80%93Yates_shuffle) it to get a random order.
+Now we need to generate some random data. For the floating-point numbers we can just use a [normal distribution](https://en.wikipedia.org/wiki/Normal_distribution), and for the integer indices we can just take the list of integers up to the length of our array, and shuffle it to get a random permutation via [Fisher-Yates](https://en.wikipedia.org/wiki/Fisher%E2%80%93Yates_shuffle), a standard algorithm that shuffles the data in a single pass.
 
 Or rather, that's what I thought at first. Small spoiler: further down we're going to do some experiments with arrays too big to fit in memory, and for those, Fisher-Yates turned out to be way too slow. So instead I implemented a [two-pass shuffle](https://blog.janestreet.com/how-to-shuffle-a-big-dataset/) which first partitions the array into chunks that are about a gigabyte each.
 
