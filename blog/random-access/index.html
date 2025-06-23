@@ -655,11 +655,11 @@
           <a href="https://en.wikipedia.org/wiki/Normal_distribution"
             >normal distribution</a
           >, and for the integer indices we can just take the list of integers
-          up to the length of our array, and
+          up to the length of our array, and shuffle it to get a random
+          permutation via
           <a href="https://en.wikipedia.org/wiki/Fisher%E2%80%93Yates_shuffle"
-            >shuffle</a
-          >
-          it to get a random order.
+            >Fisher-Yates</a
+          >, a standard algorithm that shuffles the data in a single pass.
         </p>
         <p>
           Or rather, that's what I thought at first. Small spoiler: further down
