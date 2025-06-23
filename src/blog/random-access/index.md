@@ -24,7 +24,7 @@ If you already know the answers to all these questions, sweet! Otherwise, make y
 
 All the code to reproduce the measurements in this blog post can be found in a [supplementary GitHub repository](https://github.com/samestep/random-access/tree/5db7cd58bd07f511a92de62adb65178dac3e659b).
 
-Because the indices are just stored in an array, they should use the _exact same machine code_ for both first-to-last order and random order, we've chosen the precisions for our floating-point and integer data types. That means the performance should be entirely determined by _dynamic_ behavior in the CPU based on the data we're using, along with other dynamic behavior by the operating system (we'll get to that later).
+Because the indices are just stored in an array, they should use the _exact same machine code_ for both first-to-last order and random order, we've chosen the precisions for our floating-point and integer data types. That means the performance should be entirely determined by _dynamic_ behavior in the CPU based on the data we're using, along with other dynamic behavior by the operating system like memory paging and swap space.
 
 <details>
 <summary>Expand this to see some Rust code.</summary>
@@ -362,7 +362,7 @@ For each data point (given a choice of floating-point type and integer type, and
 
 {{macbook}}
 
-Note that both the $x$-axis and the $y$-axis are on a log scale. As you can see, it levels out at about a nanosecond per element on average, until the array of floating-point numbers becomes too large to fit in the system-level cache (SLC), which is 8 MiB. Then first-to-last order stays the same, but random order goes up to about four nanoseconds. Finally, when the arrays become too large to fit in RAM, both times shoot up; more on that later.
+Note that both the $x$-axis and the $y$-axis are on a log scale. As you can see, it levels out at about a nanosecond per element, until the array of floating-point numbers becomes too large to fit in the system-level cache (SLC), which is 8 MiB. Then first-to-last order stays the same, but random order goes up to about four nanoseconds. Finally, when the arrays become too large to fit in RAM, both times shoot up; more on that later.
 
 ### Linux desktop
 
@@ -370,7 +370,7 @@ Note that both the $x$-axis and the $y$-axis are on a log scale. As you can see,
 
 A bit noisier data for those smaller arrays! Looks like first-to-last order is actually only about half a nanosecond per element on this CPU. But even though this L3 cache is 32 MiB, random order starts to become slower when the floating-point array is bigger than 4 MiB; not sure why. The ratio here is starker here, ranging from four to about eight nanoseconds per element after divergence from the first-to-last curve.
 
-Just like the MacBook, there's a huge spike when there's to much to fit everything in RAM, but the interesting difference here is that random-order performance starts to degrade sharply even before reaching that point, while first-to-last order stays relatively stable. Even though I have 24 GiB of RAM, floating-point arrays over a gigabyte in size start to reach twenty or thirty nanoseconds per element.
+Just like the MacBook, there's a huge spike when there's too much to fit everything in RAM, but the interesting difference here is that random-order performance starts to degrade sharply even before reaching that point, while first-to-last order stays relatively stable. Even though I have 24 GiB of RAM, floating-point arrays over a gigabyte in size start to reach twenty or thirty nanoseconds per element.
 
 ## Memory mapping
 
