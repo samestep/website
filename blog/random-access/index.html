@@ -614,7 +614,7 @@
           integer data types. That means the performance should be entirely
           determined by <em>dynamic</em> behavior in the CPU based on the data
           we're using, along with other dynamic behavior by the operating system
-          (we'll get to that later).
+          like memory paging and swap space.
         </p>
         <details>
           <summary>Expand this to see some Rust code.</summary>
@@ -2730,12 +2730,11 @@
               ></span
             ></span
           >-axis are on a log scale. As you can see, it levels out at about a
-          nanosecond per element on average, until the array of floating-point
-          numbers becomes too large to fit in the system-level cache (SLC),
-          which is 8 MiB. Then first-to-last order stays the same, but random
-          order goes up to about four nanoseconds. Finally, when the arrays
-          become too large to fit in RAM, both times shoot up; more on that
-          later.
+          nanosecond per element, until the array of floating-point numbers
+          becomes too large to fit in the system-level cache (SLC), which is 8
+          MiB. Then first-to-last order stays the same, but random order goes up
+          to about four nanoseconds. Finally, when the arrays become too large
+          to fit in RAM, both times shoot up; more on that later.
         </p>
         <h3>Linux desktop</h3>
         <div class="selection">
@@ -4453,7 +4452,7 @@
           curve.
         </p>
         <p>
-          Just like the MacBook, there's a huge spike when there's to much to
+          Just like the MacBook, there's a huge spike when there's too much to
           fit everything in RAM, but the interesting difference here is that
           random-order performance starts to degrade sharply even before
           reaching that point, while first-to-last order stays relatively
