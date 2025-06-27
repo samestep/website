@@ -37,3 +37,11 @@ body:has(#macbook-32bit:checked) .macbook-32bit {
 body:has(#macbook-64bit:checked) .macbook-64bit {
   display: block;
 }
+
+body:has(#desktop-32bit:checked) .desktop-32bit {
+  display: block;
+}
+
+body:has(#desktop-64bit:checked) .desktop-64bit {
+  display: block;
+}
