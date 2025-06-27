@@ -9,4 +9,10 @@ A great point! Let's do it. I have a shorter list of questions this time:
 1. How much slower is iteration over these pairs compared to the two separate arrays, if they are stored in first-to-last order?
 2. How much slower is iteration over these pairs in random order compared to first-to-last order?
 
-I'm also not going to bother with arrays too big for RAM. Before running any new experiments, **I'm guessing** that both first-to-last order and random order will be about 2x slower on linked lists than on the separate-arrays setup, but that the performance ratio between the two orderings will be roughly the same as before (no difference if everything fits in L3 cache, then a roughly 4-8x ratio for data bigger than that).
+I'm also not going to bother with arrays too big for RAM. Before running any new experiments, **I'm guessing** that both first-to-last order and random order will be about 2x slower on linked lists than on the separate-arrays setup, but that the performance ratio between the two orderings will be roughly the same as before (no difference if everything fits in L3 cache, then a roughly 4-8x ratio for data bigger than that). **(Spoiler: I was _very wrong_.)**
+
+## Results
+
+### MacBook
+
+{{macbook}}
