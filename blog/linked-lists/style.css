@@ -1,0 +1,39 @@
+.selection > div {
+  display: none;
+}
+
+.selectors {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+}
+
+.selector {
+  border: 1px solid #555;
+  border-radius: 10px;
+  display: flex;
+  overflow: hidden;
+}
+
+.selector input[type="radio"] {
+  appearance: none;
+  display: none;
+}
+
+.selector label {
+  cursor: pointer;
+  padding: 5px;
+}
+
+.selector input[type="radio"]:checked + label {
+  background: #ddd;
+  color: #222;
+}
+
+body:has(#macbook-32bit:checked) .macbook-32bit {
+  display: block;
+}
+
+body:has(#macbook-64bit:checked) .macbook-64bit {
+  display: block;
+}
