@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="en-us">
+  <head>
+    <meta charset="utf-8" />
+    <link rel="icon" type="image/png" href="/icon.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,100..700;1,100..700&amp;family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&amp;display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.10.0/styles/monokai.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.5.1/katex.min.css"
+    />
+    <link rel="stylesheet" href="/blog.css" />
+    <title>How much slower are linked lists, really? | Sam Estep</title>
+  </head>
+  <body>
+    <main>
+      <h1>How much slower are linked lists, really?</h1>
+      <p>
+        <em>by <a href="/">Sam Estep</a>, unpublished</em>
+      </p>
+      <div>
+        <p>
+          This is a followup to my previous post titled
+          <a href="https://samestep.com/blog/random-access/"
+            >&quot;How much slower is random access, really?&quot;</a
+          >
+          which to my surprise, ended up getting some attention
+          <a href="https://news.ycombinator.com/item?id=44356385"
+            >on Hacker News</a
+          >. Here is the top comment (as of today), by @andersa:
+        </p>
+        <blockquote>
+          <p>
+            Note this is not true random access in the manner it occurs in most
+            programs. By having a contiguous array of indices to look at, that
+            array can be prefetched as it goes, and speculative execution will
+            take care of loading many upcoming indices of the target array in
+            parallel.
+          </p>
+          <p>
+            A more interesting example might be if each slot in the target array
+            has the next index to go to in addition to the value, then you will
+            introduce a dependency chain preventing this from happening.
+          </p>
+        </blockquote>
+        <p>
+          A great point! Let's do it. I have a shorter list of questions this
+          time:
+        </p>
+        <ol>
+          <li>
+            How much slower is iteration over these pairs compared to the two
+            separate arrays, if they are stored in first-to-last order?
+          </li>
+          <li>
+            How much slower is iteration over these pairs in random order
+            compared to first-to-last order?
+          </li>
+        </ol>
+        <p>
+          I'm also not going to bother with arrays too big for RAM. Before
+          running any new experiments, <strong>I'm guessing</strong> that both
+          first-to-last order and random order will be about 2x slower on linked
+          lists than on the separate-arrays setup, but that the performance
+          ratio between the two orderings will be roughly the same as before (no
+          difference if everything fits in L3 cache, then a roughly 4-8x ratio
+          for data bigger than that).
+        </p>
+      </div>
+    </main>
+  </body>
+</html>
