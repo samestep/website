@@ -16,3 +16,7 @@ I'm also not going to bother with arrays too big for RAM. Before running any new
 ### MacBook
 
 {{macbook}}
+
+### Linux desktop
+
+{{desktop}}

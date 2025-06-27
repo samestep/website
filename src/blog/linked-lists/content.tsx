@@ -11,6 +11,7 @@ import {
   yticks,
 } from "../../../plot";
 import { range, splitlines } from "../../../util";
+import desktop from "./desktop.jsonl" with { type: "text" };
 import macbook from "./macbook.jsonl" with { type: "text" };
 
 const colorGrid = "#444";
@@ -162,5 +163,6 @@ const TwoCharts = ({ name, jsonl }: { name: string; jsonl: string }) => {
 export const content: Content = async () => {
   return {
     macbook: <TwoCharts name="macbook" jsonl={macbook} />,
+    desktop: <TwoCharts name="desktop" jsonl={desktop} />,
   };
 };
