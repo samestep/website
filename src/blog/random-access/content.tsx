@@ -138,7 +138,7 @@ const Caches = () => {
   );
 };
 
-const Arrays = () => {
+export const Arrays = () => {
   const height = 150;
   const elements = 6;
   const indices = [4, 0, 3, 5, 1, 2];

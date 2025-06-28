@@ -11,6 +11,7 @@ import {
   yticks,
 } from "../../../plot";
 import { range, splitlines } from "../../../util";
+import { Arrays } from "../random-access/content";
 import desktop from "./desktop.jsonl" with { type: "text" };
 import macbook from "./macbook.jsonl" with { type: "text" };
 
@@ -125,7 +126,15 @@ const Chart = ({ plots }: { plots: Plot[] }) => {
   );
 };
 
-const TwoCharts = ({ name, jsonl }: { name: string; jsonl: string }) => {
+const TwoCharts = ({
+  name,
+  jsonl,
+  verbose,
+}: {
+  name: string;
+  jsonl: string;
+  verbose?: boolean;
+}) => {
   const button = `${name}-bits`;
   const bits32 = `${name}-32bit`;
   const bits64 = `${name}-64bit`;
@@ -135,9 +144,17 @@ const TwoCharts = ({ name, jsonl }: { name: string; jsonl: string }) => {
       <div class="selection">
         {processed.map(({ bits }) => (
           <div class={`${name}-${bits}bit`}>
-            <p>
-              Here are the <strong>{bits}-bit</strong> results.
-            </p>
+            {verbose ? (
+              <p>
+                Here are the results for <strong>{bits} bits</strong>, showing
+                both <span style={{ color: colorShuffled }}>shuffled</span> and{" "}
+                <span style={{ color: colorUnshuffled }}>unshuffled</span>.
+              </p>
+            ) : (
+              <p>
+                Here are the <strong>{bits}-bit</strong> results.
+              </p>
+            )}
           </div>
         ))}
       </div>
@@ -162,7 +179,8 @@ const TwoCharts = ({ name, jsonl }: { name: string; jsonl: string }) => {
 
 export const content: Content = async () => {
   return {
-    macbook: <TwoCharts name="macbook" jsonl={macbook} />,
+    arrays: <Arrays />,
+    macbook: <TwoCharts name="macbook" jsonl={macbook} verbose={true} />,
     desktop: <TwoCharts name="desktop" jsonl={desktop} />,
   };
 };
