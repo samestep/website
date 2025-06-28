@@ -31,7 +31,7 @@
       <div>
         <p>
           This is a followup to my previous post titled
-          <a href="https://samestep.com/blog/random-access/"
+          <a href="/blog/random-access/"
             >&quot;How much slower is random access, really?&quot;</a
           >
           which to my surprise, ended up getting some attention
@@ -59,32 +59,381 @@
         </p>
         <ol>
           <li>
-            How much slower is iteration over these pairs compared to the two
-            separate arrays, if they are stored in first-to-last order?
+            Compared to the original two separate arrays, how much slower is
+            iterating over these pairs in first-to-last layout?
           </li>
           <li>
-            How much slower is iteration over these pairs in random order
-            compared to first-to-last order?
+            Compared to the original two separate arrays, how much slower is
+            iterating over these pairs in random layout?
           </li>
         </ol>
+        <p>I'm also not going to bother with arrays too big for RAM.</p>
         <p>
-          I'm also not going to bother with arrays too big for RAM. Before
-          running any new experiments, <strong>I'm guessing</strong> that both
-          first-to-last order and random order will be about 2x slower on linked
-          lists than on the separate-arrays setup, but that the performance
-          ratio between the two orderings will be roughly the same as before (no
-          difference if everything fits in L3 cache, then a roughly 4-8x ratio
-          for data bigger than that).
-          <strong>(Spoiler: I was <em>very wrong</em>.)</strong>
+          Before running these new experiments, my guess was that they'd both be
+          about 2x slower on linked lists compared to separate arrays. As a
+          brief recap, that would mean <em>roughly</em> 2ns per list element in
+          any layout except <em>roughly</em> 8-16ns per element in random layout
+          for lists with more than a million elements.
         </p>
+        <details>
+          <summary>Spoiler...</summary>
+          <p>
+            I was pretty much exactly right for question 1!
+            <strong>But <em>very wrong</em> for question 2.</strong>
+          </p>
+        </details>
+        <h2>Setup</h2>
+        <p>
+          As a recap, previously we had <strong>two arrays</strong>, one holding
+          indices (shown on the top), and the other holding the actual numbers
+          we want to sum:
+        </p>
+        <div class="svg">
+          <svg viewBox="0 0 300 150" height="150">
+            <rect
+              x="5"
+              y="5"
+              width="40"
+              height="40"
+              fill="none"
+              stroke="white"
+              stroke-width="2"
+            ></rect>
+            <text
+              x="25"
+              y="25"
+              fill="white"
+              text-anchor="middle"
+              dominant-baseline="central"
+            >
+              4
+            </text>
+            <path
+              d="M 25 50 C 25 75, 225 75, 225 100"
+              fill="none"
+              stroke="white"
+              stroke-width="2"
+            ></path>
+            <rect
+              x="55"
+              y="5"
+              width="40"
+              height="40"
+              fill="none"
+              stroke="white"
+              stroke-width="2"
+            ></rect>
+            <text
+              x="75"
+              y="25"
+              fill="white"
+              text-anchor="middle"
+              dominant-baseline="central"
+            >
+              0
+            </text>
+            <path
+              d="M 75 50 C 75 75, 25 75, 25 100"
+              fill="none"
+              stroke="white"
+              stroke-width="2"
+            ></path>
+            <rect
+              x="105"
+              y="5"
+              width="40"
+              height="40"
+              fill="none"
+              stroke="white"
+              stroke-width="2"
+            ></rect>
+            <text
+              x="125"
+              y="25"
+              fill="white"
+              text-anchor="middle"
+              dominant-baseline="central"
+            >
+              3
+            </text>
+            <path
+              d="M 125 50 C 125 75, 175 75, 175 100"
+              fill="none"
+              stroke="white"
+              stroke-width="2"
+            ></path>
+            <rect
+              x="155"
+              y="5"
+              width="40"
+              height="40"
+              fill="none"
+              stroke="white"
+              stroke-width="2"
+            ></rect>
+            <text
+              x="175"
+              y="25"
+              fill="white"
+              text-anchor="middle"
+              dominant-baseline="central"
+            >
+              5
+            </text>
+            <path
+              d="M 175 50 C 175 75, 275 75, 275 100"
+              fill="none"
+              stroke="white"
+              stroke-width="2"
+            ></path>
+            <rect
+              x="205"
+              y="5"
+              width="40"
+              height="40"
+              fill="none"
+              stroke="white"
+              stroke-width="2"
+            ></rect>
+            <text
+              x="225"
+              y="25"
+              fill="white"
+              text-anchor="middle"
+              dominant-baseline="central"
+            >
+              1
+            </text>
+            <path
+              d="M 225 50 C 225 75, 75 75, 75 100"
+              fill="none"
+              stroke="white"
+              stroke-width="2"
+            ></path>
+            <rect
+              x="255"
+              y="5"
+              width="40"
+              height="40"
+              fill="none"
+              stroke="white"
+              stroke-width="2"
+            ></rect>
+            <text
+              x="275"
+              y="25"
+              fill="white"
+              text-anchor="middle"
+              dominant-baseline="central"
+            >
+              2
+            </text>
+            <path
+              d="M 275 50 C 275 75, 125 75, 125 100"
+              fill="none"
+              stroke="white"
+              stroke-width="2"
+            ></path>
+            <rect
+              x="5"
+              y="105"
+              width="40"
+              height="40"
+              fill="none"
+              stroke="white"
+              stroke-width="2"
+            ></rect>
+            <text
+              x="25"
+              y="125"
+              fill="white"
+              text-anchor="middle"
+              dominant-baseline="central"
+            >
+              α
+            </text>
+            <rect
+              x="55"
+              y="105"
+              width="40"
+              height="40"
+              fill="none"
+              stroke="white"
+              stroke-width="2"
+            ></rect>
+            <text
+              x="75"
+              y="125"
+              fill="white"
+              text-anchor="middle"
+              dominant-baseline="central"
+            >
+              β
+            </text>
+            <rect
+              x="105"
+              y="105"
+              width="40"
+              height="40"
+              fill="none"
+              stroke="white"
+              stroke-width="2"
+            ></rect>
+            <text
+              x="125"
+              y="125"
+              fill="white"
+              text-anchor="middle"
+              dominant-baseline="central"
+            >
+              γ
+            </text>
+            <rect
+              x="155"
+              y="105"
+              width="40"
+              height="40"
+              fill="none"
+              stroke="white"
+              stroke-width="2"
+            ></rect>
+            <text
+              x="175"
+              y="125"
+              fill="white"
+              text-anchor="middle"
+              dominant-baseline="central"
+            >
+              δ
+            </text>
+            <rect
+              x="205"
+              y="105"
+              width="40"
+              height="40"
+              fill="none"
+              stroke="white"
+              stroke-width="2"
+            ></rect>
+            <text
+              x="225"
+              y="125"
+              fill="white"
+              text-anchor="middle"
+              dominant-baseline="central"
+            >
+              ε
+            </text>
+            <rect
+              x="255"
+              y="105"
+              width="40"
+              height="40"
+              fill="none"
+              stroke="white"
+              stroke-width="2"
+            ></rect>
+            <text
+              x="275"
+              y="125"
+              fill="white"
+              text-anchor="middle"
+              dominant-baseline="central"
+            >
+              ζ
+            </text>
+          </svg>
+        </div>
+        <p>in contrast, this time ...</p>
+        <details>
+          <summary>Expand this to see the core of the Rust code.</summary>
+          <pre><code class="language-rust"><span class="hljs-keyword">use</span> std::{fmt, ops::AddAssign};
+
+<span class="hljs-keyword">use</span> num::{Float, Num};
+
+<span class="hljs-keyword">trait</span> <span class="hljs-title class_">Number</span>: <span class="hljs-built_in">Sized</span> + <span class="hljs-built_in">Copy</span> + <span class="hljs-built_in">Into</span>&lt;<span class="hljs-type">f64</span>&gt; + AddAssign + Num + Float {}
+
+<span class="hljs-keyword">impl</span> <span class="hljs-title class_">Number</span> <span class="hljs-keyword">for</span> <span class="hljs-title class_">f32</span> {}
+
+<span class="hljs-keyword">impl</span> <span class="hljs-title class_">Number</span> <span class="hljs-keyword">for</span> <span class="hljs-title class_">f64</span> {}
+
+<span class="hljs-keyword">trait</span> <span class="hljs-title class_">Int</span>: <span class="hljs-built_in">Copy</span> + TryFrom&lt;<span class="hljs-type">usize</span>, Error: fmt::<span class="hljs-built_in">Debug</span>&gt; + Num {
+    <span class="hljs-keyword">fn</span> <span class="hljs-title function_">to_usize</span>(<span class="hljs-keyword">self</span>) <span class="hljs-punctuation">-&gt;</span> <span class="hljs-type">usize</span>;
+}
+
+<span class="hljs-keyword">impl</span> <span class="hljs-title class_">Int</span> <span class="hljs-keyword">for</span> <span class="hljs-title class_">u32</span> {
+    <span class="hljs-keyword">fn</span> <span class="hljs-title function_">to_usize</span>(<span class="hljs-keyword">self</span>) <span class="hljs-punctuation">-&gt;</span> <span class="hljs-type">usize</span> {
+        <span class="hljs-keyword">self</span> <span class="hljs-keyword">as</span> <span class="hljs-type">usize</span>
+    }
+}
+
+<span class="hljs-keyword">impl</span> <span class="hljs-title class_">Int</span> <span class="hljs-keyword">for</span> <span class="hljs-title class_">u64</span> {
+    <span class="hljs-keyword">fn</span> <span class="hljs-title function_">to_usize</span>(<span class="hljs-keyword">self</span>) <span class="hljs-punctuation">-&gt;</span> <span class="hljs-type">usize</span> {
+        <span class="hljs-keyword">self</span> <span class="hljs-keyword">as</span> <span class="hljs-type">usize</span>
+    }
+}
+
+<span class="hljs-keyword">fn</span> <span class="hljs-title function_">sum_pairs</span>&lt;T: Number, I: Int&gt;(pairs: &amp;[(T, I)]) <span class="hljs-punctuation">-&gt;</span> T {
+    <span class="hljs-keyword">let</span> <span class="hljs-keyword">mut </span><span class="hljs-variable">total</span> = T::<span class="hljs-title function_ invoke__">zero</span>();
+    <span class="hljs-keyword">let</span> <span class="hljs-keyword">mut </span><span class="hljs-variable">i</span> = I::<span class="hljs-title function_ invoke__">zero</span>();
+    <span class="hljs-keyword">loop</span> {
+        <span class="hljs-keyword">match</span> pairs.<span class="hljs-title function_ invoke__">get</span>(i.<span class="hljs-title function_ invoke__">to_usize</span>()) {
+            <span class="hljs-title function_ invoke__">Some</span>(&amp;(x, j)) =&gt; {
+                total += x;
+                i = j;
+            }
+            <span class="hljs-literal">None</span> =&gt; <span class="hljs-keyword">return</span> total,
+        }
+    }
+}
+</code></pre>
+        </details>
         <h2>Results</h2>
+        <p>I'm running these experiments on the same two machines as before:</p>
+        <ul>
+          <li>
+            A 2020 MacBook Pro with M1 chip, 16 GiB of RAM, and a 1 TB SSD.
+          </li>
+          <li>
+            A Linux desktop with an AMD Ryzen 5 3600X, 24 GiB of Corsair
+            Vengeance LPX DDR4 3000MHz DRAM, and a Western Digital 1 TB 3D NAND
+            SATA SSD.
+          </li>
+        </ul>
+        <p>
+          A different HN commenter (@archi42) noted that 24 GiB is a bit of a
+          weird amount of RAM, and I responded that it's because I originally
+          had four 8 GiB RAM sticks, but one stopped working so I removed it a
+          while ago. They suggested that may be a cause of some of my weird data
+          for larger arrays on Linux:
+        </p>
+        <blockquote>
+          <p>
+            I'm not deep into the details of the AMD DRAM controller, but this
+            detail could cause some of your anomalies. If this was an academic
+            paper, the findings would be borderline invalid. You might want to
+            remove the extra module and run the benchmarks again.
+          </p>
+        </blockquote>
+        <p>
+          I did not end up doing that for this post, and as you'll see, it does
+          not affect the high-level takeaway.
+        </p>
         <h3>MacBook</h3>
         <div class="selection">
           <div class="macbook-32bit">
-            <p>Here are the <strong>32-bit</strong> results.</p>
+            <p>
+              Here are the results for <strong>32 bits</strong>, showing both
+              <span style="color: hsl(42 100% 75%)">shuffled</span> and
+              <span style="color: hsl(222 100% 75%)">unshuffled</span>.
+            </p>
           </div>
           <div class="macbook-64bit">
-            <p>Here are the <strong>64-bit</strong> results.</p>
+            <p>
+              Here are the results for <strong>64 bits</strong>, showing both
+              <span style="color: hsl(42 100% 75%)">shuffled</span> and
+              <span style="color: hsl(222 100% 75%)">unshuffled</span>.
+            </p>
           </div>
         </div>
         <div class="selectors">
@@ -923,6 +1272,27 @@
             </div>
           </div>
         </div>
+        <p>
+          So uh... yeah. Not even close to before. I mean, the first-to-last
+          layout does level out to 2ns per element as I predicted! But random
+          layout is <em>way</em> slower for linked lists. Here you can actually
+          see the distinction between L1 cache, L2 cache, and RAM pretty
+          clearly:
+        </p>
+        <ul>
+          <li>
+            For linked lists that fit in the <em>L1 cache</em>, random layout is
+            <strong>not discernably slower</strong> than first-to-last.
+          </li>
+          <li>
+            For linked lists that fit in the <em>L2 cache</em>, random layout is
+            <strong>about 3x slower</strong> than first-to-last.
+          </li>
+          <li>
+            For linked lists that <em>don't fit in cache</em>, random layout is
+            <strong>about 50x slower</strong> than first-to-last.
+          </li>
+        </ul>
         <h3>Linux desktop</h3>
         <div class="selection">
           <div class="desktop-32bit">
@@ -1768,6 +2138,39 @@
             </div>
           </div>
         </div>
+        <h2>Conclusion</h2>
+        <p>
+          Really I should have done this experiment earlier. Anyways, returning
+          back to our two research questions (recall that the specific questions
+          referred to experiments from
+          <a href="/blog/random-access/">the original post</a>):
+        </p>
+        <ol>
+          <li>
+            If the nodes of a linked list are laid out in first-to-last order,
+            summing over the list is about 2x slower than summing over an array
+            using a separate array of indices in first-to-last order.
+          </li>
+          <li>
+            If the nodes of a linked list are laid out in random order, summing
+            over the list is significantly slower than summing over an array
+            using an index array in random order:
+            <ul>
+              <li>
+                If everything fits in the L2 cache, a linked list is
+                <strong>about 3x slower</strong> than two arrays.
+              </li>
+              <li>
+                If everything does not fit in cache, a linked list is
+                <strong>about 15x slower</strong> than two arrays.
+              </li>
+            </ul>
+          </li>
+        </ol>
+        <p>
+          Like before, I hope you enjoyed, and please let me know if I made any
+          mistakes!
+        </p>
       </div>
     </main>
   </body>
