@@ -388,6 +388,110 @@
 }
 </code></pre>
         </details>
+        <p>
+          Since we're only considering arrays that fit in memory this time, our
+          data generation becomes a bit simpler in some ways. Unlike before,
+          though, the logic for shuffling the iteration order of a linked list
+          is a bit more subtle than just generating a random permutation into an
+          array.
+        </p>
+        <details>
+          <summary>Code to generate random linked lists.</summary>
+          <pre><code class="language-rust"><span class="hljs-keyword">use</span> rand::{Rng, SeedableRng, seq::SliceRandom};
+<span class="hljs-keyword">use</span> rand_distr::{Distribution, Normal, StandardNormal};
+
+<span class="hljs-keyword">fn</span> <span class="hljs-title function_">generate_pairs</span>&lt;T: Number, I: Int&gt;(rng: &amp;<span class="hljs-keyword">mut</span> <span class="hljs-keyword">impl</span> <span class="hljs-title class_">Rng</span>, n: <span class="hljs-type">usize</span>) <span class="hljs-punctuation">-&gt;</span> <span class="hljs-type">Vec</span>&lt;(T, I)&gt;
+<span class="hljs-keyword">where</span>
+    StandardNormal: Distribution&lt;T&gt;,
+{
+    <span class="hljs-keyword">let</span> <span class="hljs-variable">normal</span> = Normal::&lt;T&gt;::<span class="hljs-title function_ invoke__">new</span>(T::<span class="hljs-title function_ invoke__">zero</span>(), T::<span class="hljs-title function_ invoke__">one</span>()).<span class="hljs-title function_ invoke__">unwrap</span>();
+    (<span class="hljs-number">0</span>..n)
+        .<span class="hljs-title function_ invoke__">map</span>(|i| (normal.<span class="hljs-title function_ invoke__">sample</span>(rng), I::<span class="hljs-title function_ invoke__">try_from</span>(i + <span class="hljs-number">1</span>).<span class="hljs-title function_ invoke__">unwrap</span>()))
+        .<span class="hljs-title function_ invoke__">collect</span>()
+}
+
+<span class="hljs-keyword">fn</span> <span class="hljs-title function_">reorder_pairs</span>&lt;T: Number, I: Int&gt;(rng: &amp;<span class="hljs-keyword">mut</span> <span class="hljs-keyword">impl</span> <span class="hljs-title class_">Rng</span>, <span class="hljs-keyword">mut</span> pairs: <span class="hljs-type">Vec</span>&lt;(T, I)&gt;) <span class="hljs-punctuation">-&gt;</span> <span class="hljs-type">Vec</span>&lt;(T, I)&gt; {
+    <span class="hljs-keyword">let</span> <span class="hljs-variable">n</span> = pairs.<span class="hljs-title function_ invoke__">len</span>();
+    <span class="hljs-keyword">let</span> <span class="hljs-keyword">mut </span><span class="hljs-variable">indices</span>: <span class="hljs-type">Vec</span>&lt;<span class="hljs-type">usize</span>&gt; = (<span class="hljs-number">0</span>..n).<span class="hljs-title function_ invoke__">collect</span>();
+    indices.<span class="hljs-title function_ invoke__">shuffle</span>(rng);
+    <span class="hljs-keyword">for</span> <span class="hljs-variable">i</span> <span class="hljs-keyword">in</span> <span class="hljs-number">0</span>..n {
+        <span class="hljs-keyword">let</span> <span class="hljs-keyword">mut </span><span class="hljs-variable">next</span> = indices[(i + <span class="hljs-number">1</span>) % n];
+        <span class="hljs-keyword">if</span> next == <span class="hljs-number">0</span> {
+            next = n;
+        }
+        pairs[indices[i]].<span class="hljs-number">1</span> = I::<span class="hljs-title function_ invoke__">try_from</span>(next).<span class="hljs-title function_ invoke__">unwrap</span>();
+    }
+    pairs
+}
+
+<span class="hljs-keyword">fn</span> <span class="hljs-title function_">make_rng</span>(seed: <span class="hljs-type">u64</span>) <span class="hljs-punctuation">-&gt;</span> <span class="hljs-keyword">impl</span> <span class="hljs-title class_">Rng</span> {
+    rand_pcg::Pcg64Mcg::<span class="hljs-title function_ invoke__">seed_from_u64</span>(seed)
+}
+</code></pre>
+        </details>
+        <p>
+          Finally, we just need to iterate over all our possible array sizes,
+          generate data, and run sums over it for some number of repetitions.
+        </p>
+        <details>
+          <summary>Tying it all together.</summary>
+          <pre><code class="language-rust"><span class="hljs-keyword">use</span> std::time::Instant;
+
+<span class="hljs-keyword">use</span> serde::Serialize;
+
+<span class="hljs-meta">#[derive(Serialize)]</span>
+<span class="hljs-keyword">struct</span> <span class="hljs-title class_">Measurement</span> {
+    bits: <span class="hljs-type">usize</span>,
+    order: &amp;<span class="hljs-symbol">&#x27;static</span> <span class="hljs-type">str</span>,
+    exponent: <span class="hljs-type">usize</span>,
+    iteration: <span class="hljs-type">usize</span>,
+    output: <span class="hljs-type">f64</span>,
+    seconds: <span class="hljs-type">f64</span>,
+}
+
+<span class="hljs-keyword">fn</span> <span class="hljs-title function_">measure_pairs</span>&lt;T: Number, I: Int&gt;(
+    bits: <span class="hljs-type">usize</span>,
+    order: &amp;<span class="hljs-symbol">&#x27;static</span> <span class="hljs-type">str</span>,
+    exponent: <span class="hljs-type">usize</span>,
+    pairs: &amp;[(T, I)],
+    repeat: <span class="hljs-type">usize</span>,
+) {
+    <span class="hljs-keyword">for</span> <span class="hljs-variable">iteration</span> <span class="hljs-keyword">in</span> <span class="hljs-number">0</span>..repeat {
+        <span class="hljs-keyword">let</span> <span class="hljs-variable">start</span> = Instant::<span class="hljs-title function_ invoke__">now</span>();
+        <span class="hljs-keyword">let</span> <span class="hljs-variable">total</span> = <span class="hljs-title function_ invoke__">sum_pairs</span>(pairs);
+        <span class="hljs-keyword">let</span> <span class="hljs-variable">duration</span> = start.<span class="hljs-title function_ invoke__">elapsed</span>();
+        <span class="hljs-keyword">let</span> <span class="hljs-variable">measurement</span> = Measurement {
+            bits,
+            order,
+            exponent,
+            iteration,
+            output: total.<span class="hljs-title function_ invoke__">into</span>(),
+            seconds: duration.<span class="hljs-title function_ invoke__">as_secs_f64</span>(),
+        };
+        <span class="hljs-built_in">println!</span>(<span class="hljs-string">&quot;{}&quot;</span>, serde_json::<span class="hljs-title function_ invoke__">to_string</span>(&amp;measurement).<span class="hljs-title function_ invoke__">unwrap</span>());
+    }
+}
+
+<span class="hljs-keyword">fn</span> <span class="hljs-title function_">measure_many</span>(min: <span class="hljs-type">usize</span>, max: <span class="hljs-type">usize</span>, repeat: <span class="hljs-type">usize</span>) {
+    <span class="hljs-keyword">for</span> <span class="hljs-variable">exponent</span> <span class="hljs-keyword">in</span> min..=max {
+        <span class="hljs-keyword">let</span> <span class="hljs-variable">n</span> = <span class="hljs-number">1</span> &lt;&lt; exponent;
+        <span class="hljs-keyword">let</span> <span class="hljs-keyword">mut </span><span class="hljs-variable">rng</span> = <span class="hljs-title function_ invoke__">make_rng</span>(exponent <span class="hljs-keyword">as</span> <span class="hljs-type">u64</span>);
+        {
+            <span class="hljs-keyword">let</span> <span class="hljs-variable">first_to_last</span>: <span class="hljs-type">Vec</span>&lt;(<span class="hljs-type">f32</span>, <span class="hljs-type">u32</span>)&gt; = <span class="hljs-title function_ invoke__">generate_pairs</span>(&amp;<span class="hljs-keyword">mut</span> rng, n);
+            <span class="hljs-title function_ invoke__">measure_pairs</span>(<span class="hljs-number">32</span>, <span class="hljs-string">&quot;unshuffled&quot;</span>, exponent, &amp;first_to_last, repeat);
+            <span class="hljs-keyword">let</span> <span class="hljs-variable">random</span> = <span class="hljs-title function_ invoke__">reorder_pairs</span>(&amp;<span class="hljs-keyword">mut</span> rng, first_to_last);
+            <span class="hljs-title function_ invoke__">measure_pairs</span>(<span class="hljs-number">32</span>, <span class="hljs-string">&quot;shuffled&quot;</span>, exponent, &amp;random, repeat);
+        }
+        {
+            <span class="hljs-keyword">let</span> <span class="hljs-variable">first_to_last</span>: <span class="hljs-type">Vec</span>&lt;(<span class="hljs-type">f64</span>, <span class="hljs-type">u64</span>)&gt; = <span class="hljs-title function_ invoke__">generate_pairs</span>(&amp;<span class="hljs-keyword">mut</span> rng, n);
+            <span class="hljs-title function_ invoke__">measure_pairs</span>(<span class="hljs-number">64</span>, <span class="hljs-string">&quot;unshuffled&quot;</span>, exponent, &amp;first_to_last, repeat);
+            <span class="hljs-keyword">let</span> <span class="hljs-variable">random</span> = <span class="hljs-title function_ invoke__">reorder_pairs</span>(&amp;<span class="hljs-keyword">mut</span> rng, first_to_last);
+            <span class="hljs-title function_ invoke__">measure_pairs</span>(<span class="hljs-number">64</span>, <span class="hljs-string">&quot;shuffled&quot;</span>, exponent, &amp;random, repeat);
+        }
+    }
+}
+</code></pre>
+        </details>
         <h2>Results</h2>
         <p>I'm running these experiments on the same two machines as before:</p>
         <ul>
