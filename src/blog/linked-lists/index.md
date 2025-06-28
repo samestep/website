@@ -75,6 +75,111 @@ fn sum_pairs<T: Number, I: Int>(pairs: &[(T, I)]) -> T {
 
 </details>
 
+Since we're only considering arrays that fit in memory this time, our data generation becomes a bit simpler in some ways. Unlike before, though, the logic for shuffling the iteration order of a linked list is a bit more subtle than just generating a random permutation into an array.
+
+<details>
+<summary>Code to generate random linked lists.</summary>
+
+```rust
+use rand::{Rng, SeedableRng, seq::SliceRandom};
+use rand_distr::{Distribution, Normal, StandardNormal};
+
+fn generate_pairs<T: Number, I: Int>(rng: &mut impl Rng, n: usize) -> Vec<(T, I)>
+where
+    StandardNormal: Distribution<T>,
+{
+    let normal = Normal::<T>::new(T::zero(), T::one()).unwrap();
+    (0..n)
+        .map(|i| (normal.sample(rng), I::try_from(i + 1).unwrap()))
+        .collect()
+}
+
+fn reorder_pairs<T: Number, I: Int>(rng: &mut impl Rng, mut pairs: Vec<(T, I)>) -> Vec<(T, I)> {
+    let n = pairs.len();
+    let mut indices: Vec<usize> = (0..n).collect();
+    indices.shuffle(rng);
+    for i in 0..n {
+        let mut next = indices[(i + 1) % n];
+        if next == 0 {
+            next = n;
+        }
+        pairs[indices[i]].1 = I::try_from(next).unwrap();
+    }
+    pairs
+}
+
+fn make_rng(seed: u64) -> impl Rng {
+    rand_pcg::Pcg64Mcg::seed_from_u64(seed)
+}
+```
+
+</details>
+
+Finally, we just need to iterate over all our possible array sizes, generate data, and run sums over it for some number of repetitions.
+
+<details>
+<summary>Tying it all together.</summary>
+
+```rust
+use std::time::Instant;
+
+use serde::Serialize;
+
+#[derive(Serialize)]
+struct Measurement {
+    bits: usize,
+    order: &'static str,
+    exponent: usize,
+    iteration: usize,
+    output: f64,
+    seconds: f64,
+}
+
+fn measure_pairs<T: Number, I: Int>(
+    bits: usize,
+    order: &'static str,
+    exponent: usize,
+    pairs: &[(T, I)],
+    repeat: usize,
+) {
+    for iteration in 0..repeat {
+        let start = Instant::now();
+        let total = sum_pairs(pairs);
+        let duration = start.elapsed();
+        let measurement = Measurement {
+            bits,
+            order,
+            exponent,
+            iteration,
+            output: total.into(),
+            seconds: duration.as_secs_f64(),
+        };
+        println!("{}", serde_json::to_string(&measurement).unwrap());
+    }
+}
+
+fn measure_many(min: usize, max: usize, repeat: usize) {
+    for exponent in min..=max {
+        let n = 1 << exponent;
+        let mut rng = make_rng(exponent as u64);
+        {
+            let first_to_last: Vec<(f32, u32)> = generate_pairs(&mut rng, n);
+            measure_pairs(32, "unshuffled", exponent, &first_to_last, repeat);
+            let random = reorder_pairs(&mut rng, first_to_last);
+            measure_pairs(32, "shuffled", exponent, &random, repeat);
+        }
+        {
+            let first_to_last: Vec<(f64, u64)> = generate_pairs(&mut rng, n);
+            measure_pairs(64, "unshuffled", exponent, &first_to_last, repeat);
+            let random = reorder_pairs(&mut rng, first_to_last);
+            measure_pairs(64, "shuffled", exponent, &random, repeat);
+        }
+    }
+}
+```
+
+</details>
+
 ## Results
 
 I'm running these experiments on the same two machines as before:
