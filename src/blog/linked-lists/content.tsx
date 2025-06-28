@@ -59,8 +59,8 @@ const process = (jsonl: string): Processed[] => {
   const groups: Group[] = [
     { bits: 32, order: "unshuffled", points: new Map() },
     { bits: 32, order: "shuffled", points: new Map() },
-    { bits: 64, order: "shuffled", points: new Map() },
     { bits: 64, order: "unshuffled", points: new Map() },
+    { bits: 64, order: "shuffled", points: new Map() },
   ];
   for (const line of splitlines(jsonl)) {
     const { bits, order, exponent, seconds }: Measurement = JSON.parse(line);
