@@ -35,6 +35,9 @@ interface BlogPost {
 
 const blogPosts: Record<string, BlogPost> = {
   autodiff: { title: "Differentiable Programming in General" },
+  "incremental-parsing": {
+    title: "How much faster is incremental parsing, really?",
+  },
   "linked-lists": { title: "How much slower are linked lists, really?" },
   "random-access": {
     date: "2025-06-23",
