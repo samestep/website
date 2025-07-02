@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="en-us">
+  <head>
+    <meta charset="utf-8" />
+    <link rel="icon" type="image/png" href="/icon.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,100..700;1,100..700&amp;family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&amp;display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.10.0/styles/monokai.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.5.1/katex.min.css"
+    />
+    <link rel="stylesheet" href="/blog.css" />
+    <title>How much faster is incremental parsing, really? | Sam Estep</title>
+  </head>
+  <body>
+    <main>
+      <h1>How much faster is incremental parsing, really?</h1>
+      <p>
+        <em>by <a href="/">Sam Estep</a>, unpublished</em>
+      </p>
+      <div>
+        <ul>
+          <li>
+            Incremental parsers:
+            <ul>
+              <li>
+                <a href="https://tree-sitter.github.io/tree-sitter/"
+                  >Tree-sitter</a
+                >
+              </li>
+              <li><a href="https://lezer.codemirror.net/">Lezer</a></li>
+            </ul>
+          </li>
+          <li>
+            Industrial parsers:
+            <ul>
+              <li>rust-analyzer</li>
+              <li>Zig</li>
+            </ul>
+          </li>
+          <li>
+            Parsers to write:
+            <ul>
+              <li>
+                C-like syntax for Wasm
+                <ul>
+                  <li>Test by roundtripping Wasm</li>
+                </ul>
+              </li>
+            </ul>
+          </li>
+          <li>
+            Things to link to:
+            <ul>
+              <li>
+                <a
+                  href="https://code.visualstudio.com/blogs/2018/03/23/text-buffer-reimplementation"
+                  >2018 VS Code text buffer reimplementation</a
+                >
+              </li>
+            </ul>
+          </li>
+          <li>
+            Questions:
+            <ul>
+              <li>
+                How big does the file need to be for incremental parsing to be
+                faster?
+              </li>
+              <li>
+                What underlying text data structure should be used to serve
+                incremental parsing best?
+              </li>
+              <li>How hard is it to write a faster parser by hand?</li>
+              <li>How hard is it to give good error messages in both cases?</li>
+              <li>Can a parser generator emit a fast parser?</li>
+              <li>
+                Does either approach affect speed of code consuming the AST?
+              </li>
+              <li>
+                How fast is each approach for syntax highlighting specifically?
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </div>
+    </main>
+  </body>
+</html>
