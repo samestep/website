@@ -308,7 +308,7 @@ const Chart = ({ plots }: { plots: Plot[] }) => {
     <AxesLabeled
       height={250}
       top={10}
-      left={35}
+      left={40}
       right={5}
       bottom={20}
       xlabel="number of elements"
