@@ -122,9 +122,10 @@ export const indexHtml = ({
         <p>
           Outside of work, I love{" "}
           <a href="https://ironcityboulders.com/">bouldering</a>, performing{" "}
-          <a href="https://412improv.com/">improv comedy</a>, and baking. I'm
-          also always looking for music and book recommendations, and trying to
-          get my friends to join{" "}
+          <a href="https://www.arcadecomedytheater.com/">improv</a>{" "}
+          <a href="https://www.theglitterboxtheater.com/">comedy</a>, and
+          baking. I'm also always looking for music and book recommendations,
+          and trying to get my friends to join{" "}
           <a href="https://letterboxd.com/">Letterboxd</a> because it lets us
           take the set intersection of the movies <em>you</em> want to watch
           with the movies <em>I</em> want to watch (how cool is that?)
