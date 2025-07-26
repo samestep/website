@@ -10,8 +10,9 @@ import { Content } from "./blog";
 import { Logo } from "./logo";
 import { publications } from "./publications";
 import { blogHtml, indexHtml } from "./templates";
+import { importText } from "./util";
 
-const renderHtml = async (element: JSX.Element) =>
+export const renderHtml = async (element: JSX.Element): Promise<string> =>
   await prettier.format(`<!doctype html>\n${render(element)}`, {
     parser: "html",
   });
@@ -28,12 +29,29 @@ const getBlogPostContent = async (
   );
 };
 
+export const getBlogPostBody = async (
+  md: markdownit,
+  name: string,
+): Promise<string> => {
+  const replacements = await getBlogPostContent(name);
+  const filename = `src/blog/${name}/index.md`;
+  const markdown = (await importText(filename)).replaceAll(
+    /^\{\{(\w+)\}\}$/gm,
+    (_, key) => {
+      const val = replacements.get(key);
+      if (val === undefined) throw Error(`${filename} unknown key: ${key}`);
+      return val;
+    },
+  );
+  return md.render(markdown);
+};
+
 interface BlogPost {
   date?: string;
   title: string;
 }
 
-const blogPosts: Record<string, BlogPost> = {
+export const blogPosts: Record<string, BlogPost> = {
   autodiff: { title: "Differentiable Programming in General" },
   "incremental-parsing": {
     title: "How much faster is incremental parsing, really?",
@@ -54,33 +72,36 @@ const blogPosts: Record<string, BlogPost> = {
   "parallelizing-nvcc": { date: "2021-02-20", title: "Parallelizing nvcc" },
 };
 
-const generate = async () => {
-  const md = markdownit({
-    highlight: (str, lang) => {
-      if (lang && hljs.getLanguage(lang)) {
-        try {
-          return hljs.highlight(str, { language: lang }).value;
-        } catch (_) {}
-      }
-      return "";
-    },
-    html: true,
-  }).use(markdownitKatex);
+export const md = markdownit({
+  highlight: (str, lang) => {
+    if (lang && hljs.getLanguage(lang)) {
+      try {
+        return hljs.highlight(str, { language: lang }).value;
+      } catch (_) {}
+    }
+    return "";
+  },
+  html: true,
+}).use(markdownitKatex);
 
+export const logo = () => {
+  const svg = render(<Logo />);
+  return {
+    svg,
+    png: new Blob([
+      new Resvg(svg, { fitTo: { mode: "width", value: 192 } }).render().asPng(),
+    ]),
+  };
+};
+
+const generate = async () => {
   for (const file of ["all.css", "blog.css", "index.css", "photo.jpeg"]) {
     await Bun.write(`${out}/${file}`, Bun.file(`src/${file}`));
   }
 
-  const logo = render(<Logo />);
-  await Bun.write(`${out}/logo.svg`, logo);
-  await Bun.write(
-    `${out}/icon.png`,
-    new Blob([
-      new Resvg(logo, { fitTo: { mode: "width", value: 192 } })
-        .render()
-        .asPng(),
-    ]),
-  );
+  const { svg, png } = logo();
+  await Bun.write(`${out}/logo.svg`, svg);
+  await Bun.write(`${out}/icon.png`, png);
 
   await Bun.write(
     `${out}/index.html`,
@@ -111,20 +132,10 @@ const generate = async () => {
         recursive: true,
       });
     } catch (_) {}
-    const replacements = await getBlogPostContent(name);
-    const filename = `src/blog/${name}/index.md`;
-    const markdown = (await Bun.file(filename).text()).replaceAll(
-      /^\{\{(\w+)\}\}$/gm,
-      (_, key) => {
-        const val = replacements.get(key);
-        if (val === undefined) throw Error(`${filename} unknown key: ${key}`);
-        return val;
-      },
-    );
     const body = (
       <div
         dangerouslySetInnerHTML={{
-          __html: md.render(markdown),
+          __html: await getBlogPostBody(md, name),
         }}
       ></div>
     );

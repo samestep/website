@@ -1,4 +1,7 @@
 import { JSX } from "preact";
+import { importText } from "./util";
+
+const hotness = await importText("hot.js");
 
 const Head = () => (
   <>
@@ -179,13 +182,14 @@ export const indexHtml = ({
 );
 
 export interface Post {
+  hot?: string;
   css: boolean;
   title: string;
   date: string;
   body: JSX.Element;
 }
 
-export const blogHtml = ({ css, title, date, body }: Post) => (
+export const blogHtml = ({ hot, css, title, date, body }: Post) => (
   <html lang="en-us">
     <head>
       <Head />
@@ -199,6 +203,16 @@ export const blogHtml = ({ css, title, date, body }: Post) => (
       />
       <link rel="stylesheet" href="/blog.css" />
       {css ? <link rel="stylesheet" href="style.css" /> : <></>}
+      {hot === undefined ? (
+        <></>
+      ) : (
+        <script
+          type="module"
+          dangerouslySetInnerHTML={{
+            __html: `const url = ${JSON.stringify(hot)};\n${hotness}`,
+          }}
+        ></script>
+      )}
       <title>{title} | Sam Estep</title>
     </head>
     <body>
@@ -209,7 +223,7 @@ export const blogHtml = ({ css, title, date, body }: Post) => (
             by <a href="/">Sam Estep</a>, {date}
           </em>
         </p>
-        {body}
+        <div id="body">{body}</div>
       </main>
     </body>
   </html>

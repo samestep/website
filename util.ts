@@ -12,3 +12,10 @@ export const splitlines = (s: string): string[] => {
   if (n > 0 && lines[n - 1] === "") lines.pop();
   return lines;
 };
+
+// TypeScript doesn't like this dynamic import situation so we're putting it in
+// its own function to isolate the fact that we're ignoring the type error.
+/** Import a file in this repository as text. */
+export const importText = async (path: string): Promise<string> =>
+  // @ts-ignore
+  (await import(`./${path}`, { with: { type: "text" } })).default as string;

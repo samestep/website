@@ -2,7 +2,7 @@
   "private": true,
   "devDependencies": {
     "@resvg/resvg-js": "^2",
-    "@types/bun": "^1",
+    "@types/bun": "^1.2.16",
     "@types/markdown-it": "^14",
     "chokidar": "^3",
     "highlight.js": "^11",
@@ -17,6 +17,7 @@
   },
   "scripts": {
     "check": "prettier --check . && tsc",
+    "format": "prettier --write .",
     "build": "./build.ts",
     "serve": "live-server dist --verbose"
   }
