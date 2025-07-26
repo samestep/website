@@ -1,5 +1,5 @@
 {
-  "lockfileVersion": 0,
+  "lockfileVersion": 1,
   "workspaces": {
     "": {
       "devDependencies": {
@@ -15,6 +15,7 @@
         "preact-render-to-string": "^6",
         "prettier": "^3",
         "prettier-plugin-organize-imports": "^4",
+        "typescript": "^5",
       },
     },
   },

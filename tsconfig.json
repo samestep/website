@@ -5,6 +5,8 @@
     "jsx": "react-jsx",
     "jsxImportSource": "preact",
     "module": "preserve",
+    "noEmit": true,
+    "skipLibCheck": true,
     "strict": true,
     "target": "ESNext"
   }
