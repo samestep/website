@@ -3,6 +3,7 @@ import * as fs from "node:fs/promises";
 import os from "node:os";
 import * as readline from "node:readline";
 import { parseArgs } from "node:util";
+import encodeQR from "qr";
 import { blogPosts, logo, renderHtml } from "./common";
 import { blogHtml } from "./templates";
 
@@ -84,5 +85,7 @@ Bun.serve({
   },
 });
 
-console.log(`http://${address}:3000/blog/${name}/`);
-// TODO: Print a QR code for ease of use on mobile.
+const url = `http://${address}:3000/blog/${name}/`;
+console.log(url);
+console.log();
+console.log(encodeQR(url, "ascii"));

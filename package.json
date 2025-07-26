@@ -13,6 +13,7 @@
     "prettier-plugin-organize-imports": "^4",
     "preact": "^10",
     "preact-render-to-string": "^6",
+    "qr": "^0.5",
     "typescript": "^5"
   },
   "scripts": {
