@@ -1,1 +1,4 @@
-{ "saveConstantly.saveWithoutFormatting": true }
+{
+  "saveConstantly.saveWithoutFormatting": true,
+  "tinymist.typstExtraArgs": ["--features", "html"]
+}
