@@ -8,6 +8,15 @@ import encodeQR from "qr";
 import { blogPosts, logo, renderHtml } from "./common";
 import { blogHtml } from "./templates";
 
+interface Timed<T> {
+  when: number;
+  what: T;
+}
+
+const stamp = <T,>(what: T): Timed<T> => ({ when: performance.now(), what });
+
+const formatMs = (ms: number): string => `${Math.round(ms)}`.padStart(6);
+
 const listen = <T,>(
   command: string,
   args: string[],
@@ -21,6 +30,11 @@ const listen = <T,>(
     callback(JSON.parse(line));
   });
 };
+
+interface Output {
+  milliseconds: number;
+  body: string;
+}
 
 const { values } = parseArgs({ options: { post: { type: "string" } } });
 const { post: name } = values;
@@ -36,9 +50,46 @@ const addresses = Object.values(os.networkInterfaces()).flatMap((ifaces) =>
 if (addresses.length < 1) throw Error("expected at least one address");
 const [address] = addresses;
 
+const url = `http://${address}:3000/blog/${name}/`;
+console.log(url);
+console.log();
+console.log(encodeQR(url, "ascii"));
+
 const clients = new Set<Bun.ServerWebSocket<unknown>>();
 
-let body: string | undefined = undefined;
+let lastFsEvent: Timed<fs.FileChangeInfo<string>> | undefined = undefined;
+let lastOutput: Timed<Output> | undefined = undefined;
+let lastAck: Timed<"ack"> | undefined = undefined;
+
+const log = () => {
+  let lines: string[] = [];
+  let total = 0;
+
+  if (lastFsEvent !== undefined && lastOutput !== undefined) {
+    const latency = lastOutput.when - lastFsEvent.when;
+    const event = `${lastFsEvent.what.filename} ${lastFsEvent.what.eventType}`;
+    lines.push(`${formatMs(latency)}ms rebuild after ${event}`);
+    total += latency;
+  } else lines.push("");
+
+  if (lastOutput !== undefined && lastAck !== undefined) {
+    const latency = lastAck.when - lastOutput.when;
+    lines.push(`${formatMs(latency)}ms network roundtrip`);
+    total += latency;
+  } else lines.push("");
+
+  lines.push(`${formatMs(total)}ms total`);
+  logUpdate(lines.join("\n"));
+};
+
+const args = ["--hot", "--no-clear-screen", "post.ts", name];
+listen("bun", args, (output: Output) => {
+  lastOutput = stamp(output);
+  log();
+  for (const ws of clients) {
+    ws.send(lastOutput.what.body);
+  }
+});
 
 Bun.serve({
   routes: {
@@ -65,9 +116,14 @@ Bun.serve({
     },
   },
   websocket: {
-    message() {},
+    message(ws, message) {
+      if (message === "ack") {
+        lastAck = stamp(message);
+        log();
+      } else console.warn({ message });
+    },
     open(ws) {
-      if (body !== undefined) ws.send(body);
+      if (lastOutput !== undefined) ws.send(lastOutput.what.body);
       clients.add(ws);
     },
     close(ws) {
@@ -76,30 +132,7 @@ Bun.serve({
   },
 });
 
-const url = `http://${address}:3000/blog/${name}/`;
-console.log(url);
-console.log();
-console.log(encodeQR(url, "ascii"));
-
-let lastInput = performance.now();
-let lastOutput = performance.now();
-
-const log = () => {
-  const latency = lastOutput - lastInput;
-  if (latency >= 0) logUpdate(`${Math.round(latency)} milliseconds`);
-};
-
-const args = ["--hot", "--no-clear-screen", "post.ts", name];
-listen("bun", args, (newBody: string) => {
-  lastOutput = performance.now();
-  log();
-  body = newBody;
-  for (const ws of clients) {
-    ws.send(body);
-  }
-});
-
-for await (const _ of fs.watch(".", { recursive: true })) {
-  lastInput = performance.now();
+for await (const event of fs.watch(".", { recursive: true })) {
+  lastFsEvent = stamp(event);
   log();
 }
