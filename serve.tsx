@@ -32,10 +32,7 @@ const addresses = Object.values(os.networkInterfaces()).flatMap((ifaces) =>
     )
     .map(({ address }) => address),
 );
-if (addresses.length !== 1)
-  throw Error(
-    `expected exactly one address but got ${JSON.stringify(addresses)}`,
-  );
+if (addresses.length < 1) throw Error("expected at least one address");
 const [address] = addresses;
 
 const clients = new Set<Bun.ServerWebSocket<unknown>>();
