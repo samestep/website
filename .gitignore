@@ -3,4 +3,5 @@
 /dist/
 /node_modules/
 /out/
+/src/blog/*/index.html
 /tmp/

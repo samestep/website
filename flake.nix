@@ -19,6 +19,7 @@
           buildInputs = [
             pkgs.bun
             pkgs.nixfmt-rfc-style
+            pkgs.typst
           ];
         };
       }
