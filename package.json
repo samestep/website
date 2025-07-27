@@ -7,6 +7,7 @@
     "chokidar": "^3",
     "highlight.js": "^11",
     "live-server": "^1",
+    "log-update": "^6",
     "markdown-it": "^14",
     "markdown-it-katex": "^2",
     "prettier": "^3",

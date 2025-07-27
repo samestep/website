@@ -1,3 +1,4 @@
+import logUpdate from "log-update";
 import * as child_process from "node:child_process";
 import * as fs from "node:fs/promises";
 import os from "node:os";
@@ -38,13 +39,6 @@ const [address] = addresses;
 const clients = new Set<Bun.ServerWebSocket<unknown>>();
 
 let body: string | undefined = undefined;
-const args = ["--hot", "--no-clear-screen", "post.ts", name];
-listen("bun", args, (newBody: string) => {
-  body = newBody;
-  for (const ws of clients) {
-    ws.send(body);
-  }
-});
 
 Bun.serve({
   routes: {
@@ -86,3 +80,26 @@ const url = `http://${address}:3000/blog/${name}/`;
 console.log(url);
 console.log();
 console.log(encodeQR(url, "ascii"));
+
+let lastInput = performance.now();
+let lastOutput = performance.now();
+
+const log = () => {
+  const latency = lastOutput - lastInput;
+  if (latency >= 0) logUpdate(`${Math.round(latency)} milliseconds`);
+};
+
+const args = ["--hot", "--no-clear-screen", "post.ts", name];
+listen("bun", args, (newBody: string) => {
+  lastOutput = performance.now();
+  log();
+  body = newBody;
+  for (const ws of clients) {
+    ws.send(body);
+  }
+});
+
+for await (const _ of fs.watch(".", { recursive: true })) {
+  lastInput = performance.now();
+  log();
+}
