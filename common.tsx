@@ -57,6 +57,9 @@ export const blogPosts: Record<string, BlogPost> = {
     title: "How much faster is incremental parsing, really?",
   },
   "linked-lists": { title: "How much slower are linked lists, really?" },
+  "parameter-syntax": {
+    title: "Parameters and binding forms should be mutually recursive",
+  },
   "random-access": {
     date: "2025-06-23",
     title: "How much slower is random access, really?",
