@@ -323,7 +323,7 @@ As you can see, `Type` and `Binding` are both recursive types, but they're compl
 
 ### Proposal
 
-Now let's contrast that with how we'd represent the ...
+Here's how I'd instead represent parameters and binding forms in the AST:
 
 ```typescript
 type TypeField = {
