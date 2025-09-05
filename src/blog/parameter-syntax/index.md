@@ -1,4 +1,9 @@
-**tl;dr:** I want programming languages to let me write code like the following. Every language I'm aware of makes this more painful than it should be in either the function definition, or the function call, or both:
+Some programming languages let you define functions that are easy to call with more structure than a flat argument list, whether via keyword arguments, tuples, records, or some nesting of those. But I don't know any language that makes it very nice to define such functions:
+
+- I want to destructure the input to bind pieces of it to local values, without having to come up with extra names for intermediate values.
+- I want to describe the shape of the input in the function signature itself, without duplicating structure and names just to write out the types.
+
+Here's an example of my proposed syntax:
 
 ```
 fn transport(
@@ -27,14 +32,28 @@ transport(
 )
 ```
 
-Put simply:
+In this snippet, we're defining a function named `transport` which takes three parameters (or if you prefer, you can think of it as taking a tuple with three elements).
 
-- I want to be able to define a function whose parameters are aggregates, and simultaneously destructure those aggregates, binding pieces of them to local values.
-- I want to be able to define the function to accept parameters either positionally (i.e. like a tuple) or by name (i.e. like a record or struct) with minimal boilerplate.
-- I want to be able to nest these aggregates without having to
-  - come up with names for things I don't want to actually bind,
-  - duplicate the names of things unnecessarily, or
-  - separate the types of things from the places where I bind them.
+- The first parameter doesn't is a pair of `Timestamp`s, which we destructure into locals named `start` and `end`; the pair itself doesn't get bound to any name.
+- The second parameter is just a `Foo`. We bind it to the name `foo`.
+- The third parameter doesn't get bound to a name. It's a record with three fields:
+  - The `bar` field has type `Bar`. It gets bound to the name `bar`.
+  - The `person` field doesn't get bound to any name. It is a record with two fields:
+    - `name` is a `String`, and we bind it to a local named `who`.
+    - `phone` is also a `String`, and we bind it to a local named `phone`.
+  - Similarly the `options` field is a
+
+In the body of `transport`, we use all those locals to call other functions.
+
+Then somewhere else, we call `transport`.
+
+- For the first parameter we just construct a tuple.
+- For the second parameter we pass in a `Foo` named `foo123` that we already had.
+- For the third parameter we use nested record literals:
+  - We already have a value named `bar`, so we can write just `bar` instead of `bar = bar`.
+  - For `person` and `options`, we just use more record literals.
+
+The point of this example is to make it _almost_ as convenient to define and call a function with structured input (nested records and tuples) versus flat positional parameters; you just need to add a couple punctuation marks denoting the structure itself, and that's it.
 
 ## Comparisons
 
