@@ -22,7 +22,7 @@ fn transport(
 
 let bar = something();
 transport(
-  (iso("2025-09-03T09:00:00Z"), iso("2025-09-03T11:00:00Z")),
+  (iso("2025-09-05T09:00:00Z"), iso("2025-09-05T11:00:00Z")),
   foo123,
   {
     bar,
@@ -34,14 +34,14 @@ transport(
 
 In this snippet, we're defining a function named `transport` which takes three parameters (or if you prefer, you can think of it as taking a tuple with three elements).
 
-- The first parameter doesn't is a pair of `Timestamp`s, which we destructure into locals named `start` and `end`; the pair itself doesn't get bound to any name.
+- The first parameter is a pair of `Timestamp`s, which we destructure into locals named `start` and `end`; the pair itself doesn't get bound to any name.
 - The second parameter is just a `Foo`. We bind it to the name `foo`.
 - The third parameter doesn't get bound to a name. It's a record with three fields:
   - The `bar` field has type `Bar`. It gets bound to the name `bar`.
   - The `person` field doesn't get bound to any name. It is a record with two fields:
     - `name` is a `String`, and we bind it to a local named `who`.
     - `phone` is also a `String`, and we bind it to a local named `phone`.
-  - Similarly the `options` field is a
+  - Similarly the `options` field is a record with two fields; we bind each to a local with the same name.
 
 In the body of `transport`, we use all those locals to call other functions.
 
@@ -53,7 +53,7 @@ Then somewhere else, we call `transport`.
   - We already have a value named `bar`, so we can write just `bar` instead of `bar = bar`.
   - For `person` and `options`, we just use more record literals.
 
-The point of this example is to make it _almost_ as convenient to define and call a function with structured input (nested records and tuples) versus flat positional parameters; you just need to add a couple punctuation marks denoting the structure itself, and that's it.
+The point is to make it _almost_ as convenient to define and call a function with structured input (nested records and tuples) as it is with flat positional parameters; you just need to add a couple punctuation marks denoting the structure itself, and that's it.
 
 ## Comparisons
 
@@ -100,7 +100,7 @@ def transport(
 
 bar = something()
 transport(
-    (iso("2025-09-03T09:00:00Z"), iso("2025-09-03T11:00:00Z")),
+    (iso("2025-09-05T09:00:00Z"), iso("2025-09-05T11:00:00Z")),
     foo123,
     bar=bar,
     person={"name": "Alex Smith", "phone": "+1 (555) 555-5555"},
@@ -143,7 +143,7 @@ function transport(
 }
 
 let bar = something();
-transport([iso("2025-09-03T09:00:00Z"), iso("2025-09-03T11:00:00Z")], foo123, {
+transport([iso("2025-09-05T09:00:00Z"), iso("2025-09-05T11:00:00Z")], foo123, {
   bar,
   person: { name: "Alex Smith", phone: "+1 (555) 555-5555" },
   options: { fragile: true, window: HalfDay.PM },
@@ -192,7 +192,7 @@ fn transport(
 fn main() {
     let bar = something();
     transport(
-        (iso("2025-09-03T09:00:00Z"), iso("2025-09-03T11:00:00Z")),
+        (iso("2025-09-05T09:00:00Z"), iso("2025-09-05T11:00:00Z")),
         foo123,
         Args {
             bar,
