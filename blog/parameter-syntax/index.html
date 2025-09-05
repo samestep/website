@@ -27,7 +27,7 @@
     <main>
       <h1>Parameters and binding forms should be mutually recursive</h1>
       <p>
-        <em>by <a href="/">Sam Estep</a>, unpublished</em>
+        <em>by <a href="/">Sam Estep</a>, 2025-09-05</em>
       </p>
       <div id="body">
         <div>
@@ -67,7 +67,7 @@
 
 let bar = something();
 transport(
-  (iso(&quot;2025-09-03T09:00:00Z&quot;), iso(&quot;2025-09-03T11:00:00Z&quot;)),
+  (iso(&quot;2025-09-05T09:00:00Z&quot;), iso(&quot;2025-09-05T11:00:00Z&quot;)),
   foo123,
   {
     bar,
@@ -83,8 +83,8 @@ transport(
           </p>
           <ul>
             <li>
-              The first parameter doesn't is a pair of <code>Timestamp</code>s,
-              which we destructure into locals named <code>start</code> and
+              The first parameter is a pair of <code>Timestamp</code>s, which we
+              destructure into locals named <code>start</code> and
               <code>end</code>; the pair itself doesn't get bound to any name.
             </li>
             <li>
@@ -113,7 +113,10 @@ transport(
                     </li>
                   </ul>
                 </li>
-                <li>Similarly the <code>options</code> field is a</li>
+                <li>
+                  Similarly the <code>options</code> field is a record with two
+                  fields; we bind each to a local with the same name.
+                </li>
               </ul>
             </li>
           </ul>
@@ -143,11 +146,10 @@ transport(
             </li>
           </ul>
           <p>
-            The point of this example is to make it <em>almost</em> as
-            convenient to define and call a function with structured input
-            (nested records and tuples) versus flat positional parameters; you
-            just need to add a couple punctuation marks denoting the structure
-            itself, and that's it.
+            The point is to make it <em>almost</em> as convenient to define and
+            call a function with structured input (nested records and tuples) as
+            it is with flat positional parameters; you just need to add a couple
+            punctuation marks denoting the structure itself, and that's it.
           </p>
           <h2>Comparisons</h2>
           <p>
@@ -198,7 +200,7 @@ transport(
 
 bar = something()
 transport(
-    (iso(<span class="hljs-string">&quot;2025-09-03T09:00:00Z&quot;</span>), iso(<span class="hljs-string">&quot;2025-09-03T11:00:00Z&quot;</span>)),
+    (iso(<span class="hljs-string">&quot;2025-09-05T09:00:00Z&quot;</span>), iso(<span class="hljs-string">&quot;2025-09-05T11:00:00Z&quot;</span>)),
     foo123,
     bar=bar,
     person={<span class="hljs-string">&quot;name&quot;</span>: <span class="hljs-string">&quot;Alex Smith&quot;</span>, <span class="hljs-string">&quot;phone&quot;</span>: <span class="hljs-string">&quot;+1 (555) 555-5555&quot;</span>},
@@ -275,7 +277,7 @@ transport(
 }
 
 <span class="hljs-keyword">let</span> bar = <span class="hljs-title function_">something</span>();
-<span class="hljs-title function_">transport</span>([<span class="hljs-title function_">iso</span>(<span class="hljs-string">&quot;2025-09-03T09:00:00Z&quot;</span>), <span class="hljs-title function_">iso</span>(<span class="hljs-string">&quot;2025-09-03T11:00:00Z&quot;</span>)], foo123, {
+<span class="hljs-title function_">transport</span>([<span class="hljs-title function_">iso</span>(<span class="hljs-string">&quot;2025-09-05T09:00:00Z&quot;</span>), <span class="hljs-title function_">iso</span>(<span class="hljs-string">&quot;2025-09-05T11:00:00Z&quot;</span>)], foo123, {
   bar,
   <span class="hljs-attr">person</span>: { <span class="hljs-attr">name</span>: <span class="hljs-string">&quot;Alex Smith&quot;</span>, <span class="hljs-attr">phone</span>: <span class="hljs-string">&quot;+1 (555) 555-5555&quot;</span> },
   <span class="hljs-attr">options</span>: { <span class="hljs-attr">fragile</span>: <span class="hljs-literal">true</span>, <span class="hljs-attr">window</span>: <span class="hljs-title class_">HalfDay</span>.<span class="hljs-property">PM</span> },
@@ -327,7 +329,7 @@ transport(
 <span class="hljs-keyword">fn</span> <span class="hljs-title function_">main</span>() {
     <span class="hljs-keyword">let</span> <span class="hljs-variable">bar</span> = <span class="hljs-title function_ invoke__">something</span>();
     <span class="hljs-title function_ invoke__">transport</span>(
-        (<span class="hljs-title function_ invoke__">iso</span>(<span class="hljs-string">&quot;2025-09-03T09:00:00Z&quot;</span>), <span class="hljs-title function_ invoke__">iso</span>(<span class="hljs-string">&quot;2025-09-03T11:00:00Z&quot;</span>)),
+        (<span class="hljs-title function_ invoke__">iso</span>(<span class="hljs-string">&quot;2025-09-05T09:00:00Z&quot;</span>), <span class="hljs-title function_ invoke__">iso</span>(<span class="hljs-string">&quot;2025-09-05T11:00:00Z&quot;</span>)),
         foo123,
         Args {
             bar,
