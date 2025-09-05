@@ -32,16 +32,30 @@
       <div id="body">
         <div>
           <p>
-            <strong>tl;dr:</strong> I want programming languages to let me write
-            code like the following. Every language I'm aware of makes this more
-            painful than it should be in either the function definition, or the
-            function call, or both:
+            Some programming languages let you define functions that are easy to
+            call with more structure than a flat argument list, whether via
+            keyword arguments, tuples, records, or some nesting of those. But I
+            don't know any language that makes it very nice to define such
+            functions:
           </p>
+          <ul>
+            <li>
+              I want to destructure the input to bind pieces of it to local
+              values, without having to come up with extra names for
+              intermediate values.
+            </li>
+            <li>
+              I want to describe the shape of the input in the function
+              signature itself, without duplicating structure and names just to
+              write out the types.
+            </li>
+          </ul>
+          <p>Here's an example of my proposed syntax:</p>
           <pre><code>fn transport(
   (start: Timestamp, end: Timestamp),
-  foo: FooId,
+  foo: Foo,
   {
-    bar: BarId,
+    bar: Bar,
     person = { name = who: String, phone: String },
     options = { fragile: Boolean, window: HalfDay },
   },
@@ -62,32 +76,79 @@ transport(
   },
 )
 </code></pre>
-          <p>Put simply:</p>
+          <p>
+            In this snippet, we're defining a function named
+            <code>transport</code> which takes three parameters (or if you
+            prefer, you can think of it as taking a tuple with three elements).
+          </p>
           <ul>
             <li>
-              I want to be able to define a function whose parameters are
-              aggregates, and simultaneously destructure those aggregates,
-              binding pieces of them to local values.
+              The first parameter doesn't is a pair of <code>Timestamp</code>s,
+              which we destructure into locals named <code>start</code> and
+              <code>end</code>; the pair itself doesn't get bound to any name.
             </li>
             <li>
-              I want to be able to define the function to accept parameters
-              either positionally (i.e. like a tuple) or by name (i.e. like a
-              record or struct) with minimal boilerplate.
+              The second parameter is just a <code>Foo</code>. We bind it to the
+              name <code>foo</code>.
             </li>
             <li>
-              I want to be able to nest these aggregates without having to
+              The third parameter doesn't get bound to a name. It's a record
+              with three fields:
               <ul>
                 <li>
-                  come up with names for things I don't want to actually bind,
+                  The <code>bar</code> field has type <code>Bar</code>. It gets
+                  bound to the name <code>bar</code>.
                 </li>
-                <li>duplicate the names of things unnecessarily, or</li>
                 <li>
-                  separate the types of things from the places where I bind
-                  them.
+                  The <code>person</code> field doesn't get bound to any name.
+                  It is a record with two fields:
+                  <ul>
+                    <li>
+                      <code>name</code> is a <code>String</code>, and we bind it
+                      to a local named <code>who</code>.
+                    </li>
+                    <li>
+                      <code>phone</code> is also a <code>String</code>, and we
+                      bind it to a local named <code>phone</code>.
+                    </li>
+                  </ul>
+                </li>
+                <li>Similarly the <code>options</code> field is a</li>
+              </ul>
+            </li>
+          </ul>
+          <p>
+            In the body of <code>transport</code>, we use all those locals to
+            call other functions.
+          </p>
+          <p>Then somewhere else, we call <code>transport</code>.</p>
+          <ul>
+            <li>For the first parameter we just construct a tuple.</li>
+            <li>
+              For the second parameter we pass in a <code>Foo</code> named
+              <code>foo123</code> that we already had.
+            </li>
+            <li>
+              For the third parameter we use nested record literals:
+              <ul>
+                <li>
+                  We already have a value named <code>bar</code>, so we can
+                  write just <code>bar</code> instead of <code>bar = bar</code>.
+                </li>
+                <li>
+                  For <code>person</code> and <code>options</code>, we just use
+                  more record literals.
                 </li>
               </ul>
             </li>
           </ul>
+          <p>
+            The point of this example is to make it <em>almost</em> as
+            convenient to define and call a function with structured input
+            (nested records and tuples) versus flat positional parameters; you
+            just need to add a couple punctuation marks denoting the structure
+            itself, and that's it.
+          </p>
           <h2>Comparisons</h2>
           <p>
             Let's compare this pseudocode to what we're forced to write in the
@@ -117,10 +178,10 @@ transport(
 
 <span class="hljs-keyword">def</span> <span class="hljs-title function_">transport</span>(<span class="hljs-params">
     times: <span class="hljs-built_in">tuple</span>[datetime, datetime],
-    foo: FooId,
+    foo: Foo,
     /,
     *,
-    bar: BarId,
+    bar: Bar,
     person: Person,
     options: Options,
 </span>):
@@ -197,13 +258,13 @@ transport(
           </p>
           <pre><code class="language-typescript"><span class="hljs-keyword">function</span> <span class="hljs-title function_">transport</span>(<span class="hljs-params">
   [start, end]: [<span class="hljs-title class_">Timestamp</span>, <span class="hljs-title class_">Timestamp</span>],
-  <span class="hljs-attr">foo</span>: <span class="hljs-title class_">FooId</span>,
+  <span class="hljs-attr">foo</span>: <span class="hljs-title class_">Foo</span>,
   {
     bar,
     person: { name: who, phone },
     options: { fragile, <span class="hljs-variable language_">window</span> },
   }: {
-    bar: BarId;
+    bar: Bar;
     person: { name: <span class="hljs-built_in">string</span>; phone: <span class="hljs-built_in">string</span> };
     options: { fragile: <span class="hljs-built_in">boolean</span>; <span class="hljs-variable language_">window</span>: HalfDay };
   },
@@ -244,14 +305,14 @@ transport(
 }
 
 <span class="hljs-keyword">struct</span> <span class="hljs-title class_">Args</span> {
-    bar: BarId,
+    bar: Bar,
     person: Person,
     options: Options,
 }
 
 <span class="hljs-keyword">fn</span> <span class="hljs-title function_">transport</span>(
     (start, end): (Instant, Instant),
-    foo: FooId,
+    foo: Foo,
     Args {
         bar,
         person: Person { name: who, phone },
@@ -403,7 +464,7 @@ transport(
     },
     {
       <span class="hljs-attr">binding</span>: { <span class="hljs-attr">kind</span>: <span class="hljs-string">&quot;name&quot;</span>, <span class="hljs-attr">name</span>: <span class="hljs-string">&quot;foo&quot;</span> },
-      <span class="hljs-attr">type</span>: { <span class="hljs-attr">kind</span>: <span class="hljs-string">&quot;name&quot;</span>, <span class="hljs-attr">name</span>: <span class="hljs-string">&quot;FooId&quot;</span> },
+      <span class="hljs-attr">type</span>: { <span class="hljs-attr">kind</span>: <span class="hljs-string">&quot;name&quot;</span>, <span class="hljs-attr">name</span>: <span class="hljs-string">&quot;Foo&quot;</span> },
     },
     {
       <span class="hljs-attr">binding</span>: {
@@ -432,7 +493,7 @@ transport(
       <span class="hljs-attr">type</span>: {
         <span class="hljs-attr">kind</span>: <span class="hljs-string">&quot;record&quot;</span>,
         <span class="hljs-attr">fields</span>: [
-          { <span class="hljs-attr">name</span>: <span class="hljs-string">&quot;bar&quot;</span>, <span class="hljs-attr">type</span>: { <span class="hljs-attr">kind</span>: <span class="hljs-string">&quot;name&quot;</span>, <span class="hljs-attr">name</span>: <span class="hljs-string">&quot;BarId&quot;</span> } },
+          { <span class="hljs-attr">name</span>: <span class="hljs-string">&quot;bar&quot;</span>, <span class="hljs-attr">type</span>: { <span class="hljs-attr">kind</span>: <span class="hljs-string">&quot;name&quot;</span>, <span class="hljs-attr">name</span>: <span class="hljs-string">&quot;Bar&quot;</span> } },
           {
             <span class="hljs-attr">name</span>: <span class="hljs-string">&quot;person&quot;</span>,
             <span class="hljs-attr">type</span>: {
@@ -555,7 +616,7 @@ transport(
         },
         {
           <span class="hljs-attr">binding</span>: { <span class="hljs-attr">kind</span>: <span class="hljs-string">&quot;name&quot;</span>, <span class="hljs-attr">name</span>: <span class="hljs-string">&quot;foo&quot;</span> },
-          <span class="hljs-attr">type</span>: { <span class="hljs-attr">kind</span>: <span class="hljs-string">&quot;name&quot;</span>, <span class="hljs-attr">name</span>: <span class="hljs-string">&quot;FooId&quot;</span> },
+          <span class="hljs-attr">type</span>: { <span class="hljs-attr">kind</span>: <span class="hljs-string">&quot;name&quot;</span>, <span class="hljs-attr">name</span>: <span class="hljs-string">&quot;Foo&quot;</span> },
         },
         {
           <span class="hljs-attr">binding</span>: {
@@ -565,7 +626,7 @@ transport(
                 <span class="hljs-attr">name</span>: <span class="hljs-string">&quot;bar&quot;</span>,
                 <span class="hljs-attr">parameter</span>: {
                   <span class="hljs-attr">binding</span>: { <span class="hljs-attr">kind</span>: <span class="hljs-string">&quot;name&quot;</span>, <span class="hljs-attr">name</span>: <span class="hljs-string">&quot;bar&quot;</span> },
-                  <span class="hljs-attr">type</span>: { <span class="hljs-attr">kind</span>: <span class="hljs-string">&quot;name&quot;</span>, <span class="hljs-attr">name</span>: <span class="hljs-string">&quot;BarId&quot;</span> },
+                  <span class="hljs-attr">type</span>: { <span class="hljs-attr">kind</span>: <span class="hljs-string">&quot;name&quot;</span>, <span class="hljs-attr">name</span>: <span class="hljs-string">&quot;Bar&quot;</span> },
                 },
               },
               {
@@ -681,9 +742,9 @@ transport(
               </p>
               <pre><code>fn transport(
   (start, end): (Timestamp, Timestamp),
-  foo: FooId,
+  foo: Foo,
   {
-    bar: BarId,
+    bar: Bar,
     person: { name: String, phone: String },
     options: { fragile: Boolean, window: HalfDay },
   },
