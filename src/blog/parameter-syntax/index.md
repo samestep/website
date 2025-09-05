@@ -3,9 +3,9 @@
 ```
 fn transport(
   (start: Timestamp, end: Timestamp),
-  foo: FooId,
+  foo: Foo,
   {
-    bar: BarId,
+    bar: Bar,
     person = { name = who: String, phone: String },
     options = { fragile: Boolean, window: HalfDay },
   },
@@ -61,10 +61,10 @@ class Options(TypedDict):
 
 def transport(
     times: tuple[datetime, datetime],
-    foo: FooId,
+    foo: Foo,
     /,
     *,
-    bar: BarId,
+    bar: Bar,
     person: Person,
     options: Options,
 ):
@@ -107,13 +107,13 @@ This one is definitely the closest to the pseudocode I wrote at the top.
 ```typescript
 function transport(
   [start, end]: [Timestamp, Timestamp],
-  foo: FooId,
+  foo: Foo,
   {
     bar,
     person: { name: who, phone },
     options: { fragile, window },
   }: {
-    bar: BarId;
+    bar: Bar;
     person: { name: string; phone: string };
     options: { fragile: boolean; window: HalfDay };
   },
@@ -151,14 +151,14 @@ struct Options {
 }
 
 struct Args {
-    bar: BarId,
+    bar: Bar,
     person: Person,
     options: Options,
 }
 
 fn transport(
     (start, end): (Instant, Instant),
-    foo: FooId,
+    foo: Foo,
     Args {
         bar,
         person: Person { name: who, phone },
@@ -262,7 +262,7 @@ As you can see, `Type` and `Binding` are both recursive types, but they're compl
     },
     {
       binding: { kind: "name", name: "foo" },
-      type: { kind: "name", name: "FooId" },
+      type: { kind: "name", name: "Foo" },
     },
     {
       binding: {
@@ -291,7 +291,7 @@ As you can see, `Type` and `Binding` are both recursive types, but they're compl
       type: {
         kind: "record",
         fields: [
-          { name: "bar", type: { kind: "name", name: "BarId" } },
+          { name: "bar", type: { kind: "name", name: "Bar" } },
           {
             name: "person",
             type: {
@@ -391,7 +391,7 @@ That last one is probably a bit too cheeky, since it makes things weird by havin
         },
         {
           binding: { kind: "name", name: "foo" },
-          type: { kind: "name", name: "FooId" },
+          type: { kind: "name", name: "Foo" },
         },
         {
           binding: {
@@ -401,7 +401,7 @@ That last one is probably a bit too cheeky, since it makes things weird by havin
                 name: "bar",
                 parameter: {
                   binding: { kind: "name", name: "bar" },
-                  type: { kind: "name", name: "BarId" },
+                  type: { kind: "name", name: "Bar" },
                 },
               },
               {
@@ -486,9 +486,9 @@ Some final notes just to clarify things a bit more:
   ```
   fn transport(
     (start, end): (Timestamp, Timestamp),
-    foo: FooId,
+    foo: Foo,
     {
-      bar: BarId,
+      bar: Bar,
       person: { name: String, phone: String },
       options: { fragile: Boolean, window: HalfDay },
     },
