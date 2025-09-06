@@ -51,6 +51,13 @@ interface BlogPost {
   title: string;
 }
 
+type PublishedPost = [string, Required<BlogPost>];
+
+const isPublished = (entry: [string, BlogPost]): entry is PublishedPost => {
+  const [_, p] = entry;
+  return p.date !== undefined;
+};
+
 export const blogPosts: Record<string, BlogPost> = {
   autodiff: { title: "Differentiable Programming in General" },
   "incremental-parsing": {
@@ -88,6 +95,48 @@ export const md = markdownit({
   html: true,
 }).use(markdownitKatex);
 
+const postHref = (id: string) => `/blog/${id}`;
+const escapeXML = (str: string) =>
+  str.replace(
+    /[&<>'"]/g,
+    (tag) =>
+      ({
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        "'": "&#39;",
+        '"': "&quot;",
+      })[tag] ?? "",
+  );
+
+const rss = (posts: PublishedPost[], baseUrl: string) => {
+  const items = posts
+    .map(
+      ([id, p]) => `<item>
+<title>${escapeXML(p.title)}</title>
+<description>TODO</description>
+<link>${new URL(postHref(id), baseUrl).href}</link>
+<guid>${new URL(postHref(id), baseUrl).href}</guid>
+<pubDate>${new Date(p.date).toUTCString()}</pubDate>
+</item>`,
+    )
+    .join("\n");
+
+  const feedUrl = new URL("rss.xml", baseUrl).href;
+  const feed = `<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+<channel>
+<atom:link href="${feedUrl}" rel="self" type="application/rss+xml" />
+<title>Sam Estep</title>
+<link>${baseUrl}</link>
+<description>TODO</description>
+${items}
+</channel>
+</rss>`;
+  return `<?xml version="1.0" encoding="UTF-8" ?>
+${feed}
+`;
+};
+
 export const logo = () => {
   const svg = render(<Logo />);
   return {
@@ -107,6 +156,7 @@ const generate = async () => {
   await Bun.write(`${out}/logo.svg`, svg);
   await Bun.write(`${out}/icon.png`, png);
 
+  const publishedPosts = Object.entries(blogPosts).filter(isPublished);
   await Bun.write(
     `${out}/index.html`,
     await renderHtml(
@@ -114,8 +164,7 @@ const generate = async () => {
         pubs: publications(),
         blog: (
           <table class="blog">
-            {Object.entries(blogPosts)
-              .filter(([_, { date }]) => date !== undefined)
+            {publishedPosts
               .map(([id, { date, title }]) => {
                 const name = Bun.escapeHTML(title);
                 return (
@@ -155,6 +204,13 @@ const generate = async () => {
         blogHtml({ css, date: date ?? "unpublished", title, body }),
       ),
     );
+  }
+
+  const blogUrl = Bun.env["BLOG_BASE_URL"];
+  if (blogUrl) {
+    Bun.write(`${out}/rss.xml`, rss(publishedPosts, blogUrl));
+  } else {
+    console.debug("Blog URL not set; skipping RSS generation");
   }
 };
 
