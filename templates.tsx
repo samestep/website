@@ -79,7 +79,7 @@ export const indexHtml = ({
           <a class="pronouns" href="https://pronouns.org/he-him">
             (he/him)
           </a>
-          . I'm a fourth-year PhD student in{" "}
+          . I'm a fifth-year PhD student in{" "}
           <a href="https://s3d.cmu.edu/">S3D</a> at CMU, advised by{" "}
           <a href="https://www.cs.cmu.edu/~jssunshi/">Joshua Sunshine</a>. I do
           research on <span class="topic">differentiable programming</span> (you
