@@ -13,6 +13,8 @@ jobs:
       - run: bun install
       - run: bun run check
       - run: bun run build
+        env:
+          BLOG_BASE_URL: "https://samestep.com"
       - uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
