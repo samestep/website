@@ -113,18 +113,21 @@ const generate = async () => {
       indexHtml({
         pubs: publications(),
         blog: (
-          <ul>
+          <table class="blog">
             {Object.entries(blogPosts)
               .filter(([_, { date }]) => date !== undefined)
               .map(([id, { date, title }]) => {
                 const name = Bun.escapeHTML(title);
                 return (
-                  <li>
-                    {date} <a href={`/blog/${id}/`}>{name}</a>
-                  </li>
+                  <tr>
+                    <td class="date">{date}</td>
+                    <td>
+                      <a href={`/blog/${id}/`}>{name}</a>
+                    </td>
+                  </tr>
                 );
               })}
-          </ul>
+          </table>
         ),
       }),
     ),

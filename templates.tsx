@@ -85,7 +85,7 @@ export const indexHtml = ({
           research on <span class="topic">differentiable programming</span> (you
           should <a href="https://discord.gg/RZ37HrpheT">join us on Discord</a>
           !), with a particular focus on performance for interactive visual
-          applications. Here are some of my projects:
+          applications. Here are some past projects:
         </p>
         <ul>
           <li>
@@ -97,17 +97,6 @@ export const indexHtml = ({
             languages, building this up as a shared resource for the
             differentiable programming community to maintain together as we move
             forward.
-          </li>
-          <li>
-            <a href="https://github.com/samestep/floretta">Floretta</a> is a
-            work-in-progress program transformation that takes a{" "}
-            <a href="https://webassembly.org/">Wasm</a> module and augments it
-            to compute gradients. Also, Floretta can itself be compiled to Wasm
-            and included in a webpage as <code>floretta.wasm.gz</code> which is
-            smaller than 50 kilobytes! The goal is to provide a tool which
-            (similar to <a href="https://enzyme.mit.edu/">Enzyme</a>) operates
-            over a well-supported low-level representation, while also providing
-            the extreme portability of Wasm.
           </li>
           <li>
             <a href="https://github.com/rose-lang/rose">Rose</a> is the core
@@ -133,45 +122,6 @@ export const indexHtml = ({
           take the set intersection of the movies <em>you</em> want to watch
           with the movies <em>I</em> want to watch (how cool is that?)
         </p>
-        <h2>Webapps</h2>
-        <p>Here are a few toys I've made over the years.</p>
-        <div class="stuff">
-          <a href="https://samestep.github.io/minkowski/">
-            <div class="toy">
-              <h3>Minkowski sum</h3>
-              <h3 class="year">2023</h3>
-            </div>
-            <p>
-              Look, some polygons! Drag them around to see their Minkowski sum.
-              (Still a work in progress.)
-            </p>
-          </a>
-          <a href="https://samestep.github.io/elliptic-curves/">
-            <div class="toy">
-              <h3>Elliptic curves</h3>
-              <h3 class="year">2017</h3>
-            </div>
-            <p>
-              See how the elliptic curve group law is associative: click three
-              points to get each of their pairwise sums, then click the
-              magnifying glass to see that all the three-way sums converge at
-              the same point. Hit escape to reset or use the box in the top-left
-              to select alternative parameters for the curve.
-            </p>
-          </a>
-          <a href="https://samestep.github.io/lambda-calculus/">
-            <div class="toy">
-              <h3>Lambda calculus</h3>
-              <h3 class="year">2016</h3>
-            </div>
-            <p>
-              Type Lispy lambda calculus expressions like
-              <code>((λ x x) 42)</code> to see their reduced form. Backslash
-              automatically becomes <code>λ</code>, and parentheses are
-              automatched.
-            </p>
-          </a>
-        </div>
         <h2>Publications</h2>
         {pubs}
         <h2>Blog</h2>
