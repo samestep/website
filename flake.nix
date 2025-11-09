@@ -3,7 +3,7 @@
     nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
     flake-utils.url = "github:numtide/flake-utils";
     bun2nix = {
-      url = "github:baileyluTCD/bun2nix";
+      url = "github:fleek-platform/bun2nix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
   };
@@ -17,19 +17,29 @@
     flake-utils.lib.eachDefaultSystem (
       system:
       let
-        pkgs = import nixpkgs { inherit system; };
+        pkgs = import nixpkgs {
+          inherit system;
+          overlays = [ bun2nix.overlays.default ];
+        };
       in
       {
-        packages.default = bun2nix.lib.${system}.mkBunDerivation {
+        packages.default = pkgs.bun2nix.mkDerivation {
           packageJson = ./package.json;
           src = ./.;
-          bunNix = (
-            pkgs.runCommand "bun.nix" { } ''
-              ${bun2nix.packages.${system}.default}/bin/bun2nix -l ${./bun.lock} -o $out
-            ''
-          );
+          bunDeps = pkgs.bun2nix.fetchBunDeps {
+            bunNix = (
+              pkgs.runCommand "bun.nix" { } ''
+                ${pkgs.bun2nix}/bin/bun2nix -l ${./bun.lock} -o $out
+              ''
+            );
+          };
+          bunInstallFlags = [ "--backend=copyfile" ]; # Necessary on Mac.
           buildPhase = ''
             bun run build
+          '';
+          doCheck = true;
+          checkPhase = ''
+            bun run check
           '';
           installPhase = ''
             mv dist $out
