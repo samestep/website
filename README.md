@@ -1,13 +1,13 @@
 # My website
 
-To develop locally, run these commands:
+To develop locally, run these commands in the dev shell provided by `flake.nix`:
 
 ```sh
 bun install
 bun --watch run watch.ts
 ```
 
-Then in a separate terminal:
+Then in a separate terminal, also using the dev shell:
 
 ```sh
 bun run serve
