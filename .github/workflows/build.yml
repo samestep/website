@@ -11,6 +11,9 @@ jobs:
     steps:
       - uses: actions/checkout@v5
       - uses: nixbuild/nix-quick-install-action@v34
+      - uses: nix-community/cache-nix-action@v6
+        with:
+          primary-key: nix-${{ runner.os }}
       - run: nix build
       - if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         uses: peaceiris/actions-gh-pages@v4
