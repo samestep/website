@@ -33,7 +33,6 @@
               ''
             );
           };
-          bunInstallFlags = [ "--backend=copyfile" ]; # Necessary on Mac.
           buildPhase = ''
             bun run build
           '';
