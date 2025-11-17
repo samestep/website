@@ -11,11 +11,11 @@
         "treefmt-nix": "treefmt-nix"
       },
       "locked": {
-        "lastModified": 1762770326,
-        "narHash": "sha256-2h9GOi9KyIVpmtBT3We2kEHCVPb62ttJEffTcdhE7Lg=",
+        "lastModified": 1763405662,
+        "narHash": "sha256-Ix9Qa3pKMt1jtuXSEVxB5OdzQEmUz9C8E8hvjCdFElM=",
         "owner": "fleek-platform",
         "repo": "bun2nix",
-        "rev": "f6f2111c199d9c9a1ecbb43a69994f1b20093e9d",
+        "rev": "b12367aee2c6a93e5960b1e0e71a188d5e5e3bd8",
         "type": "github"
       },
       "original": {
@@ -77,11 +77,11 @@
     },
     "nixpkgs": {
       "locked": {
-        "lastModified": 1762482733,
-        "narHash": "sha256-g/da4FzvckvbiZT075Sb1/YDNDr+tGQgh4N8i5ceYMg=",
+        "lastModified": 1763312402,
+        "narHash": "sha256-3YJkOBrFpmcusnh7i8GXXEyh7qZG/8F5z5+717550Hk=",
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "e1ebeec86b771e9d387dd02d82ffdc77ac753abc",
+        "rev": "85a6c4a07faa12aaccd81b36ba9bfc2bec974fa1",
         "type": "github"
       },
       "original": {
