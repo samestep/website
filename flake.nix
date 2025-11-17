@@ -47,7 +47,6 @@
         devShells.default = pkgs.mkShellNoCC {
           buildInputs = [
             pkgs.bun
-            pkgs.nixfmt
           ];
         };
       }
