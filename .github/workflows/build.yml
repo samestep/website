@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v5
-      - uses: nixbuild/nix-quick-install-action@v34
+      - uses: cachix/install-nix-action@v31
       - uses: DeterminateSystems/magic-nix-cache-action@main
       - run: nix build --print-build-logs
       - if: github.event_name == 'push' && github.ref == 'refs/heads/main'
