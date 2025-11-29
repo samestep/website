@@ -97,31 +97,24 @@ export const md = markdownit({
 
 const postHref = (id: string) => `/blog/${id}`;
 const rss = (posts: PublishedPost[], baseUrl: string) => {
-  const items = posts
-    .map(
-      ([id, p]) => `<item>
-<title>${Bun.escapeHTML(p.title)}</title>
-<description>TODO</description>
-<link>${new URL(postHref(id), baseUrl).href}</link>
-<guid>${new URL(postHref(id), baseUrl).href}</guid>
-<pubDate>${new Date(p.date).toUTCString()}</pubDate>
-</item>`,
-    )
-    .join("\n");
-
   const feedUrl = new URL("rss.xml", baseUrl).href;
-  const feed = `<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
-<channel>
-<atom:link href="${feedUrl}" rel="self" type="application/rss+xml" />
-<title>Sam Estep</title>
-<link>${baseUrl}</link>
-<description>TODO</description>
-${items}
-</channel>
-</rss>`;
-  return `<?xml version="1.0" encoding="UTF-8" ?>
-${feed}
-`;
+  return <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+    <channel>
+      <atom:link href={feedUrl} rel="self" type="application/rss+xml" />
+      <title>Sam Estep</title>
+      <link>{baseUrl}</link>
+      <description>TODO</description>
+      {posts
+        .map(
+          ([id, p]) => <item>
+            <title>{Bun.escapeHTML(p.title)}</title>
+            <description>TODO</description>
+            <link>{new URL(postHref(id), baseUrl).href}</link>
+            <guid>{new URL(postHref(id), baseUrl).href}</guid>
+            <pubDate>{new Date(p.date).toUTCString()}</pubDate>
+          </item>)}
+    </channel>
+  </rss>
 };
 
 export const logo = () => {
@@ -195,7 +188,8 @@ const generate = async () => {
 
   const blogUrl = Bun.env["BLOG_BASE_URL"];
   if (blogUrl) {
-    Bun.write(`${out}/rss.xml`, rss(publishedPosts, blogUrl));
+    const xml = `<?xml version="1.0" encoding="UTF-8" ?>${render(rss(publishedPosts, blogUrl))}`
+    await Bun.write(`${out}/rss.xml`, xml);
   } else {
     console.debug("Blog URL not set; skipping RSS generation");
   }
