@@ -96,24 +96,11 @@ export const md = markdownit({
 }).use(markdownitKatex);
 
 const postHref = (id: string) => `/blog/${id}`;
-const escapeXML = (str: string) =>
-  str.replace(
-    /[&<>'"]/g,
-    (tag) =>
-      ({
-        "&": "&amp;",
-        "<": "&lt;",
-        ">": "&gt;",
-        "'": "&#39;",
-        '"': "&quot;",
-      })[tag] ?? "",
-  );
-
 const rss = (posts: PublishedPost[], baseUrl: string) => {
   const items = posts
     .map(
       ([id, p]) => `<item>
-<title>${escapeXML(p.title)}</title>
+<title>${Bun.escapeHTML(p.title)}</title>
 <description>TODO</description>
 <link>${new URL(postHref(id), baseUrl).href}</link>
 <guid>${new URL(postHref(id), baseUrl).href}</guid>
