@@ -187,13 +187,9 @@ const generate = async () => {
     );
   }
 
-  const blogUrl = Bun.env["BLOG_BASE_URL"];
-  if (blogUrl) {
-    const xml = `<?xml version="1.0" encoding="UTF-8" ?>${render(rss(publishedPosts, blogUrl))}`;
-    await Bun.write(`${out}/rss.xml`, xml);
-  } else {
-    console.debug("Blog URL not set; skipping RSS generation");
-  }
+  const blogUrl = "https://samestep.com";
+  const xml = `<?xml version="1.0" encoding="UTF-8" ?>${render(rss(publishedPosts, blogUrl))}`;
+  await Bun.write(`${out}/rss.xml`, xml);
 };
 
 export const build = async () => {
