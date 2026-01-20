@@ -98,23 +98,25 @@ export const md = markdownit({
 const postHref = (id: string) => `/blog/${id}`;
 const rss = (posts: PublishedPost[], baseUrl: string) => {
   const feedUrl = new URL("rss.xml", baseUrl).href;
-  return <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
-    <channel>
-      <atom:link href={feedUrl} rel="self" type="application/rss+xml" />
-      <title>Sam Estep</title>
-      <link>{baseUrl}</link>
-      <description>TODO</description>
-      {posts
-        .map(
-          ([id, p]) => <item>
+  return (
+    <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+      <channel>
+        <atom:link href={feedUrl} rel="self" type="application/rss+xml" />
+        <title>Sam Estep</title>
+        <link>{baseUrl}</link>
+        <description>TODO</description>
+        {posts.map(([id, p]) => (
+          <item>
             <title>{Bun.escapeHTML(p.title)}</title>
             <description>TODO</description>
             <link>{new URL(postHref(id), baseUrl).href}</link>
             <guid>{new URL(postHref(id), baseUrl).href}</guid>
             <pubDate>{new Date(p.date).toUTCString()}</pubDate>
-          </item>)}
-    </channel>
-  </rss>
+          </item>
+        ))}
+      </channel>
+    </rss>
+  );
 };
 
 export const logo = () => {
@@ -144,18 +146,17 @@ const generate = async () => {
         pubs: publications(),
         blog: (
           <table class="blog">
-            {publishedPosts
-              .map(([id, { date, title }]) => {
-                const name = Bun.escapeHTML(title);
-                return (
-                  <tr>
-                    <td class="date">{date}</td>
-                    <td>
-                      <a href={`/blog/${id}/`}>{name}</a>
-                    </td>
-                  </tr>
-                );
-              })}
+            {publishedPosts.map(([id, { date, title }]) => {
+              const name = Bun.escapeHTML(title);
+              return (
+                <tr>
+                  <td class="date">{date}</td>
+                  <td>
+                    <a href={`/blog/${id}/`}>{name}</a>
+                  </td>
+                </tr>
+              );
+            })}
           </table>
         ),
       }),
@@ -188,7 +189,7 @@ const generate = async () => {
 
   const blogUrl = Bun.env["BLOG_BASE_URL"];
   if (blogUrl) {
-    const xml = `<?xml version="1.0" encoding="UTF-8" ?>${render(rss(publishedPosts, blogUrl))}`
+    const xml = `<?xml version="1.0" encoding="UTF-8" ?>${render(rss(publishedPosts, blogUrl))}`;
     await Bun.write(`${out}/rss.xml`, xml);
   } else {
     console.debug("Blog URL not set; skipping RSS generation");
