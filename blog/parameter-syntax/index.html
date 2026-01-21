@@ -418,7 +418,7 @@ transport(
 
 <span class="hljs-keyword">type</span> <span class="hljs-title class_">BindingField</span> = {
   <span class="hljs-attr">name</span>: <span class="hljs-built_in">string</span>;
-  binding?: <span class="hljs-title class_">Binding</span>;
+  <span class="hljs-attr">binding</span>?: <span class="hljs-title class_">Binding</span>;
 };
 
 <span class="hljs-keyword">type</span> <span class="hljs-title class_">Binding</span> =
@@ -433,7 +433,7 @@ transport(
 
 <span class="hljs-keyword">type</span> <span class="hljs-title class_">FunctionSignature</span> = {
   <span class="hljs-attr">parameters</span>: <span class="hljs-title class_">Parameter</span>[];
-  result?: <span class="hljs-title class_">Type</span>;
+  <span class="hljs-attr">result</span>?: <span class="hljs-title class_">Type</span>;
 };
 </code></pre>
           <p>
@@ -550,12 +550,12 @@ transport(
 
 <span class="hljs-keyword">type</span> <span class="hljs-title class_">Parameter</span> = {
   <span class="hljs-attr">binding</span>: <span class="hljs-title class_">Binding</span>;
-  <span class="hljs-keyword">type</span>?: <span class="hljs-title class_">Type</span>;
+  <span class="hljs-attr">type</span>?: <span class="hljs-title class_">Type</span>;
 };
 
 <span class="hljs-keyword">type</span> <span class="hljs-title class_">FunctionSignature</span> = {
   <span class="hljs-attr">parameter</span>: <span class="hljs-title class_">Parameter</span>;
-  result?: <span class="hljs-title class_">Type</span>;
+  <span class="hljs-attr">result</span>?: <span class="hljs-title class_">Type</span>;
 };
 </code></pre>
           <p>
@@ -770,7 +770,7 @@ transport(
   | {
       <span class="hljs-attr">kind</span>: <span class="hljs-string">&quot;let&quot;</span>;
       <span class="hljs-attr">binding</span>: <span class="hljs-title class_">Binding</span>;
-      <span class="hljs-keyword">type</span>?: <span class="hljs-title class_">Type</span>;
+      <span class="hljs-attr">type</span>?: <span class="hljs-title class_">Type</span>;
       <span class="hljs-attr">expression</span>: <span class="hljs-title class_">Expression</span>;
     };
 </code></pre>
