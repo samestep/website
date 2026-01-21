@@ -147,7 +147,11 @@ export const logo = () => {
   return {
     svg,
     png: new Blob([
-      new Resvg(svg, { fitTo: { mode: "width", value: 192 } }).render().asPng(),
+      new Uint8Array(
+        new Resvg(svg, { fitTo: { mode: "width", value: 192 } })
+          .render()
+          .asPng(),
+      ),
     ]),
   };
 };
