@@ -49,6 +49,7 @@ export const getBlogPostBody = async (
 interface BlogPost {
   date?: string;
   title: string;
+  description: string;
 }
 
 type PublishedPost = [string, Required<BlogPost>];
@@ -59,28 +60,50 @@ const isPublished = (entry: [string, BlogPost]): entry is PublishedPost => {
 };
 
 export const blogPosts: Record<string, BlogPost> = {
-  autodiff: { title: "Differentiable Programming in General" },
+  autodiff: {
+    title: "Differentiable Programming in General",
+    description:
+      "How to perform automatic differentiation as a program transformation on a Turing-complete language.",
+  },
   "incremental-parsing": {
     title: "How much faster is incremental parsing, really?",
+    description:
+      "Performance measurements for incremental parsing versus data-oriented parsing.",
   },
-  "linked-lists": { title: "How much slower are linked lists, really?" },
+  "linked-lists": {
+    title: "How much slower are linked lists, really?",
+    description:
+      "Performance measurements for iterating through linked lists compared to arrays.",
+  },
   "parameter-syntax": {
     date: "2025-09-05",
     title: "Parameters and binding forms should be mutually recursive",
+    description:
+      "An idea about syntax for destructuring in languages with anonymous record types.",
   },
   "random-access": {
     date: "2025-06-23",
     title: "How much slower is random access, really?",
+    description:
+      "Performance measurements for different iteration orders on arrays of various sizes.",
   },
   "typst-impressions": {
     date: "2025-03-27",
     title: "First impressions with Typst",
+    description:
+      "Things I like and dislike about Typst after using it for a short amount of time.",
   },
   "random-integers": {
     date: "2024-10-20",
     title: "How can computers roll dice?",
+    description:
+      "Some of the algorithms and math you can use to go from random bits to randomly selecting from a finite set.",
   },
-  "parallelizing-nvcc": { date: "2021-02-20", title: "Parallelizing nvcc" },
+  "parallelizing-nvcc": {
+    date: "2021-02-20",
+    title: "Parallelizing nvcc",
+    description: "A wrapper I wrote around nvcc to parallelize it.",
+  },
 };
 
 export const md = markdownit({
@@ -104,11 +127,11 @@ const rss = (posts: PublishedPost[], baseUrl: string) => {
         <atom:link href={feedUrl} rel="self" type="application/rss+xml" />
         <title>Sam Estep</title>
         <link>{baseUrl}</link>
-        <description>TODO</description>
+        <description>Sam Estep's personal blog.</description>
         {posts.map(([id, p]) => (
           <item>
             <title>{Bun.escapeHTML(p.title)}</title>
-            <description>TODO</description>
+            <description>{p.description}</description>
             <link>{new URL(postHref(id), baseUrl).href}</link>
             <guid>{new URL(postHref(id), baseUrl).href}</guid>
             <pubDate>{new Date(p.date).toUTCString()}</pubDate>
