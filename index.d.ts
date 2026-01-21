@@ -7,8 +7,8 @@ declare module "*.jsonl" {
 
 // workaround for using preact to render the XML for the RSS feed using JSX elements
 declare namespace preact.JSX {
-  interface XmlElementAttributes
-    extends preact.JSX.HTMLAttributes<HTMLElement> {
+  interface XmlElementAttributes extends preact.JSX
+    .HTMLAttributes<HTMLElement> {
     [attr: string]: unknown;
   }
 
