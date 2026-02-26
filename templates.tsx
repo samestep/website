@@ -66,10 +66,6 @@ export const indexHtml = ({
             href="https://stackoverflow.com/users/5044950/sam-estep"
           ></a>
           <a
-            class="fa-brands fa-twitter fa-2x"
-            href="https://twitter.com/sgestep"
-          ></a>
-          <a
             class="fa-brands fa-youtube fa-2x"
             href="https://youtube.com/@sam-estep"
           ></a>
