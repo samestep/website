@@ -50,6 +50,10 @@ export const indexHtml = ({
         <div class="socials">
           <a class="fa fa-envelope fa-2x" href="mailto:estep@cmu.edu"></a>
           <a
+            class="fa-brands fa-discord fa-2x"
+            href="https://discord.com/users/samestep"
+          ></a>
+          <a
             class="fa-brands fa-github fa-2x"
             href="https://github.com/samestep"
           ></a>
