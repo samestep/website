@@ -75,6 +75,10 @@ export const blogPosts: Record<string, BlogPost> = {
     description:
       "Performance measurements for iterating through linked lists compared to arrays.",
   },
+  "newcombs-paradox": {
+    title: "Newcomb's paradox needs a demon",
+    description: "A supercomputer can't predict whether I'd flip a coin.",
+  },
   "parameter-syntax": {
     date: "2025-09-05",
     title: "Parameters and binding forms should be mutually recursive",
