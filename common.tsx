@@ -135,7 +135,7 @@ const rss = (posts: PublishedPost[], baseUrl: string) => {
         <description>Sam Estep's personal blog.</description>
         {posts.map(([id, p]) => (
           <item>
-            <title>{Bun.escapeHTML(p.title)}</title>
+            <title>{p.title}</title>
             <description>{p.description}</description>
             <link>{new URL(postHref(id), baseUrl).href}</link>
             <guid>{new URL(postHref(id), baseUrl).href}</guid>
@@ -179,7 +179,7 @@ const generate = async () => {
         blog: (
           <table class="blog">
             {publishedPosts.map(([id, { date, title }]) => {
-              const name = Bun.escapeHTML(title);
+              const name = title;
               return (
                 <tr>
                   <td class="date">{date}</td>
