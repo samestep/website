@@ -22,7 +22,7 @@ So, my complaint about the Veritasium video is that they present it as if it doe
 
 Technically, I didn't present the problem in _exactly_ the same way that Veritasium did. They only said that the computer has _almost_ always been correct, not that it has always been correct. And that of course also completely changes the problem: if the computer has made mistakes in the past, then it's possible for it to make mistakes in the future.
 
-In the video, Gregor gives an argument for one-boxing based on probabilities. He starts by assuming that the probability the computer guesses your answer correctly is $C$, and then derives that you should one-box as long as $C > 0.505$. But this is also flawed. There's a hidden assumption that $C$ is _independent_ of whether you decide to one-box or two-box. But there's no a priori reason to believe that. If the computer has been wrong before, it'd be very surprising for it to be wrong _just as often_ for one-boxers and two-boxers. And so there's no reason to expect that the computer would continue to be accurate if you use try to trick it via some clever decision-making process that other people rarely use.
+In the video, Gregor gives an argument for one-boxing based on probabilities. He starts by assuming that the probability the computer guesses your answer correctly is $C$, and then derives that you should one-box as long as $C > 0.5005$. But this is also flawed. There's a hidden assumption that $C$ is _independent_ of whether you decide to one-box or two-box. But there's no a priori reason to believe that. If the computer has been wrong before, it'd be very surprising for it to be wrong _just as often_ for one-boxers and two-boxers. And so there's no reason to expect that the computer would continue to be accurate if you try to trick it via some clever decision-making process that other people rarely use.
 
 Anyways, I think that the problem is far less interesting if the predictor has been wrong before. Typically, the predictor is presented as having never been wrong, which makes the problem actually interesting from a decision-theoretic standpoint.
 
@@ -36,7 +36,7 @@ Obviously I'm not the first one to think of this. Before I wrote this post, I Go
 
 - [A 2021 Hacker News thread](https://news.ycombinator.com/item?id=28589222) in which someone proposes flipping a coin and another person responds with an interesting connection to the [halting problem](https://en.wikipedia.org/wiki/Halting_problem).
 
-- [A 2023 Medium comment](https://medium.com/@camiolo/your-assumption-is-invalid-3ad162783ae2) asserting that an AI cannot predict a coin flip.
+- [A 2023 Medium comment](https://medium.com/@camiolo/your-assumption-is-invalid-3ad162783ae2) asserting that the setup is invalid because an AI cannot predict a coin flip.
 
 - [A 2023 blog post](https://gcher.com/posts/2023-07-28-newcomb-paradox/) in which the amount of money in the opaque box is reduced so that a random strategy actually gives you a higher expected value than just always picking the opaque box by itself.
 

@@ -76,8 +76,9 @@ export const blogPosts: Record<string, BlogPost> = {
       "Performance measurements for iterating through linked lists compared to arrays.",
   },
   "newcombs-paradox": {
+    date: "2026-03-09",
     title: "Newcomb's paradox needs a demon",
-    description: "A supercomputer can't predict whether I'd flip a coin.",
+    description: "A supercomputer can't predict the outcome of a coin flip.",
   },
   "parameter-syntax": {
     date: "2025-09-05",
