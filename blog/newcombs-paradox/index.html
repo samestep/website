@@ -1,0 +1,272 @@
+<!doctype html>
+<html lang="en-us">
+  <head>
+    <meta charset="utf-8" />
+    <link rel="icon" type="image/png" href="/icon.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,100..700;1,100..700&amp;family=Roboto+Serif:ital,opsz,wght@0,8..144,100..900;1,8..144,100..900&amp;display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.10.0/styles/monokai.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.5.1/katex.min.css"
+    />
+    <link rel="stylesheet" href="/blog.css" />
+    <title>Newcomb's paradox needs a demon | Sam Estep</title>
+  </head>
+  <body>
+    <main>
+      <h1>Newcomb's paradox needs a demon</h1>
+      <p>
+        <em>by <a href="/">Sam Estep</a>, unpublished</em>
+      </p>
+      <div id="body">
+        <div>
+          <p>
+            Today
+            <a href="https://youtu.be/Ol18JoeXlVI"
+              >Veritasium published a video</a
+            >
+            about
+            <a href="https://en.wikipedia.org/wiki/Newcomb%27s_problem"
+              >Newcomb's paradox</a
+            >: you walk into a room with one transparent box containing $1000,
+            and one opaque box. You're allowed to either take both boxes or just
+            take the opaque box. Before you walk in, a supercomputer predicted
+            which choice you'd make, and put $1000000 in the opaque box if it
+            predicted you'd take just the one, or $0 if it predicted you'd take
+            both. Thousands of people have gone through the room, and the
+            computer has always been right. <em>What should you do?</em>
+          </p>
+          <p>
+            I'm a fan of this paradox and I like Veritasium. But the way they
+            describe the setup is <strong>wrong</strong>:
+          </p>
+          <blockquote>
+            <p>
+              Don't worry about how the supercomputer is making its prediction.
+              Instead of a computer, you could think of it as a superintelligent
+              alien, a cunning demon, or even a team of the world's best
+              psychologists. It really doesn't matter who or what is making the
+              prediction.
+            </p>
+          </blockquote>
+          <p>It actually matters <strong>a lot</strong>.</p>
+          <h2>Demons</h2>
+          <p>
+            If the predictor is
+            <a href="https://en.wikipedia.org/wiki/Laplace%27s_demon"
+              >Laplace's demon</a
+            >
+            and genuinely knows the location and momentum of every particle in
+            the universe, then sure, I buy that it can accurately predict what
+            I'll choose.
+          </p>
+          <h2>Computers and psychologists</h2>
+          <p>
+            If the predictor is a computer or a team of psychologists, they can
+            still predict a lot. The main discussion in the video is about how
+            the predictor knows what thought process you're gonna use to decide
+            whether to one-box or two-box, which I totally agree that a computer
+            or psychologist can predict by knowing about your history and
+            personality.
+          </p>
+          <p>
+            But come on. You know some smartasses are gonna walk in there and
+            flip a coin. No supercomputer on Earth can predict that
+            consistently.
+          </p>
+          <p>
+            So, my complaint about the Veritasium video is that they present it
+            as if it doesn't matter whether there's anything supernatural going
+            on.
+          </p>
+          <h2>Probabilities</h2>
+          <p>
+            Technically, I didn't present the problem in <em>exactly</em> the
+            same way that Veritasium did. They only said that the computer has
+            <em>almost</em> always been correct, not that it has always been
+            correct. And that of course also completely changes the problem: if
+            the computer has made mistakes in the past, then it's possible for
+            it to make mistakes in the future.
+          </p>
+          <p>
+            In the video, Gregor gives an argument for one-boxing based on
+            probabilities. He starts by assuming that the probability the
+            computer guesses your answer correctly is
+            <span class="katex"
+              ><span class="katex-mathml"
+                ><math
+                  ><semantics
+                    ><mrow><mi>C</mi></mrow
+                    ><annotation encoding="application/x-tex"
+                      >C</annotation
+                    ></semantics
+                  ></math
+                ></span
+              ><span class="katex-html" aria-hidden="true"
+                ><span class="strut" style="height: 0.68333em"></span
+                ><span
+                  class="strut bottom"
+                  style="height: 0.68333em; vertical-align: 0em"
+                ></span
+                ><span class="base textstyle uncramped"
+                  ><span class="mord mathit" style="margin-right: 0.07153em"
+                    >C</span
+                  ></span
+                ></span
+              ></span
+            >, and then derives that you should one-box as long as
+            <span class="katex"
+              ><span class="katex-mathml"
+                ><math
+                  ><semantics
+                    ><mrow
+                      ><mi>C</mi><mo>&gt;</mo><mn>0</mn
+                      ><mi mathvariant="normal">.</mi><mn>5</mn><mn>0</mn
+                      ><mn>5</mn></mrow
+                    ><annotation encoding="application/x-tex"
+                      >C &gt; 0.505</annotation
+                    ></semantics
+                  ></math
+                ></span
+              ><span class="katex-html" aria-hidden="true"
+                ><span class="strut" style="height: 0.68333em"></span
+                ><span
+                  class="strut bottom"
+                  style="height: 0.72243em; vertical-align: -0.0391em"
+                ></span
+                ><span class="base textstyle uncramped"
+                  ><span class="mord mathit" style="margin-right: 0.07153em"
+                    >C</span
+                  ><span class="mrel">&gt;</span
+                  ><span class="mord mathrm">0</span
+                  ><span class="mord mathrm">.</span
+                  ><span class="mord mathrm">5</span
+                  ><span class="mord mathrm">0</span
+                  ><span class="mord mathrm">5</span></span
+                ></span
+              ></span
+            >. But this is also flawed. There's a hidden assumption that
+            <span class="katex"
+              ><span class="katex-mathml"
+                ><math
+                  ><semantics
+                    ><mrow><mi>C</mi></mrow
+                    ><annotation encoding="application/x-tex"
+                      >C</annotation
+                    ></semantics
+                  ></math
+                ></span
+              ><span class="katex-html" aria-hidden="true"
+                ><span class="strut" style="height: 0.68333em"></span
+                ><span
+                  class="strut bottom"
+                  style="height: 0.68333em; vertical-align: 0em"
+                ></span
+                ><span class="base textstyle uncramped"
+                  ><span class="mord mathit" style="margin-right: 0.07153em"
+                    >C</span
+                  ></span
+                ></span
+              ></span
+            >
+            is <em>independent</em> of whether you decide to one-box or two-box.
+            But there's no a priori reason to believe that. If the computer has
+            been wrong before, it'd be very surprising for it to be wrong
+            <em>just as often</em> for one-boxers and two-boxers. And so there's
+            no reason to expect that the computer would continue to be accurate
+            if you use try to trick it via some clever decision-making process
+            that other people rarely use.
+          </p>
+          <p>
+            Anyways, I think that the problem is far less interesting if the
+            predictor has been wrong before. Typically, the predictor is
+            presented as having never been wrong, which makes the problem
+            actually interesting from a decision-theoretic standpoint.
+          </p>
+          <h2>Nothing new under the sun</h2>
+          <p>
+            Obviously I'm not the first one to think of this. Before I wrote
+            this post, I Googled &quot;newcomb's paradox flip a coin&quot; and
+            found these results just on the front page:
+          </p>
+          <ul>
+            <li>
+              <p>
+                In
+                <a
+                  href="https://web.archive.org/web/20190331225650/http://faculty.arts.ubc.ca/rjohns/nozick_newcomb.pdf"
+                  >Nozick's original 1969 paper</a
+                >, the predictor has never been wrong before, and also has one
+                additional twist to its behavior: if it predicts that &quot;you
+                will consciously randomize your choice,&quot; then it puts $0 in
+                the opaque box. I guess that's one possible answer to my
+                complaint, but in my opinion it just pushes the problem back
+                further: what exactly constitutes &quot;consciously randomizing
+                your choice&quot;? Flipping a coin isn't truly random, it's just
+                chaotic. Are not my typical brain processes also chaotic? Where
+                do we draw the line?
+              </p>
+            </li>
+            <li>
+              <p>
+                <a
+                  href="https://www.scirp.org/journal/paperinformation?paperid=1438"
+                  >A 2010 paper</a
+                >
+                titled &quot;A Study of Quantum Strategies for Newcomb's
+                Paradox&quot;. I haven't read the whole paper, but it's a lot
+                more rigorous than what I've laid out here, exploring the idea
+                of not just flipping a coin, but producing genuine randomness
+                using some quantum shenanigans.
+              </p>
+            </li>
+            <li>
+              <p>
+                <a href="https://news.ycombinator.com/item?id=28589222"
+                  >A 2021 Hacker News thread</a
+                >
+                in which someone proposes flipping a coin and another person
+                responds with an interesting connection to the
+                <a href="https://en.wikipedia.org/wiki/Halting_problem"
+                  >halting problem</a
+                >.
+              </p>
+            </li>
+            <li>
+              <p>
+                <a
+                  href="https://medium.com/@camiolo/your-assumption-is-invalid-3ad162783ae2"
+                  >A 2023 Medium comment</a
+                >
+                asserting that an AI cannot predict a coin flip.
+              </p>
+            </li>
+            <li>
+              <p>
+                <a href="https://gcher.com/posts/2023-07-28-newcomb-paradox/"
+                  >A 2023 blog post</a
+                >
+                in which the amount of money in the opaque box is reduced so
+                that a random strategy actually gives you a higher expected
+                value than just always picking the opaque box by itself.
+              </p>
+            </li>
+          </ul>
+          <p>
+            Such a fun paradox! I suspect that these arguments will continue
+            indefinitely. :)
+          </p>
+        </div>
+      </div>
+    </main>
+  </body>
+</html>
