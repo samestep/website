@@ -7,11 +7,17 @@ interface Author {
 
 const author = (name: string, href: string): Author => ({ name, href });
 
+const amy = author("Amy Wei", "https://weiagit.github.io/");
+
 const brad = author("Brad A. Myers", "https://www.cs.cmu.edu/~bam/");
 
 const eric = author("Éric Tanter", "https://pleiad.cl/people/etanter");
 
+const hanan = author("Hanan Hibshi", "https://www.cs.cmu.edu/~hhibshi/");
+
 const hweiShin = author("Hwei-Shin Harriman", "https://hsharriman.github.io/");
+
+const ian = author("Ian McCormack", "https://icmccorm.com/");
 
 const jenna = author("Jenna DiVincenzo", "https://jennalwise.github.io/");
 
@@ -40,6 +46,11 @@ const sang = author(
   "https://www.linkedin.com/in/sang-heon-choi/",
 );
 
+const tomas = author(
+  "Tomás Dougan",
+  "https://www.linkedin.com/in/tomas-dougan-955494229/",
+);
+
 interface Venue {
   name: string;
   href: string;
@@ -53,6 +64,20 @@ interface Publication {
 }
 
 const pubs: Publication[] = [
+  {
+    title:
+      "A Mixed Methods Study on the Implications of Unsafe Rust for Interoperation, Encapsulation, and Tooling",
+    href: "https://doi.org/10.1145/3798277",
+    venue: { name: "TOSEM", href: "https://dl.acm.org/journal/tosem" },
+    authors: [ian, tomas, sam, hanan, jonathan, josh],
+  },
+  {
+    title:
+      "TestLoop: A Process Model Describing Human-in-the-Loop Software Test Suite Generation",
+    href: "https://doi.org/10.1145/3765754",
+    venue: { name: "TOSEM", href: "https://dl.acm.org/journal/tosem" },
+    authors: [matt, sang, amy, sam, brad, josh],
+  },
   {
     title: "Codifying Visual Representations",
     href: "https://doi.org/10.1007/978-3-031-71291-3_37",
