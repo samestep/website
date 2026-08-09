@@ -48,29 +48,36 @@ export const indexHtml = ({
           <h1 class="name">Sam Estep</h1>
         </div>
         <div class="socials">
-          <a class="fa fa-envelope fa-2x" href="mailto:estep@cmu.edu"></a>
+          <a class="fa fa-envelope" href="mailto:sam@samestep.com"></a>
           <a
-            class="fa-brands fa-discord fa-2x"
+            class="fa-brands fa-bluesky"
+            href="https://bsky.app/profile/sgestep.bsky.social"
+          ></a>
+          <a
+            class="fa-brands fa-discord"
             href="https://discord.com/users/samestep"
           ></a>
+          <a class="fa-brands fa-github" href="https://github.com/samestep"></a>
+          <a class="fa-brands fa-gitlab" href="https://gitlab.com/sestep"></a>
           <a
-            class="fa-brands fa-github fa-2x"
-            href="https://github.com/samestep"
+            class="fa-brands fa-letterboxd"
+            href="https://letterboxd.com/samestep/"
           ></a>
           <a
-            class="fa-brands fa-linkedin fa-2x"
+            class="fa-brands fa-linkedin"
             href="https://www.linkedin.com/in/sam-estep/"
           ></a>
           <a
-            class="fa-brands fa-orcid fa-2x"
+            class="fa-brands fa-orcid"
             href="https://orcid.org/0000-0002-7107-7043"
           ></a>
           <a
-            class="fa-brands fa-stack-overflow fa-2x"
+            class="fa-brands fa-stack-overflow"
             href="https://stackoverflow.com/users/5044950/sam-estep"
           ></a>
+          <a class="fa-brands fa-twitter" href="https://x.com/sgestep"></a>
           <a
-            class="fa-brands fa-youtube fa-2x"
+            class="fa-brands fa-youtube"
             href="https://youtube.com/@sam-estep"
           ></a>
         </div>
@@ -79,48 +86,23 @@ export const indexHtml = ({
           <a class="pronouns" href="https://pronouns.org/he-him">
             (he/him)
           </a>
-          . I'm a fifth-year PhD student in{" "}
+          . I'm a software engineer at{" "}
+          <a href="https://mainstreetautonomy.com/">Main Street Autonomy</a>, on
+          leave from the Software Engineering PhD program in{" "}
           <a href="https://s3d.cmu.edu/">S3D</a> at CMU, advised by{" "}
-          <a href="https://www.cs.cmu.edu/~jssunshi/">Joshua Sunshine</a>. I do
-          research on <span class="topic">differentiable programming</span> (you
-          should <a href="https://discord.gg/RZ37HrpheT">join us on Discord</a>
-          !), with a particular focus on performance for interactive visual
-          applications. Here are some past projects:
+          <a href="https://www.cs.cmu.edu/~jssunshi/">Joshua Sunshine</a>. My
+          research specialization is programming language design and
+          implementation.
         </p>
-        <ul>
-          <li>
-            <a href="https://github.com/gradbench/gradbench">GradBench</a> is an
-            extensible benchmark suite for comparing the performance of
-            differentiable programming tools across domains. We use
-            containerization and a shared communication protocol to simplify
-            installation and usage of many tools across many programming
-            languages, building this up as a shared resource for the
-            differentiable programming community to maintain together as we move
-            forward.
-          </li>
-          <li>
-            <a href="https://github.com/rose-lang/rose">Rose</a> is the core
-            engine for differentiable programming inside{" "}
-            <a href="https://penrose.cs.cmu.edu/">Penrose</a>, engineered for
-            performance in the interactive web setting. We use JavaScript as a
-            host language for metaprogramming, and (similar to{" "}
-            <a href="https://jax.readthedocs.io/">JAX</a>) use just-in-time
-            compilation to get good performance. Unlike existing tools, we
-            drastically reduce compilation time by allowing explicit definition
-            of composable functions. Check out my publications list below for
-            our paper in ECOOP 2024!
-          </li>
-        </ul>
         <p>
-          Outside of work, I love{" "}
-          <a href="https://ironcityboulders.com/">bouldering</a>, performing{" "}
-          <a href="https://www.arcadecomedytheater.com/">improv</a>{" "}
-          <a href="https://www.theglitterboxtheater.com/">comedy</a>, and
-          baking. I'm also always looking for music and book recommendations,
-          and trying to get my friends to join{" "}
-          <a href="https://letterboxd.com/">Letterboxd</a> because it lets us
-          take the set intersection of the movies <em>you</em> want to watch
-          with the movies <em>I</em> want to watch (how cool is that?)
+          Outside of work, I enjoy spending time with my lovely partner Lee and
+          my amazing friends in Pittsburgh and elsewhere. I'm also a somewhat
+          active contributor to{" "}
+          <a href="https://github.com/NixOS/nixpkgs">Nixpkgs</a>. Waiting for{" "}
+          <a href="https://www.teamcherry.com.au/blog/holiday2025">
+            Sea of Sorrow
+          </a>{" "}
+          to come out.
         </p>
         <h2>Publications</h2>
         {pubs}
