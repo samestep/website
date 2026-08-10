@@ -102,7 +102,10 @@ export const indexHtml = ({
           Outside of work, I enjoy spending time with my lovely partner Lee and
           my amazing friends in Pittsburgh and elsewhere. I'm also a somewhat
           active contributor to{" "}
-          <a href="https://github.com/NixOS/nixpkgs">Nixpkgs</a>. Waiting for{" "}
+          <a href="https://github.com/NixOS/nixpkgs/issues?q=author%3Asamestep">
+            Nixpkgs
+          </a>
+          . Waiting for{" "}
           <a href="https://www.teamcherry.com.au/blog/holiday2025">
             Sea of Sorrow
           </a>{" "}
