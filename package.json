@@ -9,15 +9,15 @@
     "chokidar": "^5",
     "highlight.js": "^11",
     "live-server": "^1",
-    "log-update": "^7",
-    "markdown-it": "^14",
+    "log-update": "^8",
+    "markdown-it": "^15",
     "markdown-it-katex": "^2",
     "prettier": "^3",
     "prettier-plugin-organize-imports": "^4",
     "preact": "^10",
     "preact-render-to-string": "^6",
-    "qr": "^0.5",
-    "typescript": "^5.9"
+    "qr": "^0.7",
+    "typescript": "^7"
   },
   "scripts": {
     "check": "prettier --check . && tsc",
