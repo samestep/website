@@ -5,7 +5,6 @@
   "devDependencies": {
     "@resvg/resvg-js": "^2",
     "@types/bun": "^1.2.16",
-    "@types/markdown-it": "^14",
     "chokidar": "^5",
     "highlight.js": "^11",
     "live-server": "^1",

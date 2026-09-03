@@ -1,6 +1,6 @@
 import { Resvg } from "@resvg/resvg-js";
 import hljs from "highlight.js";
-import markdownit from "markdown-it";
+import markdownit, { type MarkdownIt } from "markdown-it";
 import markdownitKatex from "markdown-it-katex";
 import * as fs from "node:fs/promises";
 import { JSX } from "preact";
@@ -30,7 +30,7 @@ const getBlogPostContent = async (
 };
 
 export const getBlogPostBody = async (
-  md: markdownit,
+  md: MarkdownIt,
   name: string,
 ): Promise<string> => {
   const replacements = await getBlogPostContent(name);
