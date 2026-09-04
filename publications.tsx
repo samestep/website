@@ -75,7 +75,10 @@ const pubs: Publication[] = [
     title:
       "TestLoop: A Process Model Describing Human-in-the-Loop Software Test Suite Generation",
     href: "https://doi.org/10.1145/3765754",
-    venue: { name: "TOSEM", href: "https://dl.acm.org/journal/tosem" },
+    venue: {
+      name: "TOSEM Vol. 35 No. 8",
+      href: "https://dl.acm.org/toc/tosem/2026/35/8",
+    },
     authors: [matt, sang, amy, sam, brad, josh],
   },
   {
